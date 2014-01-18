@@ -19,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 class GMailAuthenticator extends Authenticator {
     String user;
     String pw;
@@ -84,7 +85,7 @@ public class EmailSenderService {
 			}
 			// Indicamos el titulo del mensage
 			message.setSubject(subject);
-			// Añadimos el Cuerpo
+			// Aï¿½adimos el Cuerpo
 			message.setContent(multipart);
 			System.out.println((String) this.properties.get("mail.smtp.user")+"/"+(String) this.properties.get("mail.smtp.password"));
 
