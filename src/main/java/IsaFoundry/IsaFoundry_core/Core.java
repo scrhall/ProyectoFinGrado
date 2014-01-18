@@ -15,16 +15,22 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import contentManager.ContentManager;
+
 public class Core {
+	
+	public static ContentManager CManager=new ContentManager();
+	
 	/**
 	 * Realiza el envio de un correo mediante la informacion proporcionada en xml.
 	 * @param templatePath incluye toda la informacion del correo a enviar.
 	 */
 	public void sendEmail(String templatePath) {
 		Document doc=readXmlFromUrl(templatePath);//Document doc=readXmlFromFile(templatePath)
-			
+		//TODO:	
 		
 	}
+	
 	/**
 	 * Lee un xml desde una url.
 	 * @param path url.
@@ -51,17 +57,15 @@ public class Core {
 			doc.getDocumentElement().normalize();
 			return doc;
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
 	/**
 	 * Lee un xml desde un archivo.
 	 * @param path
@@ -78,13 +82,10 @@ public class Core {
 			doc.getDocumentElement().normalize();
 			return doc;
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -96,18 +97,20 @@ public class Core {
 	 * @param destinationPath 	destino.
 	 */
 	public void copyDoc(String sourcePath, String destinationPath) {
-		// TODO Auto-generated method stub
+		CManager.copyDoc(sourcePath, destinationPath);
 		
 	}
+	
 	/**
 	 * Recupera la url para la edicion del documento en linea.
 	 * @param doc
 	 * @return
 	 */
-	public String urlDocGD(String doc) {
+	public String urlDocOnlineEdit(String doc) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	/**
 	 * Recupera la url para la obtencion del documento en formato pdf.
 	 * @param doc
@@ -117,12 +120,14 @@ public class Core {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	/**
 	 * Recupera la url del documento.
 	 * @param doc
 	 * @return
 	 */
 	public String urlDoc(String doc) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}

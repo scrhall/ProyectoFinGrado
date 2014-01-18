@@ -1,4 +1,4 @@
-package alfresco;
+package contentManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,10 +21,10 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Alfresco {
+public class ContentManager {
 	private final Properties properties = new Properties();
 
-	private static Logger logger = LoggerFactory.getLogger(Alfresco.class);
+	private static Logger logger = LoggerFactory.getLogger(ContentManager.class);
 	private Session session = null;
 	
 	public Session getSession() {
@@ -35,8 +35,7 @@ public class Alfresco {
 		this.session = session;
 	}
  
-
-	public Alfresco(){		
+	public ContentManager(){		
 		
 		try {
 			properties.load(new FileInputStream("contentManagement.properties"));
