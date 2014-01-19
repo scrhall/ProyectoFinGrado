@@ -1,4 +1,4 @@
-package contentManager;
+package isaFoundry.contentManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

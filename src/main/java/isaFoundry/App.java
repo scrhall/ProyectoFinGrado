@@ -1,4 +1,4 @@
-package IsaFoundry.IsaFoundry_core;
+package isaFoundry;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

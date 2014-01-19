@@ -1,4 +1,4 @@
-package email;
+package isaFoundry.email;
 
 import java.io.IOException;
 import java.util.Properties;

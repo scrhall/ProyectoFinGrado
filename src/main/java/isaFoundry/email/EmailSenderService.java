@@ -1,4 +1,4 @@
-package email;
+package isaFoundry.email;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

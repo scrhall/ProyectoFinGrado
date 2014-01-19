@@ -1,4 +1,6 @@
-package IsaFoundry.IsaFoundry_core;
+package isaFoundry.core;
+
+import isaFoundry.contentManager.ContentManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,8 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import contentManager.ContentManager;
 
 public class Core {
 	

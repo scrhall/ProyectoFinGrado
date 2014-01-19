@@ -1,4 +1,4 @@
-package IsaFoundry.IsaFoundry_core;
+package isaFoundry.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
