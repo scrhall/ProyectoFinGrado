@@ -8,19 +8,138 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.RepositoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class Core {
+	private Logger Log = LoggerFactory.getLogger(Core.class);
+	private  ContentManager CManager;
+	private  ProcessEngine processEngine;
 	
-	public static ContentManager CManager=new ContentManager();
 	
+	
+	
+	public Core() {
+		ContentManager CManager=new ContentManager();
+		processEngine=ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
+	     
+		LoadAllDefinitions();
+	}
+
+	private void LoadAllDefinitions() {
+		//TODO: mirar todos los bpmn en diagrams y cargarlos todos
+		final Collection<String> list = getResources(Pattern.compile(".bpmn"));
+        for(final String name : list){
+        	Log.info(name);
+        }
+		// Forma menos practica
+		 RepositoryService repositoryService = processEngine.getRepositoryService();
+	        repositoryService.createDeployment()
+	          .addClasspathResource("FinalizacionProyecto.bpmn")
+	          .deploy();
+	        Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());            
+	        repositoryService.createDeployment()
+	        .addClasspathResource("CreacionProyecto.bpmn")
+	        .deploy();
+	      Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());     
+	      repositoryService.createDeployment()
+	      .addClasspathResource("Reuniones.bpmn")
+	      .deploy();
+	    Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());            
+	    
+	}
+        public static Collection<String> getResources(
+                final Pattern pattern){
+                final ArrayList<String> retval = new ArrayList<String>();
+                final String classPath = System.getProperty("java.class.path", ".");
+                final String[] classPathElements = classPath.split(":");
+                for(final String element : classPathElements){
+                    retval.addAll(getResources(element, pattern));
+                }
+                return retval;
+            }
+	private static Collection<String> getResources(
+	        final String element,
+	        final Pattern pattern){
+	        final ArrayList<String> retval = new ArrayList<String>();
+	        final File file = new File(element);
+	        if(file.isDirectory()){
+	            retval.addAll(getResourcesFromDirectory(file, pattern));
+	        } else{
+	            retval.addAll(getResourcesFromJarFile(file, pattern));
+	        }
+	        return retval;
+	    }
+
+	    private static Collection<String> getResourcesFromJarFile(
+	        final File file,
+	        final Pattern pattern){
+	        final ArrayList<String> retval = new ArrayList<String>();
+	        ZipFile zf;
+	        try{
+	            zf = new ZipFile(file);
+	        } catch(final ZipException e){
+	            throw new Error(e);
+	        } catch(final IOException e){
+	            throw new Error(e);
+	        }
+	        final Enumeration e = zf.entries();
+	        while(e.hasMoreElements()){
+	            final ZipEntry ze = (ZipEntry) e.nextElement();
+	            final String fileName = ze.getName();
+	            final boolean accept = pattern.matcher(fileName).matches();
+	            if(accept){
+	                retval.add(fileName);
+	            }
+	        }
+	        try{
+	            zf.close();
+	        } catch(final IOException e1){
+	            throw new Error(e1);
+	        }
+	        return retval;
+	    }
+
+	    private static Collection<String> getResourcesFromDirectory(
+	        final File directory,
+	        final Pattern pattern){
+	        final ArrayList<String> retval = new ArrayList<String>();
+	        final File[] fileList = directory.listFiles();
+	        for(final File file : fileList){
+	            if(file.isDirectory()){
+	                retval.addAll(getResourcesFromDirectory(file, pattern));
+	            } else{
+	                try{
+	                    final String fileName = file.getCanonicalPath();
+	                    final boolean accept = pattern.matcher(fileName).matches();
+	                    if(accept){
+	                        retval.add(fileName);
+	                    }
+	                } catch(final IOException e){
+	                    throw new Error(e);
+	                }
+	            }
+	        }
+	        return retval;
+	    }
 	/**
 	 * Realiza el envio de un correo mediante la informacion proporcionada en xml.
 	 * @param templatePath incluye toda la informacion del correo a enviar.

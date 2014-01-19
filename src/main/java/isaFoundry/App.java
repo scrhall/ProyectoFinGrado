@@ -1,5 +1,7 @@
 package isaFoundry;
 
+import isaFoundry.core.Core;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,21 +21,7 @@ public class App
     public static void main( String[] args )
     {
     	Logger Log = LoggerFactory.getLogger(App.class);
-        ProcessEngine processEngine=ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
-        RepositoryService repositoryService = processEngine.getRepositoryService();
-        repositoryService.createDeployment()
-          .addClasspathResource("FinalizacionProyecto.bpmn")
-          .deploy();
-        Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());            
-        repositoryService.createDeployment()
-        .addClasspathResource("CreacionProyecto.bpmn")
-        .deploy();
-      Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());     
-      repositoryService.createDeployment()
-      .addClasspathResource("Reuniones.bpmn")
-      .deploy();
-    Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());            
-    
+       Core core=new Core();
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
           @Override
