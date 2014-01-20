@@ -1,9 +1,11 @@
 package isaFoundry.contentManager;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AbstractAtomPubService;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AtomPubParser;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -23,6 +27,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,9 +142,8 @@ public class ContentManager {
 		} catch (CmisObjectNotFoundException e) {}
 	}
 
-	public String uploadFile(String targetPath, String fileName, String filePath, String contentType) {
+	public void uploadFile(String targetPath, String fileName, String filePath, String contentType) {
 		Folder folder = (Folder) this.session.getObjectByPath(targetPath);
-		String idDoc = null;
 		ContentStream contentStream = null;
 		// Create contentStream from file
 		// File properties (minimal set: fileName and object type id)
@@ -152,11 +157,45 @@ public class ContentManager {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (CmisConstraintException e) {}
-		return idDoc;
 	}
+	
+	public String getDocumentURL(Document document) {
 
-	public String urlDoc(String fileName, String filePath) {
-		// TODO Auto-generated method stub
-		return null;
+	    String link = null;
+
+	    try {
+
+	        Method loadLink = AbstractAtomPubService.class.getDeclaredMethod("loadLink", 
+
+	            new Class[] { String.class, String.class, String.class, String.class });
+
+	 
+
+	        loadLink.setAccessible(true);
+
+	 
+
+	        link = (String) loadLink.invoke(this.session.getBinding().getObjectService(), this.session.getRepositoryInfo().getId(),
+
+	            document.getId(), AtomPubParser.LINK_REL_CONTENT, null);
+
+	    } catch (Exception e) {
+
+	       e.printStackTrace();
+
+	    }
+
+	    return link;
+
+	  }
+	
+	public void toPDF(String fileName, String filePath, String targetPath){
+		File file = new File(filePath + fileName);
+		try{
+			COSDocument doc = new COSDocument(file);
+			PDDocument pdf = new PDDocument(doc);
+			pdf.save(targetPath + fileName);
+			pdf.close();	
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 }
