@@ -20,26 +20,26 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class EmailSenderService {
 
+	private Logger				Log			= LoggerFactory.getLogger(EmailSenderService.class);
 	private final Properties	properties	= new Properties();
 	private Session				session;
 
-	private void init() {
+	public EmailSenderService() {
 		try {
-			this.properties.load(EmailSenderService.class.getResourceAsStream("/isaFoundry/configs/mail.properties"));
+			this.properties.load(EmailSenderService.class.getResourceAsStream("/isaFoundry/configs/emailSender.properties"));
+			this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
+					(String) this.properties.get("mail.smtp.password")));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error: " + e);
-			e.printStackTrace();
+			this.Log.error("Error: Archivo no encontrado | /isaFoundry/configs/emailRead.properties" + e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error: " + e);
-			e.printStackTrace();
+			this.Log.info("Error: Entrada/Salida | /isaFoundry/configs/emailRead.properties " + e);
 		}
-		this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
-				(String) this.properties.get("mail.smtp.password")));
 	}
 
 	public void sendEmail(String subject, String body, List<String> tos) {
@@ -47,12 +47,12 @@ public class EmailSenderService {
 	}
 
 	public void sendEmail(String subject, String body, List<String> tos, String attachedPatch, String attachedName) {
-		this.init();
 		try {
 			MimeMultipart multipart = new MimeMultipart();
 			// Texto del Email
 			BodyPart text = new MimeBodyPart();
-			text.setText(body);
+			text.setContent(body, "text/html");
+			
 			multipart.addBodyPart(text);
 			if (attachedPatch != "") {
 				// Adjunto
