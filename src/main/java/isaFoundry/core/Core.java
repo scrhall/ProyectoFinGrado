@@ -2,6 +2,7 @@ package isaFoundry.core;
 
 
 import isaFoundry.contentManager.ContentManager;
+import isaFoundry.email.EmailSenderService;
 import isaFoundry.processEngine.ProccesEngine;
 
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +30,9 @@ import org.xml.sax.SAXException;
 public class Core {
 
 	private Logger			Log	= LoggerFactory.getLogger(Core.class);
-	private ContentManager	cManager;
+	private static ContentManager	cManager;
 	private ProccesEngine	pEngine;
+	private static EmailSenderService ES;
 
 	public Core() {
 		this.Log.info("Iniciando Motor de proceso");
@@ -46,8 +49,8 @@ public class Core {
 	 * @param destinationPath
 	 *            destino.
 	 */
-	public void copyDoc(String sourcePath, String destinationPath) {
-		this.cManager.copyDoc(sourcePath , destinationPath);
+	public static void copyDoc(String sourcePath, String destinationPath) {
+		cManager.copyDoc(sourcePath , destinationPath);
 	}
 
 	/**
@@ -133,8 +136,8 @@ public class Core {
 	 * @param templatePath
 	 *            incluye toda la informacion del correo a enviar.
 	 */
-	public void sendEmail(String templatePath) {
-		this.readXmlFromUrl(templatePath);
+	public static void sendEmail(String subject, String body, List<String> tos) {
+		ES.sendEmail(subject, body, tos);
 	}
 
 	/**
@@ -143,7 +146,7 @@ public class Core {
 	 * @param doc
 	 * @return
 	 */
-	public String urlDoc(String doc) {
+	public static String urlDoc(String doc) {
 		// TODO Auto-generated method stub
 		return null;
 	}
