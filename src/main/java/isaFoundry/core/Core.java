@@ -5,41 +5,21 @@ import isaFoundry.contentManager.ContentManager;
 import isaFoundry.email.EmailService;
 import isaFoundry.processEngine.ProccesEngine;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 
 public class Core {
 
-	private Logger			Log	= LoggerFactory.getLogger(Core.class);
+	private Logger					Log	= LoggerFactory.getLogger(Core.class);
 	private static ContentManager	cManager;
 	private static ProccesEngine	pEngine;
-	private static EmailService	eService;
-
-	public Core() {
-		this.Log.info("Iniciando Motor de proceso");
-		this.pEngine = new ProccesEngine();
-		// this.Log.info("Iniciando Gestor documental");
-		// this.cManager = new ContentManager();
-	}
+	private static EmailService		eService;
 
 	/**
 	 * Copia un documento desde una ruta a otra.
@@ -54,65 +34,33 @@ public class Core {
 	}
 
 	/**
-	 * Lee un xml desde un archivo.
+	 * Realiza el envio de un correo mediante la informacion proporcionada en
+	 * xml.
 	 * 
-	 * @param path
-	 * @return
+	 * @param templatePath
+	 *            incluye toda la informacion del correo a enviar.
 	 */
-	public Document readXmlFromFile(String path) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db;
-			db = dbf.newDocumentBuilder();
-			Document doc;
-			doc = db.parse(new File(path));
-			doc.getDocumentElement().normalize();
-			return doc;
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public static void sendEmail(String subject, String body, List<String> tos) {
+		eService.SendEmail(subject , body , tos);
 	}
 
 	/**
-	 * Lee un xml desde una url.
+	 * Recupera la url del documento.
 	 * 
-	 * @param path
-	 *            url.
+	 * @param doc
 	 * @return
 	 */
-	public Document readXmlFromUrl(String path) {
-		try {
-			URL url;
-			String line;
-			String xml = "";
-			url = new URL(path);
-			BufferedReader br;
-			br = new BufferedReader(new InputStreamReader(url.openStream()));
-			while ((line = br.readLine()) != null) {
-				xml = xml + line;
-			}
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db;
-			db = dbf.newDocumentBuilder();
-			InputSource file = new InputSource();
-			file.setCharacterStream(new StringReader(xml));
-			Document doc;
-			doc = db.parse(file);
-			doc.getDocumentElement().normalize();
-			return doc;
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
+	public static String urlDoc(String doc) {
+		// TODO: hay que comprobar realmente que paramtro o valor vamos a tener
+		// cManager.getDocumentURL(document);
 		return null;
+	}
+
+	public Core() {
+		this.Log.info("Iniciando Motor de proceso");
+		Core.pEngine = new ProccesEngine();
+		// this.Log.info("Iniciando Gestor documental");
+		// this.cManager = new ContentManager();
 	}
 
 	public void run() {
@@ -126,28 +74,6 @@ public class Core {
 				// pendientes
 			}
 		} , 0 , 5 , TimeUnit.SECONDS);
-	}
-
-	/**
-	 * Realiza el envio de un correo mediante la informacion proporcionada en
-	 * xml.
-	 * 
-	 * @param templatePath
-	 *            incluye toda la informacion del correo a enviar.
-	 */
-	public static void sendEmail(String subject, String body, List<String> tos) {
-		eService.SendEmail(subject, body, tos);
-	}
-
-	/**
-	 * Recupera la url del documento.
-	 * 
-	 * @param doc
-	 * @return
-	 */
-	public static String urlDoc(String doc) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -168,7 +94,9 @@ public class Core {
 	 * @return
 	 */
 	public String urlDocPdf(String doc) {
-		// TODO Auto-generated method stub
+		// TODO: falta por hacer conincidir los parametros que tendremos por los
+		// que necesita la funcion
+		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
 	}
 }

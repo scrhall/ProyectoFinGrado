@@ -17,6 +17,13 @@ import org.slf4j.LoggerFactory;
 
 public class ProccesEngine {
 
+	public class CompleteRequest implements ExecutionListener {
+
+		public void notify(DelegateExecution arg0) throws Exception {
+			// TODO Auto-generated method stub
+		}
+	}
+
 	public class CreateRequest implements ExecutionListener {
 
 		public void notify(DelegateExecution execution) throws Exception {
@@ -32,7 +39,7 @@ public class ProccesEngine {
 			String to = (String) arg0.getVariable("DP");
 			List<String> tos = new ArrayList<String>();
 			tos.add(to);
-			//Esta parte o se carga de alfresco o directamente del BPMN
+			// Esta parte o se carga de alfresco o directamente del BPMN
 			String subject = "Rellene la solicitud de Proyecto";
 			String body = "A continuacion se adjunta un enlace con el que rellenar la "
 					+ "solicitud de proyecto, un formulario para que introduzca los datos"

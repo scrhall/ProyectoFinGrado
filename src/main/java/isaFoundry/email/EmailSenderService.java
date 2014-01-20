@@ -51,8 +51,7 @@ public class EmailSenderService {
 			MimeMultipart multipart = new MimeMultipart();
 			// Texto del Email
 			BodyPart text = new MimeBodyPart();
-			text.setContent(body, "text/html");
-			
+			text.setContent(body , "text/html");
 			multipart.addBodyPart(text);
 			if (attachedPatch != "") {
 				// Adjunto
