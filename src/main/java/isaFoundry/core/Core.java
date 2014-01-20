@@ -2,7 +2,7 @@ package isaFoundry.core;
 
 
 import isaFoundry.contentManager.ContentManager;
-import isaFoundry.email.EmailSenderService;
+import isaFoundry.email.EmailService;
 import isaFoundry.processEngine.ProccesEngine;
 
 import java.io.BufferedReader;
@@ -31,8 +31,8 @@ public class Core {
 
 	private Logger			Log	= LoggerFactory.getLogger(Core.class);
 	private static ContentManager	cManager;
-	private ProccesEngine	pEngine;
-	private static EmailSenderService ES;
+	private static ProccesEngine	pEngine;
+	private static EmailService	eService;
 
 	public Core() {
 		this.Log.info("Iniciando Motor de proceso");
@@ -119,7 +119,6 @@ public class Core {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(new Runnable() {
 
-			@Override
 			public void run() {
 				Core.this.Log.info("loop ejecutandose...");
 				// TODO:Comprobar tareas pendientes en el motor de activiti
@@ -137,7 +136,7 @@ public class Core {
 	 *            incluye toda la informacion del correo a enviar.
 	 */
 	public static void sendEmail(String subject, String body, List<String> tos) {
-		ES.sendEmail(subject, body, tos);
+		eService.SendEmail(subject, body, tos);
 	}
 
 	/**

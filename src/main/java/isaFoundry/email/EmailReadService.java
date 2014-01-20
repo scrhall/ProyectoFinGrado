@@ -1,9 +1,13 @@
 package isaFoundry.email;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -11,11 +15,15 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.search.FlagTerm;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class EmailReadService {
 
-	// Configuration
+	private Logger				Log			= LoggerFactory.getLogger(EmailReadService.class);
 	private final Properties	properties	= new Properties();
 	private String				pass , user , host;
 	private Folder				inbox;
@@ -23,11 +31,19 @@ public class EmailReadService {
 
 	// Constructor
 	public EmailReadService() {
-		this.user = "Pruebas@scrhall.com";
-		this.pass = "uno2tres4";
-		this.host = "imap.gmail.com";
-		this.properties.put("mail.store.protocol" , "imaps");
-		this.session = Session.getDefaultInstance(this.properties);
+		try {
+			Properties config = new Properties();
+			config.load(EmailReadService.class.getResourceAsStream("/isaFoundry/configs/emailRead.properties"));
+			this.user = config.getProperty("USER");
+			this.pass = config.getProperty("PASSWORD");
+			this.host = config.getProperty("HOST");
+			this.properties.put("mail.store.protocol" , "imaps");
+			this.session = Session.getDefaultInstance(this.properties);
+		} catch (FileNotFoundException e) {
+			this.Log.error("Error: Archivo no encontrado | /isaFoundry/configs/emailRead.properties" + e);
+		} catch (IOException e) {
+			this.Log.info("Error: Entrada/Salida | /isaFoundry/configs/emailRead.properties " + e);
+		}
 	}
 
 	public boolean connect() {
@@ -96,30 +112,40 @@ public class EmailReadService {
 		}
 	}
 
-	public void readEmails() {
+	public List<Email> readEmails() {
+		List<Email> emails = new ArrayList<Email>();
 		try {
 			this.inbox.open(Folder.READ_ONLY);
-			Message[] messages = this.inbox.getMessages();
-			System.out.println("No of Messages : " + this.inbox.getMessageCount());
-			System.out.println("No of Unread Messages : " + this.inbox.getUnreadMessageCount());
-			System.out.println(messages.length);
+			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+            Message messages[] = inbox.search(ft);
+			this.Log.info("No of Messages : " + this.inbox.getMessageCount());
+			this.Log.info("No of Unread Messages : " + this.inbox.getUnreadMessageCount());
+			this.Log.info(Integer.toString(messages.length));
 			for (int i = 0; i < messages.length; i++) {
-				System.out.println("*****************************************************************************");
-				System.out.println("MESSAGE " + (i + 1) + ":");
+				
+				Email email = new Email();
+				this.Log.info("*****************************************************************************");
+				this.Log.info("MESSAGE " + (i + 1) + ":");
 				Message msg = messages[i];
-				System.out.println("Subject: " + msg.getSubject());
-				System.out.println("From: " + msg.getFrom()[0]);
-				System.out.println("To: " + msg.getAllRecipients()[0]);
-				System.out.println("Date: " + msg.getReceivedDate());
-				System.out.println("Size: " + msg.getSize());
-				System.out.println(msg.getFlags());
-				System.out.println("Body: \n" + this.getText(msg));
-				System.out.println(msg.getContentType());
+				this.Log.info("Subject: " + msg.getSubject());
+				this.Log.info("From: " + msg.getFrom()[0]);
+				//this.Log.info("To: " + msg.getAllRecipients()[0]);
+				this.Log.info("Date: " + msg.getReceivedDate());
+				this.Log.info("Size: " + msg.getSize());
+				this.Log.info(msg.getFlags().toString());
+				this.Log.info("Body: \n" + this.getText(msg));
+				this.Log.info(msg.getContentType());
+				email.Subject = msg.getSubject();
+				email.From = msg.getFrom()[0].toString();
+				email.Body = this.getText(msg);
+				emails.add(email);
 			}
 			this.inbox.close(false);
-		} catch (MessagingException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (MessagingException e) {
+			this.Log.error("Error: MessagingException al leer los mensajes | " + e);
+		} catch (IOException e) {
+			this.Log.error("Error: Entrada/Salida al leer los mensajes | " + e);
 		}
+		return emails;
 	}
 }
