@@ -20,7 +20,12 @@
 		</repository>
 	</repositories>
 	<dependencies>
-
+		<dependency>
+        	<groupId>org.alfresco.cmis.client</groupId>
+        	<artifactId>alfresco-opencmis-extension</artifactId>
+        	<version>0.7</version>
+        	<type>jar</type>
+    	</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

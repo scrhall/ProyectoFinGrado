@@ -1,15 +1,21 @@
 package isaFoundry.contentManager;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.transform.stream.StreamResult;
+
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -70,124 +76,178 @@ public class ContentManager {
 			e.printStackTrace();
 		}
 	}
-
-	public void copyDoc(String fileName, String targetPath) {
-		try {
-			Document doc = (Document) this.session.getObjectByPath(fileName);
-			Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
-			doc.addToFolder(targetFolder , true);
-		} catch (CmisObjectNotFoundException e) {}
-	}
-
+	
 	public Session getSession() {
 		return this.session;
 	}
-
-	public void moveDoc(String fileName, String sourcePath, String targetPath) {
-		try {
-			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
-			Folder sourceFolder = (Folder) this.session.getObjectByPath(sourcePath);
-			Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
-			doc.move(sourceFolder , targetFolder);
-		} catch (CmisObjectNotFoundException e) {}
-	}
-
-	public void newDoc(String fileName, String filePath) {
-		this.newDoc(fileName , filePath , null);
-	}
-
-	public void newDoc(String fileName, String filePath, ContentStream content) {
-		Folder parent;
-		Map<String, Object> properties = new HashMap<String, Object>();
-		// Create new folder
-		try {
-			parent = this.newFolder(filePath);
-		} catch (CmisConstraintException e) {
-			parent = (Folder) this.session.getObjectByPath("/" + filePath + "/");
-		}
-		// File properties (minimal set: fileName and object type id)
-		try {
-			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
-			properties.put(PropertyIds.NAME , fileName);
-			// Create a major version
-			parent.createDocument(properties , content , VersioningState.MAJOR);
-		} catch (CmisConstraintException e) {}
-	}
-
-	public Folder newFolder(String path) {
-		// Create the folder
-		// Folder properties (minimal set: fileName and object type id)
-		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:folder");
-		properties.put(PropertyIds.NAME , path);
-		Folder parent = this.session.getRootFolder().createFolder(properties);
-		return parent;
-	}
-
-	public void removeDoc(String fileName) {
-		try {
-			Document doc = (Document) this.session.getObjectByPath(fileName);
-			doc.delete();
-		} catch (CmisObjectNotFoundException e) {}
-	}
-
+	
 	public void setSession(Session session) {
 		this.session = session;
 	}
 
-	public void updateDocProperties(String fileName, Map<String, Object> newProperties) {
+	public void newDoc(String fileName, String filePath, String text) {
+		//content
+		byte[] content = text.getBytes();
+		InputStream stream = new ByteArrayInputStream(content);
+		ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
+		Map<String, Object> properties = new HashMap<String, Object>();
+		// File properties (minimal set: fileName and object type id)
+		properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
+		properties.put(PropertyIds.NAME , fileName);
 		try {
-			Document doc = (Document) this.session.getObjectByPath(fileName);
+			// Get parent folder or create it
+			Folder parent = this.newFolder(filePath);
+			// Create a major version
+			parent.createDocument(properties , contentStream , VersioningState.MAJOR);
+		} catch (CmisConstraintException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void newDoc(String fileName, String filePath) {
+		this.newDoc(fileName , filePath , null);
+	}
+	
+	public void copyDoc(String fileName, String filePath, String targetPath) {
+		try {
+			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			Folder targetFolder = (Folder) this.session.getObjectByPath("/"+ targetPath +"/");
+			doc.addToFolder(targetFolder , true);
+		} catch (CmisObjectNotFoundException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void moveDoc(String fileName, String sourcePath, String targetPath) {
+		try {
+			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
+			Folder sourceFolder = (Folder) this.session.getObjectByPath("/"+ sourcePath +"/");
+			Folder targetFolder = (Folder) this.session.getObjectByPath("/"+ targetPath +"/");
+			doc.move(sourceFolder , targetFolder);
+		} catch (CmisObjectNotFoundException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+
+	public void overwriteDoc(String fileName, String filePath, String text) {
+		//content
+		byte[] content = text.getBytes();
+		InputStream stream = new ByteArrayInputStream(content);
+		ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
+		try {
+		Document targetDocument = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+		targetDocument.setContentStream(contentStream, true);
+		} catch (CmisObjectNotFoundException e){
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void appendDoc(String fileName, String filePath, String text) {
+		try {
+			//content
+			Document targetDocument = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			String newText = this.getContentAsString(targetDocument.getContentStream()) + "\n" + text;
+			byte[] content = newText.getBytes();
+			InputStream stream = new ByteArrayInputStream(content);
+			ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
+			targetDocument.setContentStream(contentStream, true);
+		} catch (CmisObjectNotFoundException e){
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+
+	public void removeDoc(String fileName, String filePath) {
+		try {
+			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			doc.delete();
+		} catch (CmisObjectNotFoundException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateDocProperties(String fileName, String filePath, Map<String, Object> newProperties) {
+		try {
+			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
 			doc.updateProperties(newProperties);
-		} catch (CmisObjectNotFoundException e) {}
+		} catch (CmisObjectNotFoundException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public String getDocumentUrl(String fileName, String filePath) {
+		Document document = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+		return this.getDocumentURL(document);
+	}
+	
+	public String getDocumentURL(Document document) {
+	    String link = null;
+	    try {
+	        Method loadLink = AbstractAtomPubService.class.getDeclaredMethod("loadLink", 
+	            new Class[] { String.class, String.class, String.class, String.class });
+	        loadLink.setAccessible(true);
+	        link = (String) loadLink.invoke(this.session.getBinding().getObjectService(), this.session.getRepositoryInfo().getId(),
+	            document.getId(), AtomPubParser.LINK_REL_CONTENT, null);
+	    } catch (Exception e) {
+	    	System.out.println("Error: " + e);
+			e.printStackTrace();
+	    }
+	    return link;
+	}
+	
+	public Folder newFolder(String path) {
+		// Create the folder
+		Folder parent;
+		// Folder properties (minimal set: fileName and object type id)
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:folder");
+		properties.put(PropertyIds.NAME , path);
+		if (path == "")
+			parent = this.session.getRootFolder();
+		else {
+			try {
+				parent = this.session.getRootFolder().createFolder(properties);
+			} catch (CmisConstraintException e){
+				parent = (Folder) this.session.getObjectByPath("/"+ path +"/");
+			}
+		}
+		return parent;
 	}
 
 	public void uploadFile(String targetPath, String fileName, String filePath, String contentType) {
-		Folder folder = (Folder) this.session.getObjectByPath(targetPath);
+		Folder folder = this.newFolder(targetPath);
+		this.uploadFile(folder, fileName, filePath, contentType);
+	}
+	
+	public void uploadFile(Folder folder, String fileName, String filePath, String contentType) {
 		ContentStream contentStream = null;
 		// Create contentStream from file
 		// File properties (minimal set: fileName and object type id)
 		// Create a major version
 		try {
-			contentStream = new ContentStreamImpl(fileName , null , contentType , new FileInputStream(filePath + fileName));
+			contentStream = new ContentStreamImpl(fileName , null , contentType , new FileInputStream("/"+ filePath +"/"+ fileName));
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
 			properties.put(PropertyIds.NAME , contentStream.getFileName());
 			folder.createDocument(properties , contentStream , VersioningState.MAJOR);
 		} catch (FileNotFoundException e) {
+			System.out.println("Error: " + e);
 			e.printStackTrace();
-		} catch (CmisConstraintException e) {}
+		} catch (CmisConstraintException e) {
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
 	}
-	
-	public String getDocumentURL(Document document) {
-
-	    String link = null;
-
-	    try {
-
-	        Method loadLink = AbstractAtomPubService.class.getDeclaredMethod("loadLink", 
-
-	            new Class[] { String.class, String.class, String.class, String.class });
-
-	 
-
-	        loadLink.setAccessible(true);
-
-	 
-
-	        link = (String) loadLink.invoke(this.session.getBinding().getObjectService(), this.session.getRepositoryInfo().getId(),
-
-	            document.getId(), AtomPubParser.LINK_REL_CONTENT, null);
-
-	    } catch (Exception e) {
-
-	       e.printStackTrace();
-
-	    }
-
-	    return link;
-
-	  }
 	
 	public void toPDF(String fileName, String filePath, String targetPath){
 		File file = new File(filePath + fileName);
@@ -196,6 +256,25 @@ public class ContentManager {
 			PDDocument pdf = new PDDocument(doc);
 			pdf.save(targetPath + fileName);
 			pdf.close();	
-		} catch (Exception e) { e.printStackTrace(); }
+		} catch (Exception e) { 
+			e.printStackTrace(); 
+		}
+	}
+	
+	private String getContentAsString(ContentStream stream) throws IOException {
+		InputStream in2 = stream.getStream();
+		StringBuffer sbuf = null;
+		sbuf = new StringBuffer(in2.available());
+		int count;
+		byte[] buf2 = new byte[100];
+		while ((count = in2.read(buf2)) != -1)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				sbuf.append((char) buf2[i]);
+			}
+		}
+		in2.close();
+		return sbuf.toString();
 	}
 }
