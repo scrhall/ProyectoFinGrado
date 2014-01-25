@@ -31,7 +31,7 @@ public class EmailReadService {
 
 	// Constructor
 	public EmailReadService() {
-		String path = "../configs/emailRead.properties";
+		String path = "target/classes/configs/emailRead.properties";
 		try {
 			Properties config = new Properties();			
 			config.load(EmailReadService.class.getResourceAsStream(path));
