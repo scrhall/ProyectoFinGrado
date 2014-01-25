@@ -31,7 +31,7 @@ public class EmailService {
 		this.eSenderService = new EmailSenderService();
 	}
 
-	public List<UserTaskRequest> IdTaskReceived() {
+	public List<UserTaskRequest> taskReceived() {
 		List<UserTaskRequest> ids = new ArrayList<UserTaskRequest>();
 		this.eReadService.connect();
 		if (this.eReadService.getUnreadMessageCount() != 0) {

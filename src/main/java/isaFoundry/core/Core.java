@@ -4,6 +4,7 @@ package isaFoundry.core;
 import isaFoundry.contentManager.ContentManager;
 import isaFoundry.email.EmailService;
 import isaFoundry.processEngine.ProccesEngine;
+import isaFoundry.processEngine.UserTaskRequest;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -69,11 +70,15 @@ public class Core {
 
 			public void run() {
 				Core.this.Log.info("loop ejecutandose...");
+				
+				for (UserTaskRequest task : eService.taskReceived()) {
+					Log.info("IdTask: "+task.idTask+"; Action: "+task.action);
+				}
 				// TODO:Comprobar tareas pendientes en el motor de activiti
 				// TODO:Comprobar emails y formularios para realizar tareas
 				// pendientes
 			}
-		} , 0 , 5 , TimeUnit.SECONDS);
+		} , 0 , 10 , TimeUnit.SECONDS);
 	}
 
 	/**

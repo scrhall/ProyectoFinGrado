@@ -1,6 +1,7 @@
 package isaFoundry;
 
 
+import isaFoundry.core.Core;
 import isaFoundry.email.EmailService;
 
 import org.eclipse.jetty.server.Server;
@@ -18,10 +19,9 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		Logger Log=LoggerFactory.getLogger(Main.class);
 		Log.info("Ejecutando");
-		// Core core = new Core();
-		// core.run();
-		EmailService es = new EmailService();
-		es.IdTaskReceived();
+		Core core = new Core();
+		core.run();
+		
 		/*String webappDirLocation = "src/main/webapp/";
 		// The port that we should run on can be set into an environment
 		// variable
