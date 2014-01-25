@@ -74,7 +74,7 @@ public class Core {
 				// TODO:Comprobar emails y formularios para realizar tareas
 				// pendientes
 			}
-		} , 0 , 10 , TimeUnit.SECONDS);
+		} , 0 , 30 , TimeUnit.MINUTES);
 	}
 
 	/**
