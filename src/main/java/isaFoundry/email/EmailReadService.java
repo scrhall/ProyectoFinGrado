@@ -35,18 +35,18 @@ public class EmailReadService {
 	public EmailReadService() {
 		try {
 			Properties config = new Properties();			
-			config.load(Main.class.getResourceAsStream("configs/emailRead.properties"));
+			config.load(getClass().getResourceAsStream("/emailRead.properties"));
 			this.user = config.getProperty("USER");
 			this.pass = config.getProperty("PASSWORD");
 			this.host = config.getProperty("HOST");
 			this.properties.put("mail.store.protocol" , "imaps");
 			this.session = Session.getDefaultInstance(this.properties);
 		} catch (FileNotFoundException e) {
-			this.Log.error("Error: Archivo no encontrado | configs/emailRead.properties " + e);
+			this.Log.error("Error: Archivo no encontrado | emailRead.properties " + e);
 		} catch (IOException e) {
-			this.Log.info("Error: Entrada/Salida |  configs/emailRead.properties " + e);
+			this.Log.info("Error: Entrada/Salida |  emailRead.properties " + e);
 		}catch (NullPointerException e) {
-			this.Log.info("Error: NullPointerException | configs/emailRead.properties " + e);
+			this.Log.info("Error: NullPointerException | emailRead.properties " + e);
 		}
 	}
 

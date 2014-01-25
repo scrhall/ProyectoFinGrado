@@ -34,13 +34,13 @@ public class EmailSenderService {
 
 	public EmailSenderService() {
 		try {
-			this.properties.load(Main.class.getResourceAsStream("configs/emailSender.properties"));
+			this.properties.load(getClass().getResourceAsStream("/emailSender.properties"));
 			this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
 					(String) this.properties.get("mail.smtp.password")));
 		} catch (FileNotFoundException e) {
-			this.Log.error("Error: Archivo no encontrado | /isaFoundry/configs/emailRead.properties" + e);
+			this.Log.error("Error: Archivo no encontrado | emailRead.properties" + e);
 		} catch (IOException e) {
-			this.Log.info("Error: Entrada/Salida | /isaFoundry/configs/emailRead.properties " + e);
+			this.Log.info("Error: Entrada/Salida | emailRead.properties " + e);
 		}
 	}
 
