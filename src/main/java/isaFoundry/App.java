@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class App {
 
 	public static void main(String[] args) {
+		System.out.printf("Ejecutando");
 		LoggerFactory.getLogger(App.class);
 		//Core core = new Core();
 		//core.run();
