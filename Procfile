@@ -1,1 +1,1 @@
-web: sh target/classes/isaFoundry/App
+worker: sh target/classes/isaFoundry/App
