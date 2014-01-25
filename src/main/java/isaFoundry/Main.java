@@ -22,7 +22,7 @@ public class Main {
 		// core.run();
 		EmailService es = new EmailService();
 		es.IdTaskReceived();
-		String webappDirLocation = "src/main/webapp/";
+		/*String webappDirLocation = "src/main/webapp/";
 		// The port that we should run on can be set into an environment
 		// variable
 		// Look for that variable and default to 8080 if it isn't there.
@@ -46,7 +46,7 @@ public class Main {
 		root.setParentLoaderPriority(true);
 		server.setHandler(root);
 		server.start();
-		server.join();
+		server.join();*/
 		
 	}
 }
