@@ -1,1 +1,1 @@
-worker: sh target/classes/isaFoundry/ App
+worker: java -jar IsaFoundry.jar 
