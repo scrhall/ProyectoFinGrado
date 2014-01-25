@@ -1,1 +1,1 @@
-web: java -cp target/classes:target/dependency/* isaFoundry.App
+web: java -cp target/classes:target/dependency/* isaFoundry.Main

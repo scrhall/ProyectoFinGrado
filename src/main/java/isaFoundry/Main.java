@@ -5,6 +5,7 @@ import isaFoundry.email.EmailService;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
@@ -16,7 +17,8 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Ejecutando");
-		LoggerFactory.getLogger(Main.class);
+		Logger Log=LoggerFactory.getLogger(Main.class);
+		Log.info("Ejecutando");
 		// Core core = new Core();
 		// core.run();
 		EmailService es = new EmailService();
