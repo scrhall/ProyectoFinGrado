@@ -1,1 +1,1 @@
-worker: java -jar IsaFoundry.jar 
+worker: java -jar target/IsaFoundry.jar 
