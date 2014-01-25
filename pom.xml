@@ -6,7 +6,7 @@
 	<artifactId>IsaFoundry</artifactId>
 	<packaging>jar</packaging>
 	<build>
-		<finalName>${artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 	</build>
 	<name>IsaFoundry</name>
 	<url>http://maven.apache.org</url>
