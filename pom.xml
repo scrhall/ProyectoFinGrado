@@ -3,11 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>IsaFoundry</groupId>
-	<artifactId>IsaFoundry-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>IsaFoundry</artifactId>
 	<packaging>jar</packaging>
-
-	<name>IsaFoundry-core</name>
+	<build>
+		<finalName>${artifactId}</finalName>
+	</build>
+	<name>IsaFoundry</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -68,4 +69,5 @@
   			<version>1.8.3</version>
 		</dependency>
 	</dependencies>
+	<version>0.0.1</version>
 </project>
