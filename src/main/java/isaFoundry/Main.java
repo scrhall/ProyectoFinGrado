@@ -12,11 +12,11 @@ import org.slf4j.LoggerFactory;
  * Hello world!
  * 
  */
-public class App {
+public class Main {
 
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Ejecutando");
-		LoggerFactory.getLogger(App.class);
+		LoggerFactory.getLogger(Main.class);
 		// Core core = new Core();
 		// core.run();
 		EmailService es = new EmailService();
