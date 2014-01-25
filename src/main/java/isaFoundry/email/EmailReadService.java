@@ -35,7 +35,7 @@ public class EmailReadService {
 	public EmailReadService() {
 		try {
 			Properties config = new Properties();			
-			config.load(getClass().getResourceAsStream("/emailRead.properties"));
+			config.load(getClass().getResourceAsStream("/config/emailRead.properties"));
 			this.user = config.getProperty("USER");
 			this.pass = config.getProperty("PASSWORD");
 			this.host = config.getProperty("HOST");

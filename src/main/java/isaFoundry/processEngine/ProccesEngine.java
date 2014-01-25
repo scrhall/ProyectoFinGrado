@@ -74,7 +74,7 @@ public class ProccesEngine {
 		 */
 		// Forma menos practica
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
-		repositoryService.createDeployment().addClasspathResource("isaFoundry/diagrams/CreacionProyecto.bpmn").deploy();
+		repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		this.Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }

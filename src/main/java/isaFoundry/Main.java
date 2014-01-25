@@ -19,8 +19,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		Logger Log=LoggerFactory.getLogger(Main.class);
 		Log.info("Ejecutando");
-		Core core = new Core();
-		core.run();
+		Core.run();
 		
 		/*String webappDirLocation = "src/main/webapp/";
 		// The port that we should run on can be set into an environment

@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 
 public class Core {
 
-	private Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager;
-	private static ProccesEngine	pEngine;
-	private static EmailService		eService;
+	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager= new ContentManager();
+	private static ProccesEngine	pEngine= new ProccesEngine();
+	private static EmailService		eService = new EmailService();
 
 	/**
 	 * Copia un documento desde una ruta a otra.
@@ -58,21 +58,17 @@ public class Core {
 	}
 
 	public Core() {
-		this.Log.info("Iniciando Motor de proceso");
-		Core.pEngine = new ProccesEngine();
-		// this.Log.info("Iniciando Gestor documental");
-		// this.cManager = new ContentManager();
 	}
 
-	public void run() {
+	public static void run() {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(new Runnable() {
 
 			public void run() {
-				Core.this.Log.info("loop ejecutandose...");
-				
-				for (UserTaskRequest task : eService.taskReceived()) {
-					Log.info("IdTask: "+task.idTask+"; Action: "+task.action);
+				Core.Log.info("loop ejecutandose...");
+				List<UserTaskRequest> lista = eService.taskReceived();
+				for (UserTaskRequest task : lista) {
+					Core.Log.info("IdTask: " + task.idTask + "; Action: " + task.action);
 				}
 				// TODO:Comprobar tareas pendientes en el motor de activiti
 				// TODO:Comprobar emails y formularios para realizar tareas

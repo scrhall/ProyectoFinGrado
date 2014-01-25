@@ -1,7 +1,6 @@
 package isaFoundry.contentManager;
 
 
-import isaFoundry.Main;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,8 +42,7 @@ public class ContentManager {
 
 	public ContentManager() {
 		try {
-			System.out.println(System.getProperty("user.dir"));
-			this.properties.load(getClass().getResourceAsStream("/contentManagement.properties"));
+			this.properties.load(getClass().getResourceAsStream("/config/contentManagement.properties"));
 			Map<String, String> parameter = new HashMap<String, String>();
 			parameter.put(SessionParameter.USER , this.properties.getProperty("USER"));
 			parameter.put(SessionParameter.PASSWORD , this.properties.getProperty("PASSWORD"));
