@@ -1,6 +1,8 @@
 package isaFoundry.email;
 
 
+import isaFoundry.Main;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,21 +33,20 @@ public class EmailReadService {
 
 	// Constructor
 	public EmailReadService() {
-		String path = "src/main/java/isaFoundry/configs/emailRead.properties";
 		try {
 			Properties config = new Properties();			
-			config.load(EmailReadService.class.getResourceAsStream(path));
+			config.load(Main.class.getResourceAsStream("configs/emailRead.properties"));
 			this.user = config.getProperty("USER");
 			this.pass = config.getProperty("PASSWORD");
 			this.host = config.getProperty("HOST");
 			this.properties.put("mail.store.protocol" , "imaps");
 			this.session = Session.getDefaultInstance(this.properties);
 		} catch (FileNotFoundException e) {
-			this.Log.error("Error: Archivo no encontrado | "+path+" " + e);
+			this.Log.error("Error: Archivo no encontrado | configs/emailRead.properties " + e);
 		} catch (IOException e) {
-			this.Log.info("Error: Entrada/Salida |  "+path+" " + e);
+			this.Log.info("Error: Entrada/Salida |  configs/emailRead.properties " + e);
 		}catch (NullPointerException e) {
-			this.Log.info("Error: NullPointerException | "+path+" " + e);
+			this.Log.info("Error: NullPointerException | configs/emailRead.properties " + e);
 		}
 	}
 

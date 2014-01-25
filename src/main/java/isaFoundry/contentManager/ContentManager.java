@@ -1,6 +1,8 @@
 package isaFoundry.contentManager;
 
 
+import isaFoundry.Main;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,7 +44,7 @@ public class ContentManager {
 	public ContentManager() {
 		try {
 			System.out.println(System.getProperty("user.dir"));
-			this.properties.load(ContentManager.class.getResourceAsStream("src/main/java/isaFoundry/configs/configs/contentManagement.properties"));
+			this.properties.load(Main.class.getResourceAsStream("configs/contentManagement.properties"));
 			Map<String, String> parameter = new HashMap<String, String>();
 			parameter.put(SessionParameter.USER , this.properties.getProperty("USER"));
 			parameter.put(SessionParameter.PASSWORD , this.properties.getProperty("PASSWORD"));
