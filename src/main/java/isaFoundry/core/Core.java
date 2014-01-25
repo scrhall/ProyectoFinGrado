@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class Core {
 
 	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager= new ContentManager();
+	private static ContentManager	cManager;
 	private static ProccesEngine	pEngine= new ProccesEngine();
 	private static EmailService		eService = new EmailService();
 
