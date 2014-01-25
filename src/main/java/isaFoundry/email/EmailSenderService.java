@@ -32,7 +32,7 @@ public class EmailSenderService {
 
 	public EmailSenderService() {
 		try {
-			this.properties.load(EmailSenderService.class.getResourceAsStream("/isaFoundry/configs/emailSender.properties"));
+			this.properties.load(EmailSenderService.class.getResourceAsStream("src/main/java/isaFoundry/configs/configs/emailSender.properties"));
 			this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
 					(String) this.properties.get("mail.smtp.password")));
 		} catch (FileNotFoundException e) {
