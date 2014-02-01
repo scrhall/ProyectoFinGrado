@@ -2,7 +2,6 @@ package isaFoundry.contentManager;
 
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,9 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.xml.transform.stream.StreamResult;
-
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -33,8 +29,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +80,14 @@ public class ContentManager {
 		this.session = session;
 	}
 
-	public void newDoc(String fileName, String filePath, String text) {
+	/**
+	 * crea un nuevo documento de texto plano en nuestro repositorio a partir de un String.
+	 * 
+	 * @param fileName nombre del documento
+	 * @param targetPath ruta donde crearemos el documento
+	 * @param text String con cadena de texto que queremos incluir en el documento
+	 */
+	public void newDoc(String fileName, String targetPath, String text) {
 		//content
 		byte[] content = text.getBytes();
 		InputStream stream = new ByteArrayInputStream(content);
@@ -96,7 +98,7 @@ public class ContentManager {
 		properties.put(PropertyIds.NAME , fileName);
 		try {
 			// Get parent folder or create it
-			Folder parent = this.newFolder(filePath);
+			Folder parent = this.newFolder(targetPath);
 			// Create a major version
 			parent.createDocument(properties , contentStream , VersioningState.MAJOR);
 		} catch (CmisConstraintException e) {
@@ -105,13 +107,26 @@ public class ContentManager {
 		}
 	}
 	
-	public void newDoc(String fileName, String filePath) {
-		this.newDoc(fileName , filePath , null);
+	/**
+	 * crea un documento de texto plano en nuestro repositorio sin contenido
+	 * 
+	 * @param fileName nombre del documento
+	 * @param targetPath ruta donde crearemos el documento
+	 */
+	public void newDoc(String fileName, String targetPath) {
+		this.newDoc(fileName , targetPath , null);
 	}
 	
-	public void copyDoc(String fileName, String filePath, String targetPath) {
+	/**
+	 * copia un documento desde el directorio origen al directorio destino
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @param targetPath ruta del directorio destino
+	 */
+	public void copyDoc(String fileName, String sourcePath, String targetPath) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 			Folder targetFolder = (Folder) this.session.getObjectByPath("/"+ targetPath +"/");
 			doc.addToFolder(targetFolder , true);
 		} catch (CmisObjectNotFoundException e) {
@@ -120,6 +135,13 @@ public class ContentManager {
 		}
 	}
 	
+	/**
+	 * mueve un documento desde el directorio origen al directorio destino
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @param targetPath ruta del directorio destino
+	 */
 	public void moveDoc(String fileName, String sourcePath, String targetPath) {
 		try {
 			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
@@ -132,13 +154,20 @@ public class ContentManager {
 		}
 	}
 
-	public void overwriteDoc(String fileName, String filePath, String text) {
+	/**
+	 * sobreescribe el contenido de un documento de nuestro repositorio con una cadena de texto 
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @param text String con cadena de texto que va a machacar el contenido anterior del archivo
+	 */
+	public void overwriteDoc(String fileName, String sourcePath, String text) {
 		//content
 		byte[] content = text.getBytes();
 		InputStream stream = new ByteArrayInputStream(content);
 		ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
 		try {
-		Document targetDocument = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+		Document targetDocument = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 		targetDocument.setContentStream(contentStream, true);
 		} catch (CmisObjectNotFoundException e){
 			System.out.println("Error: " + e);
@@ -146,10 +175,17 @@ public class ContentManager {
 		}
 	}
 	
-	public void appendDoc(String fileName, String filePath, String text) {
+	/**
+	 * añade al final de un documento de nuestro repositorio una cadena de texto  
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @param text String con cadena de texto que va a ser añadida a el contenido anterior del archivo
+	 */
+	public void appendDoc(String fileName, String sourcePath, String text) {
 		try {
 			//content
-			Document targetDocument = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			Document targetDocument = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 			String newText = this.getContentAsString(targetDocument.getContentStream()) + "\n" + text;
 			byte[] content = newText.getBytes();
 			InputStream stream = new ByteArrayInputStream(content);
@@ -165,9 +201,15 @@ public class ContentManager {
 		}
 	}
 
-	public void removeDoc(String fileName, String filePath) {
+	/**
+	 * elimina un documento de nuestro repositorio
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 */
+	public void removeDoc(String fileName, String sourcePath) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 			doc.delete();
 		} catch (CmisObjectNotFoundException e) {
 			System.out.println("Error: " + e);
@@ -175,9 +217,16 @@ public class ContentManager {
 		}
 	}
 	
-	public void updateDocProperties(String fileName, String filePath, Map<String, Object> newProperties) {
+	/**
+	 * actualiza las propiedades asociadas a un documento de nuestro repositorio
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @param newProperties mapa con las propiedades a ser actualizadas y sus valores
+	 */
+	public void updateDocProperties(String fileName, String sourcePath, Map<String, Object> newProperties) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 			doc.updateProperties(newProperties);
 		} catch (CmisObjectNotFoundException e) {
 			System.out.println("Error: " + e);
@@ -185,11 +234,24 @@ public class ContentManager {
 		}
 	}
 	
-	public String getDocumentUrl(String fileName, String filePath) {
-		Document document = (Document) this.session.getObjectByPath("/"+ filePath +"/"+ fileName);
+	/**
+	 * obtiene la url de un documento de nuestro repositorio a partir de su ruta y nombre
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath ruta del directorio origen
+	 * @return url del documento
+	 */
+	public String getDocumentUrl(String fileName, String sourcePath) {
+		Document document = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
 		return this.getDocumentURL(document);
 	}
 	
+	/**
+	 * obtiene la url de un documento de nuestro repositorio a partir de un objeto Document
+	 * 
+	 * @param document objeto Document del cual queremos obtener la url
+	 * @return url del documento
+	 */
 	public String getDocumentURL(Document document) {
 	    String link = null;
 	    try {
@@ -205,6 +267,12 @@ public class ContentManager {
 	    return link;
 	}
 	
+	/**
+	 * crea un nuevo directorio en nuestro repositorio y lo devuelve como objeto Folder
+	 * 
+	 * @param path ruta de nuestro nuevo directorio
+	 * @return objeto Folder que representa nuestro nuevo directorio
+	 */
 	public Folder newFolder(String path) {
 		// Create the folder
 		Folder parent;
@@ -224,18 +292,19 @@ public class ContentManager {
 		return parent;
 	}
 
-	public void uploadFile(String targetPath, String fileName, String filePath, String contentType) {
+	/**
+	 * sube un archivo desde el sistema a nuestro repositorio
+	 * 
+	 * @param fileName nombre del archivo
+	 * @param sourcePath ruta del directorio origen
+	 * @param targetPath ruta del directorio destino
+	 */
+	public void uploadFile(String fileName, String sourcePath,  String targetPath) {
 		Folder folder = this.newFolder(targetPath);
-		this.uploadFile(folder, fileName, filePath, contentType);
-	}
-	
-	public void uploadFile(Folder folder, String fileName, String filePath, String contentType) {
-		ContentStream contentStream = null;
-		// Create contentStream from file
-		// File properties (minimal set: fileName and object type id)
-		// Create a major version
+		String contentType =  new Tika().detect(sourcePath +"/"+ fileName);
 		try {
-			contentStream = new ContentStreamImpl(fileName , null , contentType , new FileInputStream("/"+ filePath +"/"+ fileName));
+			ContentStream contentStream = 
+					new ContentStreamImpl(fileName , null , contentType , new FileInputStream("/"+ sourcePath +"/"+ fileName));
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
 			properties.put(PropertyIds.NAME , contentStream.getFileName());
@@ -249,18 +318,29 @@ public class ContentManager {
 		}
 	}
 	
-	public void toPDF(String fileName, String filePath, String targetPath){
-		File file = new File(filePath + fileName);
-		try{
-			COSDocument doc = new COSDocument(file);
-			PDDocument pdf = new PDDocument(doc);
-			pdf.save(targetPath + fileName);
-			pdf.close();	
-		} catch (Exception e) { 
-			e.printStackTrace(); 
-		}
+	
+	/**
+	 * transforma un documento de nuestro repositorio en pdf mediante el paso por una carpeta intermedia que
+	 * tiene asignada una regla de transformación
+	 * 
+	 * @param fileName nombre del archivo
+	 * @param sourcePath ruta del directorio origen
+	 * @param targetPath ruta del directorio destino
+	 */
+	public void toPDF(String fileName, String sourcePath, String targetPath){
+		this.copyDoc(fileName, sourcePath, "pdf");
+		String newFile = fileName.substring(0, fileName.indexOf('.'))+".pdf";
+		this.moveDoc(newFile, "pdf", targetPath);
+		this.removeDoc(fileName, "pdf");
 	}
 	
+	/**
+	 * devuelve un String con el contenido de un stream
+	 * 
+	 * @param stream stream que queremos pasar a cadena de texto
+	 * @return String con la cadena de texto que contiene el stream
+	 * @throws IOException
+	 */
 	private String getContentAsString(ContentStream stream) throws IOException {
 		InputStream in2 = stream.getStream();
 		StringBuffer sbuf = null;
