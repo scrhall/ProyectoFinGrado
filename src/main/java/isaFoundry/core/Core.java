@@ -100,4 +100,8 @@ public class Core {
 		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
 	}
+	
+	public static void startProces(String procesKey){
+		ProccesEngine.startProces(procesKey);
+	}
 }

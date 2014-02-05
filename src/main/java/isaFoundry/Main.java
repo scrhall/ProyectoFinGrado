@@ -20,6 +20,7 @@ public class Main {
 		Logger Log=LoggerFactory.getLogger(Main.class);
 		Log.info("Ejecutando");
 		Core.run();
+		Core.startProces("myProcess");
 		
 		/*String webappDirLocation = "src/main/webapp/";
 		// The port that we should run on can be set into an environment
