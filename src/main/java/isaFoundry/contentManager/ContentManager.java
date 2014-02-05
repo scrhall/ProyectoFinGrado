@@ -2,6 +2,7 @@ package isaFoundry.contentManager;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +65,44 @@ public class ContentManager {
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * función que a partir de la ruta de un archivo en nuestro repositorio devuelve la url para su edición con google docs
+	 * 
+	 * @param path ruta del archivo en nuestro repositorio
+	 * @return url para edición online  mediante google docs
+	 */
+	public String getOnlineEditURL(String path){
+		Document doc = null;
+		try {
+			doc = (Document) this.session.getObjectByPath(path);
+		} catch (Exception e) {
+			Log.error("Error: " + e);
+			e.printStackTrace();
+		}
+		return getOnlineEditURL(doc);
+	}
+	
+	/**
+	 * función que a partir de un objeto Document devuelve la url para su edición con google docs
+	 * 
+	 * @param doc el objeto document
+	 * @return url para edición online mediante google docs
+	 */
+	public String getOnlineEditURL(Document doc){
+		String[] id = doc.getId().split(";");
+		String url =  this.properties.getProperty("SERVER_URL") 
+				+"share/page/googledocsEditor?nodeRef="+ id[0]
+				+"&return=context%2Fmine%2Fdocument-details%3FnodeRef%3D"+ id[0];
+		return url;
 	}
 	
 	public Session getSession() {
@@ -102,7 +135,7 @@ public class ContentManager {
 			// Create a major version
 			parent.createDocument(properties , contentStream , VersioningState.MAJOR);
 		} catch (CmisConstraintException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -126,11 +159,20 @@ public class ContentManager {
 	 */
 	public void copyDoc(String fileName, String sourcePath, String targetPath) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
-			Folder targetFolder = (Folder) this.session.getObjectByPath("/"+ targetPath +"/");
-			doc.addToFolder(targetFolder , true);
+			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
+			Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
+			String mimeType = doc.getContentStreamMimeType();
+			ContentStream contentStream = new ContentStreamImpl(fileName, null, mimeType, new DataInputStream(doc.getContentStream().getStream()));
+			Map<String, Object> properties = new HashMap<String, Object>();
+			// File properties (minimal set: fileName and object type id)
+			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
+			properties.put(PropertyIds.NAME , fileName);
+			targetFolder.createDocument(properties, contentStream, VersioningState.MAJOR);
 		} catch (CmisObjectNotFoundException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
+			e.printStackTrace();
+		} catch (CmisConstraintException e) {
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -144,12 +186,12 @@ public class ContentManager {
 	 */
 	public void moveDoc(String fileName, String sourcePath, String targetPath) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
-			Folder sourceFolder = (Folder) this.session.getObjectByPath("/"+ sourcePath +"/");
-			Folder targetFolder = (Folder) this.session.getObjectByPath("/"+ targetPath +"/");
+			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
+			Folder sourceFolder = (Folder) this.session.getObjectByPath(sourcePath);
+			Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
 			doc.move(sourceFolder , targetFolder);
 		} catch (CmisObjectNotFoundException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -167,10 +209,10 @@ public class ContentManager {
 		InputStream stream = new ByteArrayInputStream(content);
 		ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
 		try {
-		Document targetDocument = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
+		Document targetDocument = (Document) this.session.getObjectByPath(sourcePath + fileName);
 		targetDocument.setContentStream(contentStream, true);
 		} catch (CmisObjectNotFoundException e){
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -185,18 +227,18 @@ public class ContentManager {
 	public void appendDoc(String fileName, String sourcePath, String text) {
 		try {
 			//content
-			Document targetDocument = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
+			Document targetDocument = (Document) this.session.getObjectByPath(sourcePath + fileName);
 			String newText = this.getContentAsString(targetDocument.getContentStream()) + "\n" + text;
 			byte[] content = newText.getBytes();
 			InputStream stream = new ByteArrayInputStream(content);
 			ContentStream contentStream = new ContentStreamImpl(fileName, new BigInteger(content), "text/plain", stream);
 			targetDocument.setContentStream(contentStream, true);
 		} catch (CmisObjectNotFoundException e){
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -209,10 +251,10 @@ public class ContentManager {
 	 */
 	public void removeDoc(String fileName, String sourcePath) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
+			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
 			doc.delete();
 		} catch (CmisObjectNotFoundException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -226,10 +268,10 @@ public class ContentManager {
 	 */
 	public void updateDocProperties(String fileName, String sourcePath, Map<String, Object> newProperties) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
+			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
 			doc.updateProperties(newProperties);
 		} catch (CmisObjectNotFoundException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -241,9 +283,9 @@ public class ContentManager {
 	 * @param sourcePath ruta del directorio origen
 	 * @return url del documento
 	 */
-	public String getDocumentUrl(String fileName, String sourcePath) {
-		Document document = (Document) this.session.getObjectByPath("/"+ sourcePath +"/"+ fileName);
-		return this.getDocumentURL(document);
+	public String getDocumentURL(String fileName, String sourcePath) {
+		Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
+		return this.getDocumentURL(doc);
 	}
 	
 	/**
@@ -261,7 +303,7 @@ public class ContentManager {
 	        link = (String) loadLink.invoke(this.session.getBinding().getObjectService(), this.session.getRepositoryInfo().getId(),
 	            document.getId(), AtomPubParser.LINK_REL_CONTENT, null);
 	    } catch (Exception e) {
-	    	System.out.println("Error: " + e);
+	    	Log.error("Error: " + e);
 			e.printStackTrace();
 	    }
 	    return link;
@@ -286,7 +328,7 @@ public class ContentManager {
 			try {
 				parent = this.session.getRootFolder().createFolder(properties);
 			} catch (CmisConstraintException e){
-				parent = (Folder) this.session.getObjectByPath("/"+ path +"/");
+				parent = (Folder) this.session.getObjectByPath(path);
 			}
 		}
 		return parent;
@@ -301,19 +343,18 @@ public class ContentManager {
 	 */
 	public void uploadFile(String fileName, String sourcePath,  String targetPath) {
 		Folder folder = this.newFolder(targetPath);
-		String contentType =  new Tika().detect(sourcePath +"/"+ fileName);
+		String contentType =  new Tika().detect(sourcePath + fileName);
 		try {
-			ContentStream contentStream = 
-					new ContentStreamImpl(fileName , null , contentType , new FileInputStream("/"+ sourcePath +"/"+ fileName));
+			ContentStream contentStream = new ContentStreamImpl(fileName , null , contentType , new FileInputStream(sourcePath + fileName));
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
 			properties.put(PropertyIds.NAME , contentStream.getFileName());
 			folder.createDocument(properties , contentStream , VersioningState.MAJOR);
 		} catch (FileNotFoundException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		} catch (CmisConstraintException e) {
-			System.out.println("Error: " + e);
+			Log.error("Error: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -326,12 +367,18 @@ public class ContentManager {
 	 * @param fileName nombre del archivo
 	 * @param sourcePath ruta del directorio origen
 	 * @param targetPath ruta del directorio destino
+	 * @param converterPath ruta del directorio de transformación
 	 */
-	public void toPDF(String fileName, String sourcePath, String targetPath){
-		this.copyDoc(fileName, sourcePath, "pdf");
-		String newFile = fileName.substring(0, fileName.indexOf('.'))+".pdf";
-		this.moveDoc(newFile, "pdf", targetPath);
-		this.removeDoc(fileName, "pdf");
+	public void toPDF(String fileName, String sourcePath, String targetPath, String converterPath){
+		this.copyDoc(fileName, sourcePath, converterPath);
+		int aux = fileName.indexOf('.');
+		String newFile;
+		if (aux!=-1)
+			newFile = fileName.substring(0, aux)+".pdf";
+		else 
+			newFile = fileName+".pdf";
+		this.moveDoc(newFile, converterPath, targetPath);
+		this.removeDoc(fileName, converterPath);
 	}
 	
 	/**
