@@ -69,9 +69,11 @@ public class EmailSenderService {
 			// Insertamos los destinatarios en el correo
 			for (String to : tos) {
 				message.addRecipient(Message.RecipientType.BCC , new InternetAddress(to));
+				this.Log.info("Destinatario: "+to);
 			}
 			// Indicamos el titulo del mensage
 			message.setSubject(subject);
+			this.Log.info("Titulo del mensaje: "+subject);
 			// A�adimos el Cuerpo
 			message.setContent(multipart);
 			System.out.println((String) this.properties.get("mail.smtp.user") + "/" + (String) this.properties.get("mail.smtp.password"));
@@ -80,12 +82,15 @@ public class EmailSenderService {
 			t.connect((String) this.properties.get("mail.smtp.user") , (String) this.properties.get("mail.smtp.password"));
 			t.sendMessage(message , message.getAllRecipients());
 			t.close();
+			this.Log.info("Cuerpo del mensaje"+body);
+			this.Log.info("Mensaje enviado con exito");
 		} catch (MessagingException me) {
 			// TODO
 			System.out.println(me);
 			// Aqui se deberia o mostrar un mensaje de error o en lugar
 			// de no hacer nada con la excepcion, lanzarla para que el modulo
 			// superior la capture y avise al usuario con un popup, por ejemplo.
+			this.Log.info("Error al enviar el mensaje");
 			return;
 		}
 	}

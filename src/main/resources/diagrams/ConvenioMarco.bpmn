@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="myProcess" name="My process" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow8"></exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="exclusivegateway1" targetRef="scripttask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[$(Subproces==True)]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="scripttask1" targetRef="exclusivegateway2"></sequenceFlow>
+    <userTask id="usertask2" name="Redacte el convenio marco">
+      <extensionElements>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway2" targetRef="usertask2"></sequenceFlow>
+    <userTask id="usertask3" name="Firme el convenio marco">
+      <extensionElements>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+        <activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [OE-Mail];
+def subject = "Copia convenio marco";
+def body ="Hola, a continuacion se adjunta un link desde el que puede ver el convenio marco firmado: 
+
+El link con el convenio marco del proyecto es el siguiente:
+"+URLGlobalAgreement+"
+
+Muchas gracias por su tiempo."
+execution.setVariable("tos",tos)
+execution.setVariable("subject", subjet)
+execution.setVaribale("body", body)]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+def subject = "Firme junto con la empresa el siguiente convenio marco";
+def body ="Hola, a continuacion se adjunta el convenio marco, por favor concerte una cita con la empresa responsable
+y firme el documento que se encuentra disponible en el siguiente enlace:
+
+"+URLGlobalAgreement+"
+
+Una vez firmado por favor introduzcalo en la aplicacion de FIDETIA y responda al correo con siguiente formato:
+
+Firmado: Si
+
+Muchas gracias por su tiempo."
+execution.setVariable("tos",tos)
+execution.setVariable("subject", subjet)
+execution.setVaribale("body", body)]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow6" sourceRef="usertask2" targetRef="usertask3"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow7" sourceRef="usertask3" targetRef="endevent1">
+      <extensionElements>
+        <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="exclusivegateway1" targetRef="scripttask2"></sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="scripttask2" targetRef="exclusivegateway2"></sequenceFlow>
+    <scriptTask id="scripttask1" name="Email subproceso" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>def tos = [RGET-Mail]
+def subject = "Rellene el convenio marco de la empresa"
+def body ="Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco para la siguiente empresa:
+
+Nombre de la orgacion: "+OE-Name+"
+Email de contacto:  "+OE-Mail+"
+Persona de contacto: "+OE-Reponsable+"
+
+El link con la plantilla del convenio marco es el siguiente:
+"+URLGlobalAgreement+"
+
+Una vez terminado de redactar responda al correo con la siguiente estructura:
+Terminado: Si
+
+Muchas gracias por su tiempo."
+execution.setVariable("tos",tos)
+execution.setVariable("subject", subjet)
+execution.setVaribale("body", body)</script>
+    </scriptTask>
+    <scriptTask id="scripttask2" name="Email no subproces" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>def tos = [RGET-Mail];
+def subject = "Rellene el convenio marco";
+def body ="Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco :
+El link con la plantilla del convenio marco es el siguiente:
+"+URLGlobalAgreement+"
+
+Una vez terminado de redactar responda al correo con la siguiente estructura:
+Email de la empresa: 
+Terminado: Si
+
+Muchas gracias por su tiempo."
+execution.setVariable("tos",tos)
+execution.setVariable("subject", subjet)
+execution.setVaribale("body", body)</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
+    <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="110.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="190.0" y="118.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="420.0" y="117.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="65.0" width="105.0" x="500.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask3" id="BPMNShape_usertask3">
+        <omgdc:Bounds height="60.0" width="105.0" x="660.0" y="109.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="810.0" y="121.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="270.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="270.0" y="169.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="145.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="190.0" y="138.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="210.0" y="118.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="270.0" y="67.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="375.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="439.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="117.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="460.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="605.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="139.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="765.0" y="139.0"></omgdi:waypoint>
+        <omgdi:waypoint x="810.0" y="138.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="210.0" y="158.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="196.0"></omgdi:waypoint>
+        <omgdi:waypoint x="270.0" y="196.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="375.0" y="196.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="196.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="157.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
