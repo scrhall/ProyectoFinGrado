@@ -30,7 +30,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,15 +157,25 @@ public class ContentManager {
 	 * @param targetPath ruta del directorio destino
 	 */
 	public void copyDoc(String fileName, String sourcePath, String targetPath) {
+		Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
+		Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
+		this.copyDoc(doc, targetFolder);
+	}
+	
+	/**
+	 * copia un documento a un directorio de nuestro repositorio
+	 * 
+	 * @param doc documento que va a ser copiado
+	 * @param targetFolder directorio de destino
+	 */
+	public void copyDoc(Document doc, Folder targetFolder) {
 		try {
-			Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
-			Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
 			String mimeType = doc.getContentStreamMimeType();
-			ContentStream contentStream = new ContentStreamImpl(fileName, null, mimeType, new DataInputStream(doc.getContentStream().getStream()));
+			ContentStream contentStream = new ContentStreamImpl(doc.getName(), null, mimeType, new DataInputStream(doc.getContentStream().getStream()));
 			Map<String, Object> properties = new HashMap<String, Object>();
 			// File properties (minimal set: fileName and object type id)
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
-			properties.put(PropertyIds.NAME , fileName);
+			properties.put(PropertyIds.NAME , doc.getName());
 			targetFolder.createDocument(properties, contentStream, VersioningState.MAJOR);
 		} catch (CmisObjectNotFoundException e) {
 			Log.error("Error: " + e);
