@@ -2,41 +2,25 @@ package isaFoundry.core;
 
 
 import isaFoundry.contentManager.ContentManager;
+import isaFoundry.email.EmailService;
 import isaFoundry.processEngine.ProccesEngine;
+import isaFoundry.processEngine.UserTaskRequest;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 
 public class Core {
 
-	private Logger			Log	= LoggerFactory.getLogger(Core.class);
-	private ContentManager	cManager;
-	private ProccesEngine	pEngine;
-
-	public Core() {
-		this.Log.info("Iniciando Motor de proceso");
-		this.pEngine = new ProccesEngine();
-		// this.Log.info("Iniciando Gestor documental");
-		// this.cManager = new ContentManager();
-	}
+	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager;
+	private static ProccesEngine	pEngine= new ProccesEngine();
+	private static EmailService		eService = new EmailService();
 
 	/**
 	 * Copia un documento desde una ruta a otra.
@@ -46,84 +30,8 @@ public class Core {
 	 * @param destinationPath
 	 *            destino.
 	 */
-	public void copyDoc(String sourcePath, String destinationPath) {
-		this.cManager.copyDoc(sourcePath , destinationPath);
-	}
-
-	/**
-	 * Lee un xml desde un archivo.
-	 * 
-	 * @param path
-	 * @return
-	 */
-	public Document readXmlFromFile(String path) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db;
-			db = dbf.newDocumentBuilder();
-			Document doc;
-			doc = db.parse(new File(path));
-			doc.getDocumentElement().normalize();
-			return doc;
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	/**
-	 * Lee un xml desde una url.
-	 * 
-	 * @param path
-	 *            url.
-	 * @return
-	 */
-	public Document readXmlFromUrl(String path) {
-		try {
-			URL url;
-			String line;
-			String xml = "";
-			url = new URL(path);
-			BufferedReader br;
-			br = new BufferedReader(new InputStreamReader(url.openStream()));
-			while ((line = br.readLine()) != null) {
-				xml = xml + line;
-			}
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db;
-			db = dbf.newDocumentBuilder();
-			InputSource file = new InputSource();
-			file.setCharacterStream(new StringReader(xml));
-			Document doc;
-			doc = db.parse(file);
-			doc.getDocumentElement().normalize();
-			return doc;
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public void run() {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(new Runnable() {
-
-			@Override
-			public void run() {
-				Core.this.Log.info("loop ejecutandose...");
-				// TODO:Comprobar tareas pendientes en el motor de activiti
-				// TODO:Comprobar emails y formularios para realizar tareas
-				// pendientes
-			}
-		} , 0 , 5 , TimeUnit.SECONDS);
+	public static void copyDoc(String sourcePath, String destinationPath) {
+		cManager.copyDoc(sourcePath , destinationPath);
 	}
 
 	/**
@@ -133,8 +41,8 @@ public class Core {
 	 * @param templatePath
 	 *            incluye toda la informacion del correo a enviar.
 	 */
-	public void sendEmail(String templatePath) {
-		this.readXmlFromUrl(templatePath);
+	public static void sendEmail(String subject, String body, List<String> tos) {
+		eService.SendEmail(subject , body , tos);
 	}
 
 	/**
@@ -143,9 +51,30 @@ public class Core {
 	 * @param doc
 	 * @return
 	 */
-	public String urlDoc(String doc) {
-		// TODO Auto-generated method stub
+	public static String urlDoc(String doc) {
+		// TODO: hay que comprobar realmente que paramtro o valor vamos a tener
+		// cManager.getDocumentURL(document);
 		return null;
+	}
+
+	public Core() {
+	}
+
+	public static void run() {
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(new Runnable() {
+
+			public void run() {
+				Core.Log.info("loop ejecutandose...");
+				List<UserTaskRequest> lista = eService.taskReceived();
+				for (UserTaskRequest task : lista) {
+					Core.Log.info("IdTask: " + task.idTask + "; Action: " + task.action);
+				}
+				// TODO:Comprobar tareas pendientes en el motor de activiti
+				// TODO:Comprobar emails y formularios para realizar tareas
+				// pendientes
+			}
+		} , 0 , 30 , TimeUnit.MINUTES);
 	}
 
 	/**
@@ -166,7 +95,9 @@ public class Core {
 	 * @return
 	 */
 	public String urlDocPdf(String doc) {
-		// TODO Auto-generated method stub
+		// TODO: falta por hacer conincidir los parametros que tendremos por los
+		// que necesita la funcion
+		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
 	}
 }
