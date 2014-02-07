@@ -17,21 +17,39 @@ import org.slf4j.LoggerFactory;
 
 public class Core {
 
-	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager;
-	private static ProccesEngine	pEngine= new ProccesEngine();
+	private static Logger			Log	= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager = new ContentManager();
+	private static ProccesEngine	pEngine = new ProccesEngine();
 	private static EmailService		eService = new EmailService();
 
 	/**
+	 * Crea un nuevo directorio en el repositorio
+	 * 
+	 * @param path ruta del directorio
+	 */
+	public static void newFolder(String path){
+		cManager.newFolder(path);
+	}
+	
+	/**
 	 * Copia un documento desde una ruta a otra.
 	 * 
-	 * @param sourcePath
-	 *            origen.
-	 * @param destinationPath
-	 *            destino.
+	 * @param fileName nombre del archivo
+	 * @param sourcePath carpeta origen
+	 * @param destinationPath carpeta destino
 	 */
-	public static void copyDoc(String sourcePath, String destinationPath) {
-		cManager.copyDoc(sourcePath , destinationPath);
+	public static void copyDoc(String fileName, String sourcePath, String destinationPath) {
+		cManager.copyDoc(fileName, sourcePath , destinationPath);
+	}
+	
+	/**
+	 * Copia un documento desde una ruta a otra.
+	 * 
+	 * @param filePath ruta completa del archivo
+	 * @param destinationPath carpeta destino
+	 */
+	public static void copyDoc(String filePath, String destinationPath) {
+		cManager.copyDoc(filePath , destinationPath);
 	}
 
 	/**
@@ -48,13 +66,11 @@ public class Core {
 	/**
 	 * Recupera la url del documento.
 	 * 
-	 * @param doc
-	 * @return
+	 * @param doc ruta al documento
+	 * @return String que representa la url del documento en nuestro repositorio
 	 */
 	public static String urlDoc(String doc) {
-		// TODO: hay que comprobar realmente que paramtro o valor vamos a tener
-		// cManager.getDocumentURL(document);
-		return null;
+		return cManager.getDocumentURL(doc);
 	}
 
 	public Core() {
@@ -81,11 +97,10 @@ public class Core {
 	 * Recupera la url para la edicion del documento en linea.
 	 * 
 	 * @param doc
-	 * @return
+	 * @return String que representa la url de acceso a edición mediante google docs en nuestro repositorio
 	 */
 	public String urlDocOnlineEdit(String doc) {
-		// TODO Auto-generated method stub
-		return null;
+		return cManager.getOnlineEditURL(doc);
 	}
 
 	/**
@@ -99,5 +114,17 @@ public class Core {
 		// que necesita la funcion
 		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
+	}
+	
+	/**
+	 * Crea un documento pdf mediante una carpeta intermedia con regla de conversión asociada
+	 * 
+	 * @param fileName nombre del documento
+	 * @param sourcePath carpeta origen del documento
+	 * @param targetPath carpeta destino del documento pdf
+	 * @param converterPath ruta de la carpeta de transformación
+	 */
+	public static void toPDF(String fileName, String sourcePath, String targetPath, String converterPath){
+		cManager.toPDF(fileName, sourcePath, targetPath, converterPath);
 	}
 }

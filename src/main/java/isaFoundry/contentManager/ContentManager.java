@@ -150,6 +150,18 @@ public class ContentManager {
 	}
 	
 	/**
+	 * copia un documento al directorio destino
+	 * 
+	 * @param filePath ruta completa del documento
+	 * @param targetPath ruta del directorio destino
+	 */
+	public void copyDoc(String filePath, String targetPath) {
+		Document doc = (Document) this.session.getObjectByPath(filePath);
+		Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
+		this.copyDoc(doc, targetFolder);
+	}
+	
+	/**
 	 * copia un documento desde el directorio origen al directorio destino
 	 * 
 	 * @param fileName nombre del documento
@@ -292,8 +304,8 @@ public class ContentManager {
 	 * @param sourcePath ruta del directorio origen
 	 * @return url del documento
 	 */
-	public String getDocumentURL(String fileName, String sourcePath) {
-		Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
+	public String getDocumentURL(String path) {
+		Document doc = (Document) this.session.getObjectByPath(path);
 		return this.getDocumentURL(doc);
 	}
 	

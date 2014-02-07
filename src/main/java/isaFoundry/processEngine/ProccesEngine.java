@@ -28,7 +28,7 @@ public class ProccesEngine {
 
 		public void notify(DelegateExecution execution) throws Exception {
 			execution.setVariable("RequestPath" , "Raiz" + execution.getProcessDefinitionId() + "Solicitud");
-			Core.copyDoc("RutaPlantilla/SolicitudProyecto" , (String) execution.getVariable("RequestPath"));
+			Core.copyDoc("/RutaPlantilla/SolicitudProyecto" , (String) execution.getVariable("RequestPath"));
 		}
 	}
 
