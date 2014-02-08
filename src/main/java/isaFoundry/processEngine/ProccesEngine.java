@@ -41,13 +41,16 @@ public class ProccesEngine {
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
 		
 		//repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
-		repositoryService.createDeployment().addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
+		
+		//Cargamos ConvenioMarco y CreacionProyecto
+		repositoryService.createDeployment().addClasspathResource("diagrams/ConvenioMarco.bpmn").deploy();
+		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn").deploy();
 		
 		this.Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 	
-	public static void startProces(String procesKey){
-		Map<String, Object> variables = new HashMap<String, Object>();
+	public static void startProces(String procesKey,Map<String,Object> variables){
+		//Map<String, Object> variables = new HashMap<String, Object>();
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(procesKey, variables);
 		      

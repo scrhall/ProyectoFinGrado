@@ -7,10 +7,12 @@ import isaFoundry.processEngine.ProccesEngine;
 import isaFoundry.processEngine.UserTaskRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class Core {
 
 	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager;
+	private static ContentManager	cManager ;
 	private static ProccesEngine	pEngine= new ProccesEngine();
 	private static EmailService		eService = new EmailService();
 
@@ -52,9 +54,8 @@ public class Core {
 	 * @return
 	 */
 	public static String urlDoc(String doc) {
-		// TODO: hay que comprobar realmente que paramtro o valor vamos a tener
-		// cManager.getDocumentURL(document);
-		return null;
+		return cManager.getDocumentURL(doc);
+		
 	}
 
 	public Core() {
@@ -101,7 +102,12 @@ public class Core {
 		return null;
 	}
 	
-	public static void startProces(String procesKey){
-		ProccesEngine.startProces(procesKey);
+	public static void startProces(String procesKey,Map<String, Object> var){
+		ProccesEngine.startProces(procesKey, var);
+	}
+	
+	public static Folder newFolder(String path){
+		Folder f=cManager.newFolder(path);
+		return f;		
 	}
 }

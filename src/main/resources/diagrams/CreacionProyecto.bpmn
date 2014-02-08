@@ -2,14 +2,14 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <message id="InfoOffer" name="InfoOffer"></message>
   <process id="CreacionProyecto" name="CreacionProyecto" isExecutable="true">
-    <extensionElements>
-      <activiti:executionListener event="start" class="isaFoundry.listeners.SendCompleteRequest"></activiti:executionListener>
-      <activiti:executionListener event="end" class="isaFoundry.Services.CompleteRequest"></activiti:executionListener>
-    </extensionElements>
     <userTask id="usertask1" name="Cumplimentar solicitud">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [DP-Mail];
 def subject = "Rellene la siguiente solicitud de proyecto";
@@ -22,59 +22,73 @@ Persona de contacto:
 El link con la direccion de la solicitud es el siguiente:
 "+URLProjectApplication+"
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    </sequenceFlow>
     <userTask id="usertask2" name="Firmar solicitud">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [DP-Mail,DET-Mail, Gerencia-Mail];
 def subject = "Firme la siguiente solicitud de proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede firmar la solicitud del proyecto.
+def body ="""Hola, a continuacion se adjunta un link desde el que puede firmar la solicitud del proyecto.
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2"></sequenceFlow>
+    </sequenceFlow>
     <userTask id="usertask3" name="Evaluar caracteristicas">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow3" sourceRef="usertask2" targetRef="usertask3">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Gerencia-Mail];
 def subject = "Evalue el proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y evaluarlo para decidir si es valido o no para FIDETIA. Ademas debera de contestar este correo indicando si es valido o no el proyecto usando la siguiente estructura: 
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y evaluarlo para decidir si es valido o no para FIDETIA. Ademas debera de contestar este correo indicando si es valido o no el proyecto usando la siguiente estructura: 
 
 Aceptado: Si/No 
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow3" sourceRef="usertask2" targetRef="usertask3"></sequenceFlow>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway5" name="¿Proyecto aceptado?"></exclusiveGateway>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow14" name="No" sourceRef="exclusivegateway5" targetRef="endevent1">
@@ -83,85 +97,129 @@ execution.setVaribale("body", body)]]></activiti:string>
     <userTask id="usertask7" name="Delegar revision">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
+        <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def docName = "ViabilityStudy";
+execution.setVariable("Doc",docName);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow15" name="Si" sourceRef="exclusivegateway5" targetRef="usertask7">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Gerencia-Mail];
 def subject = "Seleccione el equipo de trabajo";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar el equipo de trabajo que lo realizara usando la siguiente estructura: 
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar el equipo de trabajo que lo realizara usando la siguiente estructura: 
 
 Nombre del equipo de trabajo:
 Correo del director del equipo de trabajo: 
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow15" name="Si" sourceRef="exclusivegateway5" targetRef="usertask7">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==True}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask8" name="Designar persona">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
+        <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def src = ProjectPath+"/ProjectApplication"
+def dest = ProjectPath+"/Offer";
+def docName = "Offer";
+execution.setVariable("src",src);
+execution.setVariable("dest",dest);
+execution.setVariable("Doc",docName)]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow16" sourceRef="usertask7" targetRef="usertask8">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [DET-Mail];
 def subject = "Designe a una persona para evaluar los requisitos del proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar la persona encargada de evaluar los requisitos usando la siguiente estructura: 
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar la persona encargada de evaluar los requisitos usando la siguiente estructura: 
 
 Correo de la persona encargada de evaluar los requisitos:
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow16" sourceRef="usertask7" targetRef="usertask8"></sequenceFlow>
+    </sequenceFlow>
     <userTask id="usertask9" name="Evaluar requisitos">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow17" sourceRef="usertask8" targetRef="usertask9">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Designee-Mail];
 def subject = "Evalue los requisitos del proyecto proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, ademas debe de realizar un estudio de viabilidad
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, ademas debe de realizar un estudio de viabilidad
 para ello se le adjunta una plantilla de estudio de viabilidad que debe rellenar. Por ultimo debe contestar al correo usando la siguiente estructura para indicar si el proyecto
 es viable o no: 
 
 Viable: Si/No
 
 Los datos de la empresa son los siguientes:
-Nombre de la organizacion:"+OE-Name+"
-Correo de la organizacion:"+OE-Mail+"
-Nombre de la persona encargada:"+OE-Responsable+" 
+Nombre de la organizacion:"""+OE-Name+"""
+Correo de la organizacion:"""+OE-Mail+"""
+Nombre de la persona encargada:"""+OE-Responsable+"""
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
 El link con la plantilla del estudio de viabilidad es:
-"+URLViabilityStudy+"
+"""+URLViabilityStudy+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Si el estudio de viabilidad es positivo modifique el documento para generar la oferta que recibirá la empresa:
+"""+URLOffer+"""
+
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow17" sourceRef="usertask8" targetRef="usertask9"></sequenceFlow>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway6" name="¿Es viable?"></exclusiveGateway>
     <endEvent id="endevent2" name="End"></endEvent>
     <sequenceFlow id="flow21" name="No" sourceRef="exclusivegateway6" targetRef="endevent2">
@@ -170,76 +228,25 @@ execution.setVaribale("body", body)]]></activiti:string>
     <userTask id="usertask12" name="Revisar oferta">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OE-Mail];
-def subject = "Oferta final del proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
-
-El link con la direccion de la oferta del proyecto es el siguiente:
-"+URLOffer+"
-
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
-def subject = "Revisar oferta del proyecto";
-def body ="Hola, la organizacion "+OE-Name+" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
-un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
-
-Nombre de la organizacion:"+OE-Name+"
-Correo de la organizacion:"+OE-Mail+"
-Nombre de la persona encargada:"+OE-Responsable+"
-
-Pongase en contacto con la organizacion y negocien un acuerdo para realizar el proyecto. Una vez que se haya fijado el precio
-modificar la oferta.
-
-El link con la direccion de la oferta es el siguiente:
-"+URLOffer+"
-
-Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:
-
-Acuerdo: Si/No
-
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
       </extensionElements>
     </userTask>
     <userTask id="usertask13" name="Revisar BD de los clientes">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
+        <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
-def subject = "Revise el convenio marco de la empresa";
-def body ="Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
-
-Nombre de la organizacion:"+OE-Name+"
-Correo de la organizacion:"+OE-Mail+"
-Nombre de la persona encargada:"+OE-Responsable+"
-
-Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respondiendo al correo con la siguiente estructura:
-
-Convenio Marco: Si/No
-
-El link con la direccion de la oferta es el siguiente:
-"+URLOffer+"
-
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+            <activiti:string><![CDATA[def src = ProjectPath+"/Offer"
+def dest = ProjectPath+"/EspecificAgreement";
+def docName="EspecificAgreement"
+execution.setVariable("src",src);
+execution.setVariable("dest",dest);
+execution.setVariable("Doc",docName)]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
     </userTask>
     <exclusiveGateway id="exclusivegateway10" name="¿Es cliente?"></exclusiveGateway>
@@ -247,154 +254,239 @@ execution.setVaribale("body", body)]]></activiti:string>
     <userTask id="usertask15" name="Elaborar convenio especifico">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DP-Mail];
-def subject = "Redacte el convenio especifico";
-def body ="Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
-
-Nombre de la organizacion:"+OE-Name+"
-Correo de la organizacion:"+OE-Mail+"
-Nombre de la persona encargada:"+OE-Responsable+"
-
-Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
-editando el documento que se encuentra disponible en el siguiente enlace:
-
-"+URLEspecificAgreement+"
-
-Una vez redactado por favor responda al correo con siguiente formato:
-
-Finalizado: Si
-
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
       </extensionElements>
     </userTask>
     <userTask id="usertask16" name="Firmar convenio especifico">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [OE-Mail];
 def subject = "Copia convenio especifico";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para 
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para 
 la realizacion del proyecto: 
 
 El link con el convenio especifico del proyecto es el siguiente:
-"+URLEspecificAgreement+"
+"""+URLEspecificAgreement+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow34" sourceRef="usertask15" targetRef="usertask16">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Gerencia-Mail];
 def subject = "Firme junto con la empresa el siguiente convenio especifico";
-def body ="Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
+def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"+OE-Name+"
-Correo de la organizacion:"+OE-Mail+"
-Nombre de la persona encargada:"+OE-Responsable+"
+Nombre de la organizacion:"""+OE-Name+"""
+Correo de la organizacion:"""+OE-Mail+"""
+Nombre de la persona encargada:"""+OE-Responsable+"""
 
 Para ello se ha elaborado el sigiuente convenio especifico, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
 
-"+URLEspecificAgreement+"
+"""+URLEspecificAgreement+"""
 
 Una vez firmado por favor responda al correo con siguiente formato:
 
 Firmado: Si
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow34" sourceRef="usertask15" targetRef="usertask16"></sequenceFlow>
+    </sequenceFlow>
     <userTask id="usertask17" name="Dar proyecto de alta">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow35" sourceRef="usertask16" targetRef="usertask17">
+      <extensionElements>
+        <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGF-Mail];
 def subject = "De el proyecto de alta en la aplicacion";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para realizacion de
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para realizacion de
 un proyecto. Por favor de el proyecto de alta en la aplicacion de FIDETIA. Tras hacerlo responda al correo, indicando si lo ha 
 realizado correctamente o no, con el siguiente formato:  
 
 Dado de alta: Si/No
 
 El link con la direccion del convenio especifico es el siguiente:
-"+URLEspecificAgreement+"
+"""+URLEspecificAgreement+"""
 
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
-      </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow35" sourceRef="usertask16" targetRef="usertask17">
-      <extensionElements>
-        <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
     <endEvent id="endevent3" name="End"></endEvent>
     <sequenceFlow id="flow36" sourceRef="usertask17" targetRef="endevent3"></sequenceFlow>
     <startEvent id="startevent1" name="Start">
       <extensionElements>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.ProccesEngine$CreateRequest"></activiti:executionListener>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.CreateDirectory"></activiti:executionListener>
+        <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
       </extensionElements>
     </startEvent>
     <exclusiveGateway id="exclusivegateway13" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow44" sourceRef="exclusivegateway10" targetRef="exclusivegateway13">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Client==True}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow45" sourceRef="exclusivegateway13" targetRef="usertask15"></sequenceFlow>
+    <sequenceFlow id="flow45" sourceRef="exclusivegateway13" targetRef="usertask15">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [DP-Mail];
+def subject = "Redacte el convenio especifico";
+def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
+
+Nombre de la organizacion:"""+OE-Name+"""
+Correo de la organizacion:"""+OE-Mail+"""
+Nombre de la persona encargada:"""+OE-Responsable+"""
+
+Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
+editando el documento que se encuentra disponible en el siguiente enlace:
+
+"""+URLEspecificAgreement+"""
+
+Una vez redactado por favor responda al correo con siguiente formato:
+
+Finalizado: Si
+
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
     <userTask id="usertask20" name="Informar de la aceptacion de proyecto">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow46" name="Si" sourceRef="exclusivegateway6" targetRef="usertask20">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [OE-Mail];
 def subject = "Proyecto aceptado";
-def body ="Hola, FIDETIA le informa que su proyecto ha sido aceptado. En el link que viene a continuacion podra ver
+def body ="""Hola, FIDETIA le informa que su proyecto ha sido aceptado. En el link que viene a continuacion podra ver
 una estimacion inicial del proyecto. Tanto si desea negociar el precio del proyecto como si no, responda este correo con la siguiente estructura:
 
 Negociar oferta: Si/No
 
 El link con la oferta inicial es el siguiente:
-"+URLOffer+"
+"""+URLOffer+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow46" name="Si" sourceRef="exclusivegateway6" targetRef="usertask20">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable==True}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway14" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow49" sourceRef="exclusivegateway14" targetRef="usertask12">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+def subject = "Revisar oferta del proyecto";
+def body ="Hola, la organizacion """+OE-Name+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
+un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
+
+Nombre de la organizacion:"""+OE-Name+"""
+Correo de la organizacion:"""+OE-Mail+"""
+Nombre de la persona encargada:"""+OE-Responsable+"""
+
+Pongase en contacto con la organizacion y negocien un acuerdo para realizar el proyecto. Una vez que se haya fijado el precio
+modificar la oferta.
+
+El link con la direccion de la oferta es el siguiente:
+"""+URLOffer+"""
+
+Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:
+
+Acuerdo: Si/No
+
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Offer==True}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway15" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow51" sourceRef="exclusivegateway15" targetRef="usertask13"></sequenceFlow>
+    <sequenceFlow id="flow51" sourceRef="exclusivegateway15" targetRef="usertask13">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+def subject = "Revise el convenio marco de la empresa";
+def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
+
+Nombre de la organizacion:"""+OE-Name+"""
+Correo de la organizacion:"""+OE-Mail+"""
+Nombre de la persona encargada:"""+OE-Responsable+"""
+
+Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respondiendo al correo con la siguiente estructura:
+
+Convenio Marco: Si/No
+
+El link con la direccion de la oferta es el siguiente:
+"""+URLOffer+"""
+
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
     <sequenceFlow id="flow52" sourceRef="exclusivegateway14" targetRef="exclusivegateway15">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Offer==False}]]></conditionExpression>
     </sequenceFlow>
@@ -402,15 +494,47 @@ execution.setVaribale("body", body)]]></activiti:string>
     <sequenceFlow id="flow54" sourceRef="usertask9" targetRef="exclusivegateway6"></sequenceFlow>
     <sequenceFlow id="flow55" sourceRef="usertask20" targetRef="exclusivegateway14"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway16" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow56" sourceRef="usertask12" targetRef="exclusivegateway16"></sequenceFlow>
+    <sequenceFlow id="flow56" sourceRef="usertask12" targetRef="exclusivegateway16">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [OE-Mail];
+def subject = "Oferta final del proyecto";
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
+
+El link con la direccion de la oferta del proyecto es el siguiente:
+"""+URLOffer+"""
+
+Muchas gracias por su tiempo.""";
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
     <sequenceFlow id="flow57" sourceRef="exclusivegateway16" targetRef="exclusivegateway15">
       <extensionElements>
         <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Continue==True}]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent4" name="End"></endEvent>
-    <sequenceFlow id="flow58" sourceRef="exclusivegateway16" targetRef="endevent4"></sequenceFlow>
-    <callActivity id="callactivity1" name="Call activity"></callActivity>
+    <sequenceFlow id="flow58" sourceRef="exclusivegateway16" targetRef="endevent4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Continue==False}]]></conditionExpression>
+    </sequenceFlow>
+    <callActivity id="callactivity1" name="Call activity">
+      <extensionElements>
+        <activiti:in source="OE-Mail" target="OE-Mail"></activiti:in>
+        <activiti:in source="OE-Name" target="OE-Name"></activiti:in>
+        <activiti:in source="OE-Responsable" target="OE-Responsable"></activiti:in>
+        <activiti:in source="RGET-Mail" target="RGET-Mail"></activiti:in>
+        <activiti:in source="Grenecia-Mail" target="Grenecia-Mail"></activiti:in>
+      </extensionElements>
+    </callActivity>
     <sequenceFlow id="flow59" sourceRef="exclusivegateway10" targetRef="callactivity1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Client==False}]]></conditionExpression>
     </sequenceFlow>
