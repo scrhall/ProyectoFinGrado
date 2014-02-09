@@ -79,7 +79,8 @@ public class ContentManager {
 		} catch (CmisObjectNotFoundException e) {}
 	}
 
-	public String getDocumentURL(Document document) {
+	public String getDocumentURL(String path) {
+		Document document = (Document) this.session.getObjectByPath(path);
 		String link = null;
 		try {
 			Method loadLink = AbstractAtomPubService.class.getDeclaredMethod("loadLink" , new Class[] { String.class, String.class, String.class,

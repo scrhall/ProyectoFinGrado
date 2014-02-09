@@ -1,6 +1,9 @@
 package isaFoundry;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import isaFoundry.core.Core;
 import isaFoundry.email.EmailService;
 
@@ -20,7 +23,17 @@ public class Main {
 		Logger Log=LoggerFactory.getLogger(Main.class);
 		Log.info("Ejecutando");
 		Core.run();
-		Core.startProces("myProcess");
+		
+		//Core.startProces("ConvenioMarco", new HashMap<String,Object>());
+		Map<String,Object> var= new HashMap<String, Object>();
+		var.put("DP-Mail", "jualopver@gmail.com");
+		var.put("DET-Mail", "jualopver@gmail.com");
+		var.put("Gerencia-Mail", "jualopver@gmail.com");
+		var.put("RGF-Mail", "jualopver@gmail.com");
+		var.put("ProjectName", "ProyectoPrueba");
+		var.put("TemplateDirectory", "/template");
+		var.put("Doc", "ProjectApplication");		
+		Core.startProces("CreacionProyecto",var);
 		
 		/*String webappDirLocation = "src/main/webapp/";
 		// The port that we should run on can be set into an environment
