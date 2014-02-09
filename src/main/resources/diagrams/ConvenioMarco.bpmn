@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
-  <process id="myProcess" name="My process" isExecutable="true">
-    <startEvent id="startevent1" name="Start"></startEvent>
+  <process id="ConvenioMarco" name="ConvenioMarco" isExecutable="true">
+    <startEvent id="startevent1" name="Start">
+      <extensionElements>
+        <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def docName = "GlobalAgreement";
+def td = "/template";
+def pp = "/GlobalAgreements";
+execution.setVariable("Doc",docName);
+execution.setVariable("TemplateDirectory",td);
+execution.setVariable("ProjectPath",pp);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </startEvent>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow8"></exclusiveGateway>
-    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1">
+      <extensionElements>
+        <activiti:executionListener event="take" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
     <sequenceFlow id="flow2" sourceRef="exclusivegateway1" targetRef="scripttask1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[$(Subproces==True)]]></conditionExpression>
     </sequenceFlow>
@@ -18,43 +38,52 @@
     <userTask id="usertask3" name="Firme el convenio marco">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [OE-Mail];
 def subject = "Copia convenio marco";
-def body ="Hola, a continuacion se adjunta un link desde el que puede ver el convenio marco firmado: 
+def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio marco firmado: 
 
 El link con el convenio marco del proyecto es el siguiente:
-"+URLGlobalAgreement+"
+"""+URLGlobalAgreement+"""
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo."""
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow6" sourceRef="usertask2" targetRef="usertask3">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Gerencia-Mail];
 def subject = "Firme junto con la empresa el siguiente convenio marco";
-def body ="Hola, a continuacion se adjunta el convenio marco, por favor concerte una cita con la empresa responsable
+def body ="""Hola, a continuacion se adjunta el convenio marco, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
 
-"+URLGlobalAgreement+"
+"""+URLGlobalAgreement+"""
 
 Una vez firmado por favor introduzcalo en la aplicacion de FIDETIA y responda al correo con siguiente formato:
 
 Firmado: Si
 
-Muchas gracias por su tiempo."
-execution.setVariable("tos",tos)
-execution.setVariable("subject", subjet)
-execution.setVaribale("body", body)]]></activiti:string>
+Muchas gracias por su tiempo."""
+execution.setVariable("tos",tos);
+execution.setVariable("subject", subjet);
+execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
-        </activiti:taskListener>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
       </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow6" sourceRef="usertask2" targetRef="usertask3"></sequenceFlow>
+    </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow7" sourceRef="usertask3" targetRef="endevent1">
       <extensionElements>
@@ -66,42 +95,42 @@ execution.setVaribale("body", body)]]></activiti:string>
     <scriptTask id="scripttask1" name="Email subproceso" scriptFormat="groovy" activiti:autoStoreVariables="false">
       <script>def tos = [RGET-Mail]
 def subject = "Rellene el convenio marco de la empresa"
-def body ="Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco para la siguiente empresa:
+def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco para la siguiente empresa:
 
-Nombre de la orgacion: "+OE-Name+"
-Email de contacto:  "+OE-Mail+"
-Persona de contacto: "+OE-Reponsable+"
+Nombre de la orgacion: """+OE-Name+"""
+Email de contacto:  """+OE-Mail+"""
+Persona de contacto: """+OE-Reponsable+"""
 
 El link con la plantilla del convenio marco es el siguiente:
-"+URLGlobalAgreement+"
+"""+URLGlobalAgreement+"""
 
 Una vez terminado de redactar responda al correo con la siguiente estructura:
 Terminado: Si
 
-Muchas gracias por su tiempo."
+Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
 execution.setVariable("subject", subjet)
 execution.setVaribale("body", body)</script>
     </scriptTask>
     <scriptTask id="scripttask2" name="Email no subproces" scriptFormat="groovy" activiti:autoStoreVariables="false">
-      <script>def tos = [RGET-Mail];
-def subject = "Rellene el convenio marco";
-def body ="Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco :
+      <script>def tos = [RGET-Mail]
+def subject = "Rellene el convenio marco"
+def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco :
 El link con la plantilla del convenio marco es el siguiente:
-"+URLGlobalAgreement+"
+"""+URLGlobalAgreement+"""
 
 Una vez terminado de redactar responda al correo con la siguiente estructura:
 Email de la empresa: 
 Terminado: Si
 
-Muchas gracias por su tiempo."
+Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
 execution.setVariable("subject", subjet)
 execution.setVaribale("body", body)</script>
     </scriptTask>
   </process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
-    <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ConvenioMarco">
+    <bpmndi:BPMNPlane bpmnElement="ConvenioMarco" id="BPMNPlane_ConvenioMarco">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="110.0" y="120.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
