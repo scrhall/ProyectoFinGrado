@@ -16,9 +16,8 @@ public class CreateDirectory implements ExecutionListener {
 	public void notify(DelegateExecution execution) throws Exception {
 		String p= (String)execution.getVariable("ProjectName");	
 		Log.info("Creando el directorio del proyecto: "+p);
-		Folder f=Core.newFolder(p);
+		String path=Core.newFolder(p);
 		Log.info("Carpeta Creada");
-		String path=f.getPath();
 		Log.info("Directorio creado: "+path);
 		execution.setVariable("ProjectPath", path);
 		

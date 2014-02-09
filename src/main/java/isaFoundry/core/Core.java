@@ -106,8 +106,8 @@ public class Core {
 		ProccesEngine.startProces(procesKey, var);
 	}
 	
-	public static Folder newFolder(String path){
+	public static String newFolder(String path){
 		Folder f=cManager.newFolder(path);
-		return f;		
+		return f.getPath();		
 	}
 }
