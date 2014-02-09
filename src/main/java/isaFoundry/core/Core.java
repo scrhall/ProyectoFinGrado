@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,5 +104,10 @@ public class Core {
 	
 	public static void startProces(String procesKey){
 		ProccesEngine.startProces(procesKey);
+	}
+	
+	public static Folder newFolder(String path){
+		Folder f=cManager.newFolder(path);
+		return f;		
 	}
 }
