@@ -13,14 +13,14 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [DP-Mail];
 def subject = "Rellene la siguiente solicitud de proyecto";
-def body ="Hola, a continuacion se adjunta un link desde el que puede rellenar la solicitud del proyecto, ademas debera de contestar al correo indicando los datos de la organizacion externa interesada en el proyecto siguiendo el siguiente formato:
+def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar la solicitud del proyecto, ademas debera de contestar al correo indicando los datos de la organizacion externa interesada en el proyecto siguiendo el siguiente formato:
 
 Nombre de la orgacion: 
 Email de contacto:
 Persona de contacto:
 
 El link con la direccion de la solicitud es el siguiente:
-"+URLProjectApplication+"
+"""+URLProjectApplication+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -41,19 +41,6 @@ execution.setVaribale("body", body);]]></activiti:string>
     <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2">
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DP-Mail,DET-Mail, Gerencia-Mail];
-def subject = "Firme la siguiente solicitud de proyecto";
-def body ="""Hola, a continuacion se adjunta un link desde el que puede firmar la solicitud del proyecto.
-
-El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
-
-Muchas gracias por su tiempo.""";
-execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
-          </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
@@ -92,6 +79,13 @@ execution.setVaribale("body", body);]]></activiti:string>
     <exclusiveGateway id="exclusivegateway5" name="¿Proyecto aceptado?"></exclusiveGateway>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow14" name="No" sourceRef="exclusivegateway5" targetRef="endevent1">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==False}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask7" name="Delegar revision">
@@ -223,6 +217,13 @@ execution.setVaribale("body", body);]]></activiti:string>
     <exclusiveGateway id="exclusivegateway6" name="¿Es viable?"></exclusiveGateway>
     <endEvent id="endevent2" name="End"></endEvent>
     <sequenceFlow id="flow21" name="No" sourceRef="exclusivegateway6" targetRef="endevent2">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable==False}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask12" name="Revisar oferta">
@@ -473,9 +474,6 @@ Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respon
 
 Convenio Marco: Si/No
 
-El link con la direccion de la oferta es el siguiente:
-"""+URLOffer+"""
-
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subjet);
@@ -526,7 +524,7 @@ execution.setVaribale("body", body);]]></activiti:string>
     <sequenceFlow id="flow58" sourceRef="exclusivegateway16" targetRef="endevent4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Continue==False}]]></conditionExpression>
     </sequenceFlow>
-    <callActivity id="callactivity1" name="Call activity">
+    <callActivity id="callactivity1" name="Convenio Marco" activiti:exclusive="false">
       <extensionElements>
         <activiti:in source="OE-Mail" target="OE-Mail"></activiti:in>
         <activiti:in source="OE-Name" target="OE-Name"></activiti:in>
@@ -591,7 +589,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdc:Bounds height="55.0" width="105.0" x="3120.0" y="177.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
-        <omgdc:Bounds height="35.0" width="35.0" x="3300.0" y="188.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="3300.0" y="187.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="120.0" y="192.0"></omgdc:Bounds>
@@ -672,7 +670,7 @@ execution.setVaribale("body", body);]]></activiti:string>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
         <omgdi:waypoint x="3225.0" y="204.0"></omgdi:waypoint>
-        <omgdi:waypoint x="3300.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3300.0" y="204.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow44" id="BPMNEdge_flow44">
         <omgdi:waypoint x="2380.0" y="205.0"></omgdi:waypoint>
