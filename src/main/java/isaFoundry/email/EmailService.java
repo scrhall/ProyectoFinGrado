@@ -40,8 +40,8 @@ public class EmailService {
 				UserTaskRequest uTaskRequest = new UserTaskRequest();
 				Document doc = Jsoup.parse(email.Body);
 				uTaskRequest.action = Action.valueOf(doc.getElementById("action").val());
-				uTaskRequest.idTask = Integer.valueOf(doc.getElementById("idTask").val());
-				uTaskRequest.options = new HashMap<String, String>();
+				uTaskRequest.idTask = String.valueOf(doc.getElementById("idTask").val());
+				uTaskRequest.options = new HashMap<String, Object>();
 				for (Element option : doc.getElementsByClass("options")) {
 					uTaskRequest.options.put(option.id() , option.val());
 				}

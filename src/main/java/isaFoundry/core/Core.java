@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class Core {
 
 	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager ;
+	private static ContentManager	cManager = new ContentManager();
 	private static ProccesEngine	pEngine= new ProccesEngine();
 	private static EmailService		eService = new EmailService();
 
@@ -109,5 +109,9 @@ public class Core {
 	public static String newFolder(String path){
 		Folder f=cManager.newFolder(path);
 		return f.getPath();		
+	}
+	
+	public static void doTasks(List<UserTaskRequest> lt){
+		pEngine.doTasks(lt);
 	}
 }

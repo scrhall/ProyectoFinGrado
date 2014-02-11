@@ -1,13 +1,16 @@
 package isaFoundry.processEngine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,5 +60,24 @@ public class ProccesEngine {
 		// Verificamos que se ha empezado la nueva instancia del proceso
 		Log.info("Nunero de instancias: " + runtimeService.createProcessInstanceQuery().count());
 		
+	}
+
+	public static void doTasks(List<UserTaskRequest> lt) {
+		for (UserTaskRequest t:lt){
+			doTask(t);
+		}
+	}
+	
+	public static void doTask(UserTaskRequest t){
+		TaskService taskService = processEngine.getTaskService();
+		List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
+		for (Task task : tasks) {
+			if (task.getId()==t.getId()){
+				taskService.complete(task.getId(), t.getOptions());
+				Log.info("Task: " + task.getName()+" complete, options: "+t.getOptions().toString());
+			}
+			
+			
+		}
 	}
 }
