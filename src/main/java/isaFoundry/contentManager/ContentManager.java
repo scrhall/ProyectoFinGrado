@@ -134,7 +134,7 @@ public class ContentManager {
 		// Folder properties (minimal set: fileName and object type id)
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:folder");
-		properties.put(PropertyIds.NAME , path);
+		properties.put(PropertyIds.NAME , path);;
 		Folder parent = this.session.getRootFolder().createFolder(properties);
 		return parent;
 	}
@@ -192,4 +192,6 @@ public class ContentManager {
 		// TODO falta por realizar esto
 		return null;
 	}
+	
+	
 }

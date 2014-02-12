@@ -10,7 +10,8 @@ public class UserTaskRequest {
 		DONE, RVSP,
 	}
 
-	public Integer					idTask;
+	public Integer					idProcces;
+	public String					idTask;
 	public Action					action;
 	public HashMap<String, String>	options;
 }

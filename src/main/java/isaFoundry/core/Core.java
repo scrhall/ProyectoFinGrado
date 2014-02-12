@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
 
 public class Core {
 
-	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager = new ContentManager();
-	private static ProccesEngine	pEngine= new ProccesEngine();
-	private static EmailService		eService = new EmailService();
+	private static Logger			Log			= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager;
+	private static ProccesEngine	pEngine		= new ProccesEngine();
+	private static EmailService		eService	= new EmailService();
 
 	/**
 	 * Copia un documento desde una ruta a otra.
@@ -36,28 +36,9 @@ public class Core {
 		cManager.copyDoc(sourcePath , destinationPath);
 	}
 
-	/**
-	 * Realiza el envio de un correo mediante la informacion proporcionada en
-	 * xml.
-	 * 
-	 * @param templatePath
-	 *            incluye toda la informacion del correo a enviar.
-	 */
-	public static void sendEmail(String subject, String body, List<String> tos) {
-		eService.SendEmail(subject , body , tos);
-	}
-
-	/**
-	 * Recupera la url del documento.
-	 * 
-	 * @param doc
-	 * @return
-	 */
-	public static String urlDoc(String path) {
-		return cManager.getDocumentURL(path);
-	}
-
-	public Core() {
+	public static Folder newFolder(String path) {
+		Folder f = cManager.newFolder(path);
+		return f;
 	}
 
 	public static void run() {
@@ -76,6 +57,33 @@ public class Core {
 			}
 		} , 0 , 30 , TimeUnit.MINUTES);
 	}
+
+	/**
+	 * Realiza el envio de un correo mediante la informacion proporcionada en
+	 * xml.
+	 * 
+	 * @param templatePath
+	 *            incluye toda la informacion del correo a enviar.
+	 */
+	public static void sendEmail(String subject, String body, List<String> tos) {
+		eService.SendEmail(subject , body , tos);
+	}
+
+	public static void startProcces(String procesKey, Map<String, Object> var) {
+		ProccesEngine.startProces(procesKey , var);
+	}
+
+	/**
+	 * Recupera la url del documento.
+	 * 
+	 * @param doc
+	 * @return
+	 */
+	public static String urlDoc(String path) {
+		return cManager.getDocumentURL(path);
+	}
+
+	public Core() {}
 
 	/**
 	 * Recupera la url para la edicion del documento en linea.
@@ -99,14 +107,5 @@ public class Core {
 		// que necesita la funcion
 		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
-	}
-	
-	public static void startProces(String procesKey,Map<String, Object> var){
-		ProccesEngine.startProces(procesKey, var);
-	}
-	
-	public static Folder newFolder(String path){
-		Folder f=cManager.newFolder(path);
-		return f;		
 	}
 }

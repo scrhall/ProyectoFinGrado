@@ -11,6 +11,8 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class Email {
@@ -22,7 +24,7 @@ class Email {
 
 
 public class EmailService {
-
+	private Logger				Log			= LoggerFactory.getLogger(EmailService.class);
 	private EmailReadService	eReadService;
 	private EmailSenderService	eSenderService;
 
@@ -31,27 +33,47 @@ public class EmailService {
 		this.eSenderService = new EmailSenderService();
 	}
 
+	public void SendEmail(String subject, String body, List<String> tos) {
+		this.eSenderService.sendEmail(subject , body , tos);
+	}
+
 	public List<UserTaskRequest> taskReceived() {
 		List<UserTaskRequest> ids = new ArrayList<UserTaskRequest>();
 		this.eReadService.connect();
+		Log.info("Mensajes no leidos: "+this.eReadService.getUnreadMessageCount());
 		if (this.eReadService.getUnreadMessageCount() != 0) {
 			List<Email> emails = this.eReadService.readEmails();
+			Log.info(String.valueOf(emails.size()));
+
 			for (Email email : emails) {
 				UserTaskRequest uTaskRequest = new UserTaskRequest();
-				Document doc = Jsoup.parse(email.Body);
-				uTaskRequest.action = Action.valueOf(doc.getElementById("action").val());
-				uTaskRequest.idTask = Integer.valueOf(doc.getElementById("idTask").val());
-				uTaskRequest.options = new HashMap<String, String>();
-				for (Element option : doc.getElementsByClass("options")) {
-					uTaskRequest.options.put(option.id() , option.val());
+				String[] aux = email.Subject.split("\\-=\\[");
+				
+				Log.info(email.Subject);
+				if (aux.length>1)
+				{
+					String head = aux[1];
+					Log.info(head);
+					String[] data = head.split("\\|");
+					uTaskRequest.action = Action.valueOf(data[2]);
+					uTaskRequest.idTask = data[1];
+					uTaskRequest.idProcces = Integer.valueOf(data[0]);
+					uTaskRequest.options = new HashMap<String, String>();
+					uTaskRequest.options.put("From", email.From);
+					aux = email.Body.split("<\\-\\-|\\-\\->");
+					if (aux.length > 1) {
+						String moreoptions = aux[1];
+						aux = moreoptions.split("\r\n");
+						for (String element : aux) {
+							String[] option = element.split(":");
+							if(option.length==2)
+								uTaskRequest.options.put(option[0] , option[1]);
+						}
 				}
 				ids.add(uTaskRequest);
+				}
 			}
 		}
 		return ids;
-	}
-
-	public void SendEmail(String subject, String body, List<String> tos) {
-		this.eSenderService.sendEmail(subject , body , tos);
 	}
 };

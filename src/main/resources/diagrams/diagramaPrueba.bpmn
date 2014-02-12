@@ -5,15 +5,13 @@
     <userTask id="usertask1" name="Actividad">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1">
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>
-def tos = ["jualopver@gmail.com"];
+            <activiti:string><![CDATA[def tos = ["scrhall@scrhall.com"];
 subject = "Rellene la siguiente solicitud de proyecto"
 body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar la solicitud del proyecto, ademas debera de contestar al correo indicando los datos de la organizacion externa interesada en el proyecto siguiendo el siguiente formato:
 
@@ -24,15 +22,32 @@ Persona de contacto:
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos", tos);
 execution.setVariable("subject",subject);
-execution.setVariable("body", body); 
-			</activiti:string>
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
-          <activiti:field name="language" stringValue="groovy" />
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="usertask2" targetRef="endevent1"></sequenceFlow>
+    <userTask id="usertask2" name="User Task">
+      <extensionElements>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail">
+          <activiti:field name="tos">
+            <activiti:string><![CDATA[scrhall@scrhall.com]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="subject">
+            <activiti:string><![CDATA[done]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="body">
+            <activiti:string><![CDATA[terminado]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow3" sourceRef="usertask1" targetRef="usertask2"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
     <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
@@ -43,15 +58,22 @@ execution.setVariable("body", body);
         <omgdc:Bounds height="55.0" width="105.0" x="210.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="360.0" y="140.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="650.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="350.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="165.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="210.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="455.0" y="157.0"></omgdi:waypoint>
+        <omgdi:waypoint x="650.0" y="157.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
         <omgdi:waypoint x="315.0" y="157.0"></omgdi:waypoint>
-        <omgdi:waypoint x="360.0" y="157.0"></omgdi:waypoint>
+        <omgdi:waypoint x="350.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

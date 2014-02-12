@@ -122,22 +122,9 @@ public class EmailReadService {
 			this.inbox.open(Folder.READ_ONLY);
 			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
 			Message messages[] = this.inbox.search(ft);
-			this.Log.info("No of Messages : " + this.inbox.getMessageCount());
-			this.Log.info("No of Unread Messages : " + this.inbox.getUnreadMessageCount());
-			this.Log.info(Integer.toString(messages.length));
 			for (int i = 0; i < messages.length; i++) {
 				Email email = new Email();
-				this.Log.info("*****************************************************************************");
-				this.Log.info("MESSAGE " + (i + 1) + ":");
 				Message msg = messages[i];
-				this.Log.info("Subject: " + msg.getSubject());
-				this.Log.info("From: " + msg.getFrom()[0]);
-				// this.Log.info("To: " + msg.getAllRecipients()[0]);
-				this.Log.info("Date: " + msg.getReceivedDate());
-				this.Log.info("Size: " + msg.getSize());
-				this.Log.info(msg.getFlags().toString());
-				this.Log.info("Body: \n" + this.getText(msg));
-				this.Log.info(msg.getContentType());
 				email.Subject = msg.getSubject();
 				email.From = msg.getFrom()[0].toString();
 				email.Body = this.getText(msg);
