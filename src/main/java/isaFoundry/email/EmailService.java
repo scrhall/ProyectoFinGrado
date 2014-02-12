@@ -58,7 +58,7 @@ public class EmailService {
 					uTaskRequest.action = Action.valueOf(data[2]);
 					uTaskRequest.idTask = data[1];
 					uTaskRequest.idProcces = Integer.valueOf(data[0]);
-					uTaskRequest.options = new HashMap<String, String>();
+					uTaskRequest.options = new HashMap<String, Object>();
 					uTaskRequest.options.put("From", email.From);
 					aux = email.Body.split("<\\-\\-|\\-\\->");
 					if (aux.length > 1) {

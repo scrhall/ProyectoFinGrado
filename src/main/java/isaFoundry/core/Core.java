@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class Core {
 
 	private static Logger			Log			= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager;
+	private static ContentManager	cManager= new ContentManager();
 	private static ProccesEngine	pEngine		= new ProccesEngine();
 	private static EmailService		eService	= new EmailService();
 
@@ -107,5 +107,8 @@ public class Core {
 		// que necesita la funcion
 		// cManager.toPDF(fileName , filePath , targetPath);
 		return null;
+	}
+	public static void doTasks(List<UserTaskRequest> lt){
+		pEngine.doTasks(lt);
 	}
 }
