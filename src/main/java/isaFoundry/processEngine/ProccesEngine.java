@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 
 public class ProccesEngine {
 
-	private static Logger			Log	= LoggerFactory.getLogger(ProccesEngine.class);
-	private static ProcessEngine	processEngine;
+	private Logger			Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private ProcessEngine	processEngine;
+
 
 	public ProccesEngine() {
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
@@ -49,7 +50,7 @@ public class ProccesEngine {
 		this.Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 	
-	public static void startProces(String procesKey){
+	public void startProces(String procesKey){
 		Map<String, Object> variables = new HashMap<String, Object>();
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(procesKey, variables);
@@ -59,13 +60,13 @@ public class ProccesEngine {
 		
 	}
 
-	public static void doTasks(List<UserTaskRequest> lt) {
+	public void doTasks(List<UserTaskRequest> lt) {
 		for (UserTaskRequest t:lt){
 			doTask(t);
 		}
 	}
 	
-	public static void doTask(UserTaskRequest t){
+	public void doTask(UserTaskRequest t){
 		TaskService taskService = processEngine.getTaskService();
 		List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 		for (Task task : tasks) {
