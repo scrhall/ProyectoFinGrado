@@ -30,8 +30,8 @@ public class Core {
 	 * 
 	 * @param path ruta del directorio
 	 */
-	public static void newFolder(String path){
-		cManager.newFolder(path);
+	public static String newFolder(String path){
+		return cManager.newFolder(path).getPath();
 	}
 	
 	/**
