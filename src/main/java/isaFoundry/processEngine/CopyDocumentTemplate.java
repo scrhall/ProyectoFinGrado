@@ -30,7 +30,8 @@ public class CopyDocumentTemplate implements ExecutionListener {
 		Log.info("Creando variable URL" + doc);
 		String URLDoc = Core.urlDocOnlineEdit(dest);
 		Log.info("Creando variable URL" + doc + " con valor: " + URLDoc);
-		execution.setVariable("URL" + doc , URLDoc);
+		String[] n=doc.split("\\.");
+		execution.setVariable("URL" + n[0] , URLDoc);
 		// Podriamos añadir PDF
 	}
 }

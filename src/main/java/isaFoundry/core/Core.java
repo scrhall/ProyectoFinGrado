@@ -80,7 +80,9 @@ public class Core {
 				// TODO:Comprobar emails y formularios para realizar tareas
 				// pendientes
 			}
-		} , 0 , 30 , TimeUnit.MINUTES);
+			
+			//cambiamos de MINUTES a SECONDS
+		} , 0 , 30 , TimeUnit.SECONDS);
 	}
 
 	/**

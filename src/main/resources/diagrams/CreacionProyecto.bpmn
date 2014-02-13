@@ -22,7 +22,7 @@
 			Contacto:<br/>
 			--><br/>
 			<br/>
-			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLProjectApplication+"""\
+			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLSolicitud+"""\
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -44,6 +44,20 @@
     <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2">
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def tos = [GerenciaMail]
+			def subject = "Firme la solicitud"
+			def body = """\
+			Hola, a continuacion se adjunta un link desde el que puede firmar la solicitud del proyecto
+			<br/>
+			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLSolicitud+"""\
+			<br/>
+			<br/>
+			Muchas gracias por su tiempo."""
+			execution.setVariable("tos",tos)
+			execution.setVariable("subject", subject)
+			execution.setVariable("body", body)]]></activiti:string>
+          </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
@@ -66,12 +80,12 @@ def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la s
 Aceptado: Si/No 
 
 El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
+"""+URLSolicitud+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -89,7 +103,7 @@ execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==False}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Aceptado=="No"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask7" name="Delegar revision" activiti:assignee="kermit">
       <extensionElements>
@@ -118,19 +132,19 @@ Nombre del equipo de trabajo:
 Correo del director del equipo de trabajo: 
 
 El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
+"""+URLSolicitud+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==True}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Aceptado=="Si"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask8" name="Designar persona" activiti:assignee="kermit">
       <extensionElements>
@@ -162,12 +176,12 @@ def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la s
 Correo de la persona encargada de evaluar los requisitos:
 
 El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
+"""+URLSolicitud+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -198,7 +212,7 @@ Correo de la organizacion:"""+OE-Mail+"""
 Nombre de la persona encargada:"""+OE-Responsable+"""
 
 El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
+"""+URLSolicitud+"""
 
 El link con la plantilla del estudio de viabilidad es:
 """+URLViabilityStudy+"""
@@ -208,8 +222,8 @@ Si el estudio de viabilidad es positivo modifique el documento para generar la o
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -227,7 +241,7 @@ execution.setVaribale("body", body);]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable==False}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable=="No"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="usertask12" name="Revisar oferta" activiti:assignee="kermit">
       <extensionElements>
@@ -275,8 +289,8 @@ El link con el convenio especifico del proyecto es el siguiente:
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -307,8 +321,8 @@ Firmado: Si
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -340,8 +354,8 @@ El link con la direccion del convenio especifico es el siguiente:
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -384,8 +398,8 @@ Finalizado: Si
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -414,15 +428,15 @@ El link con la oferta inicial es el siguiente:
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable==True}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable=="Si"}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway14" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow49" sourceRef="exclusivegateway14" targetRef="usertask12">
@@ -450,8 +464,8 @@ Acuerdo: Si/No
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -479,8 +493,8 @@ Convenio Marco: Si/No
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -508,8 +522,8 @@ El link con la direccion de la oferta del proyecto es el siguiente:
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+execution.setVariable("subject", subject);
+execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -634,14 +648,14 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="770.0" y="229.0"></omgdi:waypoint>
         <omgdi:waypoint x="770.0" y="280.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="39.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
         <omgdi:waypoint x="790.0" y="209.0"></omgdi:waypoint>
         <omgdi:waypoint x="850.0" y="207.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
@@ -656,7 +670,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="1382.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="1382.0" y="292.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
@@ -687,7 +701,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="1402.0" y="207.0"></omgdi:waypoint>
         <omgdi:waypoint x="1527.0" y="207.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow49" id="BPMNEdge_flow49">
