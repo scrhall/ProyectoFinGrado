@@ -33,7 +33,7 @@ public class Main {
 		var.put("RGFMail" , "scrhall@scrhall.com");
 		var.put("ProjectName" , "ProyectoPrueba");
 		var.put("TemplateDirectory" , "/Plantillas/CreacionProyecto");
-		var.put("Doc" , "ProjectApplication");
+		var.put("Doc" , "Solicitud.docx");
 		Core.startProcces("CreacionProyecto" , var);
 		/*
 		 * String webappDirLocation = "src/main/webapp/";
