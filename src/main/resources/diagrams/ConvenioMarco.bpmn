@@ -29,13 +29,13 @@ execution.setVariable("ProjectPath",pp);]]></activiti:string>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow3" sourceRef="scripttask1" targetRef="exclusivegateway2"></sequenceFlow>
-    <userTask id="usertask2" name="Redacte el convenio marco">
+    <userTask id="usertask2" name="Redacte el convenio marco" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow4" sourceRef="exclusivegateway2" targetRef="usertask2"></sequenceFlow>
-    <userTask id="usertask3" name="Firme el convenio marco">
+    <userTask id="usertask3" name="Firme el convenio marco" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">

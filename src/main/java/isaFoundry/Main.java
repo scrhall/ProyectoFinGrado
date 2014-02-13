@@ -22,21 +22,20 @@ public class Main {
 		Core.run();
 		// Core.startProces("ConvenioMarco", new HashMap<String,Object>());
 		Map<String, Object> var = new HashMap<String, Object>();
-		var.put("tos" , "scrhall@scrhall.com");
-		var.put("subject" , "Prueba de envio de correo");
-		var.put("body" , "Prueba body");
-		Core.startProcces("myProcess" , var);
-		
 		/*
-		var.put("DP-Mail" , "jualopver@gmail.com");
-		var.put("DET-Mail" , "jualopver@gmail.com");
-		var.put("Gerencia-Mail" , "jualopver@gmail.com");
-		var.put("RGF-Mail" , "jualopver@gmail.com");
+		 * var.put("tos" , "scrhall@scrhall.com");
+		 * var.put("subject" , "Prueba de envio de correo");
+		 * var.put("body" , "Prueba body");
+		 */
+		var.put("DPMail" , "scrhall@scrhall.com");
+		var.put("DETMail" , "scrhall@scrhall.com");
+		var.put("GerenciaMail" , "scrhall@scrhall.com");
+		var.put("RGFMail" , "scrhall@scrhall.com");
 		var.put("ProjectName" , "ProyectoPrueba");
-		var.put("TemplateDirectory" , "/template");
+		var.put("TemplateDirectory" , "/Plantillas/CreacionProyecto");
 		var.put("Doc" , "ProjectApplication");
-		
-		
+		Core.startProcces("CreacionProyecto" , var);
+		/*
 		 * String webappDirLocation = "src/main/webapp/";
 		 * // The port that we should run on can be set into an environment
 		 * // variable

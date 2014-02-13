@@ -10,15 +10,9 @@ public class UserTaskRequest {
 	public enum Action {
 		DONE, RVSP,
 	}
-	public Integer					idProcces;
+
+	public String					idProcces;
 	public String					idTask;
 	public Action					action;
 	public HashMap<String, Object>	options;
-	
-	public String getId(){
-		return this.idTask;
-	}
-	public Map<String,Object> getOptions(){
-		return this.options;
-	}
 }

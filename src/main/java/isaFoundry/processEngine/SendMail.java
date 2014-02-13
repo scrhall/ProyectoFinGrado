@@ -19,7 +19,11 @@ public class SendMail implements ExecutionListener {
 		List<String> tos = (List<String>) execution.getVariable("tos");
 		Log.info("Variable tos =" + tos);
 		String subject = (String) execution.getVariable("subject");
-		subject=subject+"   -=["+execution.getProcessInstanceId()+"|"+execution.getCurrentActivityId()+"|DONE";// falta que venga por execution.getVariable("Action")
+		subject = subject + "   -=[" + execution.getProcessInstanceId() + "|" + execution.getCurrentActivityId() + "|DONE";// falta
+																															// que
+																															// venga
+																															// por
+																															// execution.getVariable("Action")
 		Log.info("Variable subject =" + subject);
 		String body = (String) execution.getVariable("body");
 		Log.info("Variable body =" + body);

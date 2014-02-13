@@ -2,7 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <message id="InfoOffer" name="InfoOffer"></message>
   <process id="CreacionProyecto" name="CreacionProyecto" isExecutable="true">
-    <userTask id="usertask1" name="Cumplimentar solicitud">
+    <userTask id="usertask1" name="Cumplimentar solicitud" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -11,21 +11,24 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DP-Mail];
-def subject = "Rellene la siguiente solicitud de proyecto";
-def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar la solicitud del proyecto, ademas debera de contestar al correo indicando los datos de la organizacion externa interesada en el proyecto siguiendo el siguiente formato:
-
-Nombre de la orgacion: 
-Email de contacto:
-Persona de contacto:
-
-El link con la direccion de la solicitud es el siguiente:
-"""+URLProjectApplication+"""
-
-Muchas gracias por su tiempo.""";
-execution.setVariable("tos",tos);
-execution.setVariable("subject", subjet);
-execution.setVaribale("body", body);]]></activiti:string>
+            <activiti:string><![CDATA[def tos = [DPMail]
+			def subject = "Rellene la siguiente solicitud de proyecto"
+			def body = """\
+			Hola, a continuacion se adjunta un link desde el que puede rellenar la solicitud del proyecto, ademas debera de contestar al correo indicando los datos de la organizacion externa interesada en el proyecto siguiendo el siguiente formato:
+			<br/>
+			<--<br/>
+			Organizacion:<br/>
+			Email:<br/>
+			Contacto:<br/>
+			--><br/>
+			<br/>
+			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLProjectApplication+"""\
+			<br/>
+			<br/>
+			Muchas gracias por su tiempo."""
+			execution.setVariable("tos",tos)
+			execution.setVariable("subject", subject)
+			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -33,7 +36,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask2" name="Firmar solicitud">
+    <userTask id="usertask2" name="Firmar solicitud" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -47,7 +50,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask3" name="Evaluar caracteristicas">
+    <userTask id="usertask3" name="Evaluar caracteristicas" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -56,7 +59,7 @@ execution.setVaribale("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Evalue el proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y evaluarlo para decidir si es valido o no para FIDETIA. Ademas debera de contestar este correo indicando si es valido o no el proyecto usando la siguiente estructura: 
 
@@ -88,7 +91,7 @@ execution.setVaribale("body", body);]]></activiti:string>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==False}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask7" name="Delegar revision">
+    <userTask id="usertask7" name="Delegar revision" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
@@ -129,7 +132,7 @@ execution.setVaribale("body", body);]]></activiti:string>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Accept==True}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask8" name="Designar persona">
+    <userTask id="usertask8" name="Designar persona" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
@@ -152,7 +155,7 @@ execution.setVariable("Doc",docName)]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DET-Mail];
+            <activiti:string><![CDATA[def tos = [DETMail];
 def subject = "Designe a una persona para evaluar los requisitos del proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar la persona encargada de evaluar los requisitos usando la siguiente estructura: 
 
@@ -172,7 +175,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask9" name="Evaluar requisitos">
+    <userTask id="usertask9" name="Evaluar requisitos" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -226,12 +229,12 @@ execution.setVaribale("body", body);]]></activiti:string>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Viable==False}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask12" name="Revisar oferta">
+    <userTask id="usertask12" name="Revisar oferta" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
-    <userTask id="usertask13" name="Revisar BD de los clientes">
+    <userTask id="usertask13" name="Revisar BD de los clientes" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
@@ -252,12 +255,12 @@ execution.setVariable("Doc",docName)]]></activiti:string>
     </userTask>
     <exclusiveGateway id="exclusivegateway10" name="¿Es cliente?"></exclusiveGateway>
     <sequenceFlow id="flow29" sourceRef="usertask13" targetRef="exclusivegateway10"></sequenceFlow>
-    <userTask id="usertask15" name="Elaborar convenio especifico">
+    <userTask id="usertask15" name="Elaborar convenio especifico" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
-    <userTask id="usertask16" name="Firmar convenio especifico">
+    <userTask id="usertask16" name="Firmar convenio especifico" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
@@ -313,7 +316,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask17" name="Dar proyecto de alta">
+    <userTask id="usertask17" name="Dar proyecto de alta" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -323,7 +326,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [RGF-Mail];
+            <activiti:string><![CDATA[def tos = [RGFMail];
 def subject = "De el proyecto de alta en la aplicacion";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para realizacion de
 un proyecto. Por favor de el proyecto de alta en la aplicacion de FIDETIA. Tras hacerlo responda al correo, indicando si lo ha 
@@ -390,7 +393,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask20" name="Informar de la aceptacion de proyecto">
+    <userTask id="usertask20" name="Informar de la aceptacion de proyecto" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -426,7 +429,7 @@ execution.setVaribale("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Revisar oferta del proyecto";
 def body ="Hola, la organizacion """+OE-Name+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
 un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
@@ -631,14 +634,14 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="770.0" y="229.0"></omgdi:waypoint>
         <omgdi:waypoint x="770.0" y="280.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="39.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
         <omgdi:waypoint x="790.0" y="209.0"></omgdi:waypoint>
         <omgdi:waypoint x="850.0" y="207.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
@@ -653,7 +656,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="1382.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="1382.0" y="292.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="39.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="13.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
@@ -684,7 +687,7 @@ execution.setVaribale("body", body);]]></activiti:string>
         <omgdi:waypoint x="1402.0" y="207.0"></omgdi:waypoint>
         <omgdi:waypoint x="1527.0" y="207.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow49" id="BPMNEdge_flow49">

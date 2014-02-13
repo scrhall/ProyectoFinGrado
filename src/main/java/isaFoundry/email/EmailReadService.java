@@ -1,8 +1,6 @@
 package isaFoundry.email;
 
 
-import isaFoundry.Main;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,8 +32,8 @@ public class EmailReadService {
 	// Constructor
 	public EmailReadService() {
 		try {
-			Properties config = new Properties();			
-			config.load(getClass().getResourceAsStream("/config/emailRead.properties"));
+			Properties config = new Properties();
+			config.load(this.getClass().getResourceAsStream("/config/emailRead.properties"));
 			this.user = config.getProperty("USER");
 			this.pass = config.getProperty("PASSWORD");
 			this.host = config.getProperty("HOST");
@@ -45,7 +43,7 @@ public class EmailReadService {
 			this.Log.error("Error: Archivo no encontrado | emailRead.properties " + e);
 		} catch (IOException e) {
 			this.Log.info("Error: Entrada/Salida |  emailRead.properties " + e);
-		}catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			this.Log.info("Error: NullPointerException | emailRead.properties " + e);
 		}
 	}
@@ -63,6 +61,42 @@ public class EmailReadService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public int getUnreadMessageCount() {
+		try {
+			this.inbox.open(Folder.READ_ONLY);
+			int count = this.inbox.getUnreadMessageCount();
+			this.inbox.close(false);
+			return count;
+		} catch (Exception e) {
+			System.out.println(e);
+			return -1;
+			// En caso de una excepcion retornamos -1
+		}
+	}
+
+	public List<Email> readEmails() {
+		List<Email> emails = new ArrayList<Email>();
+		try {
+			this.inbox.open(Folder.READ_WRITE);
+			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
+			Message messages[] = this.inbox.search(ft);
+			for (Message msg : messages) {
+				Email email = new Email();
+				email.Subject = msg.getSubject();
+				email.From = msg.getFrom()[0].toString();
+				email.Body = this.getText(msg);
+				emails.add(email);
+				msg.setFlag(Flags.Flag.SEEN, true);
+			}
+			this.inbox.close(false);
+		} catch (MessagingException e) {
+			this.Log.error("Error: MessagingException al leer los mensajes | " + e);
+		} catch (IOException e) {
+			this.Log.error("Error: Entrada/Salida al leer los mensajes | " + e);
+		}
+		return emails;
 	}
 
 	private String getText(Part p) throws MessagingException, IOException {
@@ -101,41 +135,5 @@ public class EmailReadService {
 			}
 		}
 		return null;
-	}
-
-	public int getUnreadMessageCount() {
-		try {
-			this.inbox.open(Folder.READ_ONLY);
-			int count = this.inbox.getUnreadMessageCount();
-			this.inbox.close(false);
-			return count;
-		} catch (Exception e) {
-			System.out.println(e);
-			return -1;
-			// En caso de una excepcion retornamos -1
-		}
-	}
-
-	public List<Email> readEmails() {
-		List<Email> emails = new ArrayList<Email>();
-		try {
-			this.inbox.open(Folder.READ_ONLY);
-			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
-			Message messages[] = this.inbox.search(ft);
-			for (int i = 0; i < messages.length; i++) {
-				Email email = new Email();
-				Message msg = messages[i];
-				email.Subject = msg.getSubject();
-				email.From = msg.getFrom()[0].toString();
-				email.Body = this.getText(msg);
-				emails.add(email);
-			}
-			this.inbox.close(false);
-		} catch (MessagingException e) {
-			this.Log.error("Error: MessagingException al leer los mensajes | " + e);
-		} catch (IOException e) {
-			this.Log.error("Error: Entrada/Salida al leer los mensajes | " + e);
-		}
-		return emails;
 	}
 }

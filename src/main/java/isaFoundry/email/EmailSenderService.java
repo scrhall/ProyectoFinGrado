@@ -1,8 +1,6 @@
 package isaFoundry.email;
 
 
-import isaFoundry.Main;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +32,7 @@ public class EmailSenderService {
 
 	public EmailSenderService() {
 		try {
-			this.properties.load(getClass().getResourceAsStream("/config/emailSender.properties"));
+			this.properties.load(this.getClass().getResourceAsStream("/config/emailSender.properties"));
 			this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
 					(String) this.properties.get("mail.smtp.password")));
 		} catch (FileNotFoundException e) {
@@ -69,11 +67,11 @@ public class EmailSenderService {
 			// Insertamos los destinatarios en el correo
 			for (String to : tos) {
 				message.addRecipient(Message.RecipientType.BCC , new InternetAddress(to));
-				this.Log.info("Destinatario: "+to);
+				this.Log.info("Destinatario: " + to);
 			}
 			// Indicamos el titulo del mensage
 			message.setSubject(subject);
-			this.Log.info("Titulo del mensaje: "+subject);
+			this.Log.info("Titulo del mensaje: " + subject);
 			// A�adimos el Cuerpo
 			message.setContent(multipart);
 			System.out.println((String) this.properties.get("mail.smtp.user") + "/" + (String) this.properties.get("mail.smtp.password"));
@@ -82,7 +80,7 @@ public class EmailSenderService {
 			t.connect((String) this.properties.get("mail.smtp.user") , (String) this.properties.get("mail.smtp.password"));
 			t.sendMessage(message , message.getAllRecipients());
 			t.close();
-			this.Log.info("Cuerpo del mensaje"+body);
+			this.Log.info("Cuerpo del mensaje" + body);
 			this.Log.info("Mensaje enviado con exito");
 		} catch (MessagingException me) {
 			// TODO

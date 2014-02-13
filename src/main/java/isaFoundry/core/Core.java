@@ -12,47 +12,75 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class Core {
 
+	private static Logger			Log			= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager	= new ContentManager();
+	private static ProccesEngine	pEngine		= new ProccesEngine();
+	private static EmailService		eService	= new EmailService();
 
-	private static Logger			Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager = new ContentManager();
-	private static ProccesEngine	pEngine = new ProccesEngine();
-	private static EmailService		eService = new EmailService();
+	public Core() {}
+
+	/**
+	 * Copia un documento desde una ruta a otra.
+	 * 
+	 * @param filePath
+	 *            ruta completa del archivo
+	 * @param destinationPath
+	 *            carpeta destino
+	 */
+	public static void copyDoc(String filePath, String destinationPath) {
+		cManager.copyDoc(filePath , destinationPath);
+	}
+
+	/**
+	 * Copia un documento desde una ruta a otra.
+	 * 
+	 * @param fileName
+	 *            nombre del archivo
+	 * @param sourcePath
+	 *            carpeta origen
+	 * @param destinationPath
+	 *            carpeta destino
+	 */
+	public static void copyDoc(String fileName, String sourcePath, String destinationPath) {
+		cManager.copyDoc(fileName , sourcePath , destinationPath);
+	}
+
+	public static void doTasks(List<UserTaskRequest> lt) {
+		pEngine.doTasks(lt);
+	}
 
 	/**
 	 * Crea un nuevo directorio en el repositorio
 	 * 
-	 * @param path ruta del directorio
+	 * @param path
+	 *            ruta del directorio
 	 */
-	public static String newFolder(String path){
+	public static String newFolder(String path) {
 		return cManager.newFolder(path).getPath();
 	}
-	
-	/**
-	 * Copia un documento desde una ruta a otra.
-	 * 
-	 * @param fileName nombre del archivo
-	 * @param sourcePath carpeta origen
-	 * @param destinationPath carpeta destino
-	 */
-	public static void copyDoc(String fileName, String sourcePath, String destinationPath) {
-		cManager.copyDoc(fileName, sourcePath , destinationPath);
-	}
-	
-	/**
-	 * Copia un documento desde una ruta a otra.
-	 * 
-	 * @param filePath ruta completa del archivo
-	 * @param destinationPath carpeta destino
-	 */
-	public static void copyDoc(String filePath, String destinationPath) {
-		cManager.copyDoc(filePath , destinationPath);
+
+	public static void run() {
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(new Runnable() {
+
+			public void run() {
+				Core.Log.info("loop ejecutandose...");
+				List<UserTaskRequest> lista = eService.taskReceived();
+				Core.doTasks(lista);
+				for (UserTaskRequest task : lista) {
+					Core.Log.info("IdTask: " + task.idTask + "; Action: " + task.action);
+				}
+				// TODO:Comprobar tareas pendientes en el motor de activiti
+				// TODO:Comprobar emails y formularios para realizar tareas
+				// pendientes
+			}
+		} , 0 , 30 , TimeUnit.MINUTES);
 	}
 
 	/**
@@ -66,64 +94,46 @@ public class Core {
 		eService.SendEmail(subject , body , tos);
 	}
 
+	public static void startProcces(String procesKey, Map<String, Object> var) {
+		pEngine.startProces(procesKey , var);
+	}
+
+	/**
+	 * Crea un documento pdf mediante una carpeta intermedia con regla de
+	 * conversión asociada
+	 * 
+	 * @param fileName
+	 *            nombre del documento
+	 * @param sourcePath
+	 *            carpeta origen del documento
+	 * @param targetPath
+	 *            carpeta destino del documento pdf
+	 * @param converterPath
+	 *            ruta de la carpeta de transformación
+	 */
+	public static void toPDF(String fileName, String sourcePath, String targetPath, String converterPath) {
+		cManager.toPDF(fileName , sourcePath , targetPath , converterPath);
+	}
+
 	/**
 	 * Recupera la url del documento.
 	 * 
-	 * @param doc ruta al documento
+	 * @param doc
+	 *            ruta al documento
 	 * @return String que representa la url del documento en nuestro repositorio
 	 */
 	public static String urlDoc(String doc) {
 		return cManager.getDocumentURL(doc);
 	}
 
-	public Core() {
-
-	}
-
-	public static void run() {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(new Runnable() {
-
-			public void run() {
-				Core.Log.info("loop ejecutandose...");
-				List<UserTaskRequest> lista = eService.taskReceived();
-				for (UserTaskRequest task : lista) {
-					Core.Log.info("IdTask: " + task.idTask + "; Action: " + task.action);
-				}
-				// TODO:Comprobar tareas pendientes en el motor de activiti
-				// TODO:Comprobar emails y formularios para realizar tareas
-				// pendientes
-			}
-		} , 0 , 30 , TimeUnit.MINUTES);
-	}
-
-	public static void startProcces(String procesKey, Map<String, Object> var) {
-		pEngine.startProces(procesKey);// , var);
-	}
-
 	/**
 	 * Recupera la url para la edicion del documento en linea.
 	 * 
 	 * @param doc
-	 * @return String que representa la url de acceso a edición mediante google docs en nuestro repositorio
+	 * @return String que representa la url de acceso a edición mediante google
+	 *         docs en nuestro repositorio
 	 */
-	public String urlDocOnlineEdit(String doc) {
+	public static String urlDocOnlineEdit(String doc) {
 		return cManager.getOnlineEditURL(doc);
-	}
-
-	public static void doTasks(List<UserTaskRequest> lt){
-		pEngine.doTasks(lt);
-	}
-	
-	/**
-	 * Crea un documento pdf mediante una carpeta intermedia con regla de conversión asociada
-	 * 
-	 * @param fileName nombre del documento
-	 * @param sourcePath carpeta origen del documento
-	 * @param targetPath carpeta destino del documento pdf
-	 * @param converterPath ruta de la carpeta de transformación
-	 */
-	public static void toPDF(String fileName, String sourcePath, String targetPath, String converterPath){
-		cManager.toPDF(fileName, sourcePath, targetPath, converterPath);
 	}
 }
