@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,9 @@ public class EmailService {
 	public void SendEmail(String subject, String body, List<String> tos) {
 		this.eSenderService.sendEmail(subject , body , tos);
 	}
-
+	public String html2text(String html) {
+	    return Jsoup.parse(html).text();
+	}
 	public List<UserTaskRequest> taskReceived() {
 		List<UserTaskRequest> ids = new ArrayList<UserTaskRequest>();
 		this.eReadService.connect();
@@ -47,14 +50,16 @@ public class EmailService {
 					uTaskRequest.idProcces = data[0];
 					uTaskRequest.options = new HashMap<String, Object>();
 					uTaskRequest.options.put("From" , email.From);
-					aux = email.Body.split("<\\-\\-|\\-\\->");
+					String body =email.Body.replaceAll("<br" ,"{NewLine}<br");
+					body=html2text(body);
+					aux = body.split("<\\-\\-|\\-\\->");
 					if (aux.length > 1) {
 						String moreoptions = aux[1];
-						aux = moreoptions.split("\r\n");
+						aux = moreoptions.split("\\{NewLine\\}");
 						for (String element : aux) {
 							String[] option = element.split(":");
 							if (option.length == 2) {
-								uTaskRequest.options.put(option[0] , option[1]);
+								uTaskRequest.options.put(option[0].trim() , option[1].trim());
 							}
 						}
 					}

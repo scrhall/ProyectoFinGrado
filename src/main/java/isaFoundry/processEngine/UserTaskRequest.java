@@ -2,7 +2,6 @@ package isaFoundry.processEngine;
 
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class UserTaskRequest {

@@ -36,7 +36,7 @@ public class ProccesEngine {
 					String pi = task.getProcessInstanceId();
 					if (dk.equals(t.idTask) && pi.equals(t.idProcces)) {
 						taskService.complete(task.getId() , t.options);
-						this.Log.info("Task: " + task.getName() + " complete, options: " + t.options.toString());
+						this.Log.info("Task: " + task.getName() + " Completada, options: " + t.options.toString());
 					}
 				}
 				break;

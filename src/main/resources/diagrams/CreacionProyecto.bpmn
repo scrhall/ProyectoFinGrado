@@ -124,7 +124,7 @@ execution.setVariable("Doc",docName);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Seleccione el equipo de trabajo";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar el equipo de trabajo que lo realizara usando la siguiente estructura: 
 
@@ -198,7 +198,7 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Designee-Mail];
+            <activiti:string><![CDATA[def tos = [DesigneeMail];
 def subject = "Evalue los requisitos del proyecto proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, ademas debe de realizar un estudio de viabilidad
 para ello se le adjunta una plantilla de estudio de viabilidad que debe rellenar. Por ultimo debe contestar al correo usando la siguiente estructura para indicar si el proyecto
@@ -207,9 +207,9 @@ es viable o no:
 Viable: Si/No
 
 Los datos de la empresa son los siguientes:
-Nombre de la organizacion:"""+OE-Name+"""
-Correo de la organizacion:"""+OE-Mail+"""
-Nombre de la persona encargada:"""+OE-Responsable+"""
+Nombre de la organizacion:"""+OEName+"""
+Correo de la organizacion:"""+OEMail+"""
+Nombre de la persona encargada:"""+OEResponsable+"""
 
 El link con la direccion de la solicitud es el siguiente:
 """+URLSolicitud+"""
@@ -279,7 +279,7 @@ execution.setVariable("Doc",docName)]]></activiti:string>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OE-Mail];
+            <activiti:string><![CDATA[def tos = [OEMail];
 def subject = "Copia convenio especifico";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para 
 la realizacion del proyecto: 
@@ -302,13 +302,13 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Firme junto con la empresa el siguiente convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OE-Name+"""
-Correo de la organizacion:"""+OE-Mail+"""
-Nombre de la persona encargada:"""+OE-Responsable+"""
+Nombre de la organizacion:"""+OEName+"""
+Correo de la organizacion:"""+OEMail+"""
+Nombre de la persona encargada:"""+OEResponsable+"""
 
 Para ello se ha elaborado el sigiuente convenio especifico, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
@@ -379,13 +379,13 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DP-Mail];
+            <activiti:string><![CDATA[def tos = [DPMail];
 def subject = "Redacte el convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OE-Name+"""
-Correo de la organizacion:"""+OE-Mail+"""
-Nombre de la persona encargada:"""+OE-Responsable+"""
+Nombre de la organizacion:"""+OEName+"""
+Correo de la organizacion:"""+OEMail+"""
+Nombre de la persona encargada:"""+OEResponsable+"""
 
 Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
 editando el documento que se encuentra disponible en el siguiente enlace:
@@ -416,7 +416,7 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OE-Mail];
+            <activiti:string><![CDATA[def tos = [OEMail];
 def subject = "Proyecto aceptado";
 def body ="""Hola, FIDETIA le informa que su proyecto ha sido aceptado. En el link que viene a continuacion podra ver
 una estimacion inicial del proyecto. Tanto si desea negociar el precio del proyecto como si no, responda este correo con la siguiente estructura:
@@ -445,12 +445,12 @@ execution.setVariable("body", body);]]></activiti:string>
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Revisar oferta del proyecto";
-def body ="Hola, la organizacion """+OE-Name+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
+def body ="Hola, la organizacion """+OEName+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
 un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
 
-Nombre de la organizacion:"""+OE-Name+"""
-Correo de la organizacion:"""+OE-Mail+"""
-Nombre de la persona encargada:"""+OE-Responsable+"""
+Nombre de la organizacion:"""+OEName+"""
+Correo de la organizacion:"""+OEMail+"""
+Nombre de la persona encargada:"""+OEResponsable+"""
 
 Pongase en contacto con la organizacion y negocien un acuerdo para realizar el proyecto. Una vez que se haya fijado el precio
 modificar la oferta.
@@ -479,13 +479,13 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Gerencia-Mail];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Revise el convenio marco de la empresa";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OE-Name+"""
-Correo de la organizacion:"""+OE-Mail+"""
-Nombre de la persona encargada:"""+OE-Responsable+"""
+Nombre de la organizacion:"""+OEName+"""
+Correo de la organizacion:"""+OEMail+"""
+Nombre de la persona encargada:"""+OEResponsable+"""
 
 Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respondiendo al correo con la siguiente estructura:
 
@@ -513,7 +513,7 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OE-Mail];
+            <activiti:string><![CDATA[def tos = [OEMail];
 def subject = "Oferta final del proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
 
@@ -543,11 +543,11 @@ execution.setVariable("body", body);]]></activiti:string>
     </sequenceFlow>
     <callActivity id="callactivity1" name="Convenio Marco" activiti:exclusive="false">
       <extensionElements>
-        <activiti:in source="OE-Mail" target="OE-Mail"></activiti:in>
-        <activiti:in source="OE-Name" target="OE-Name"></activiti:in>
-        <activiti:in source="OE-Responsable" target="OE-Responsable"></activiti:in>
-        <activiti:in source="RGET-Mail" target="RGET-Mail"></activiti:in>
-        <activiti:in source="Grenecia-Mail" target="Grenecia-Mail"></activiti:in>
+        <activiti:in source="OEMail" target="OEMail"></activiti:in>
+        <activiti:in source="OEName" target="OEName"></activiti:in>
+        <activiti:in source="OEResponsable" target="OEResponsable"></activiti:in>
+        <activiti:in source="RGETMail" target="RGETMail"></activiti:in>
+        <activiti:in source="GreneciaMail" target="GreneciaMail"></activiti:in>
       </extensionElements>
     </callActivity>
     <sequenceFlow id="flow59" sourceRef="exclusivegateway10" targetRef="callactivity1">

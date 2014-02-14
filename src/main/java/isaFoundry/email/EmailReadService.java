@@ -79,7 +79,7 @@ public class EmailReadService {
 	public List<Email> readEmails() {
 		List<Email> emails = new ArrayList<Email>();
 		try {
-			this.inbox.open(Folder.READ_WRITE);
+			this.inbox.open(Folder.READ_ONLY);//(Folder.READ_WRITE);
 			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
 			Message messages[] = this.inbox.search(ft);
 			for (Message msg : messages) {
@@ -88,7 +88,7 @@ public class EmailReadService {
 				email.From = msg.getFrom()[0].toString();
 				email.Body = this.getText(msg);
 				emails.add(email);
-				msg.setFlag(Flags.Flag.SEEN, true);
+				//msg.setFlag(Flags.Flag.SEEN, true);  //Marca Los mensajes como leidos
 			}
 			this.inbox.close(false);
 		} catch (MessagingException e) {
