@@ -111,7 +111,7 @@ execution.setVariable("body", body);]]></activiti:string>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
         <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def docName = "ViabilityStudy";
+            <activiti:string><![CDATA[def docName = "EstudioViabilidad.docx";
 execution.setVariable("Doc",docName);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
@@ -152,9 +152,9 @@ execution.setVariable("body", body);]]></activiti:string>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
         <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def src = ProjectPath+"/ProjectApplication"
-def dest = ProjectPath+"/Offer";
-def docName = "Offer";
+            <activiti:string><![CDATA[def src = ProjectPath+"/Solicitud.docx"
+def dest = ProjectPath;
+def docName = "Oferta";
 execution.setVariable("src",src);
 execution.setVariable("dest",dest);
 execution.setVariable("Doc",docName)]]></activiti:string>
@@ -171,13 +171,16 @@ execution.setVariable("Doc",docName)]]></activiti:string>
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [DETMail];
 def subject = "Designe a una persona para evaluar los requisitos del proyecto";
-def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar la persona encargada de evaluar los requisitos usando la siguiente estructura: 
-
-Correo de la persona encargada de evaluar los requisitos:
-
-El link con la direccion de la solicitud es el siguiente:
-"""+URLSolicitud+"""
-
+def body ="""\
+Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, para seleccionar 
+la persona encargada de evaluar los requisitos reponda al correo indicando el correo de dicha persona de la siguiente manera: 
+<br/><--
+<br/>
+Designado:
+<br/>-->
+El link con la direccion de la solicitud es el siguiente:<br/>
+"""+URLSolicitud+"""\
+<br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -198,7 +201,7 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [DesigneeMail];
+            <activiti:string><![CDATA[def tos = [Designado];
 def subject = "Evalue los requisitos del proyecto proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, ademas debe de realizar un estudio de viabilidad
 para ello se le adjunta una plantilla de estudio de viabilidad que debe rellenar. Por ultimo debe contestar al correo usando la siguiente estructura para indicar si el proyecto
@@ -207,18 +210,18 @@ es viable o no:
 Viable: Si/No
 
 Los datos de la empresa son los siguientes:
-Nombre de la organizacion:"""+OEName+"""
-Correo de la organizacion:"""+OEMail+"""
-Nombre de la persona encargada:"""+OEResponsable+"""
+Nombre de la organizacion:"""+Organizacion+"""
+Correo de la organizacion:"""+Email+"""
+Nombre de la persona encargada:"""+Contacto+"""
 
 El link con la direccion de la solicitud es el siguiente:
 """+URLSolicitud+"""
 
 El link con la plantilla del estudio de viabilidad es:
-"""+URLViabilityStudy+"""
+"""+URLEstudioViabilidad+"""
 
 Si el estudio de viabilidad es positivo modifique el documento para generar la oferta que recibirá la empresa:
-"""+URLOffer+"""
+"""+URLOferta+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -254,9 +257,9 @@ execution.setVariable("body", body);]]></activiti:string>
         <activiti:executionListener event="end" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
         <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def src = ProjectPath+"/Offer"
-def dest = ProjectPath+"/EspecificAgreement";
-def docName="EspecificAgreement"
+            <activiti:string><![CDATA[def src = ProjectPath+"/Oferta.docx"
+def dest = ProjectPath;
+def docName="ConvenioEspecifico"
 execution.setVariable("src",src);
 execution.setVariable("dest",dest);
 execution.setVariable("Doc",docName)]]></activiti:string>
@@ -279,13 +282,13 @@ execution.setVariable("Doc",docName)]]></activiti:string>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="end" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OEMail];
+            <activiti:string><![CDATA[def tos = [Email];
 def subject = "Copia convenio especifico";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para 
 la realizacion del proyecto: 
 
 El link con el convenio especifico del proyecto es el siguiente:
-"""+URLEspecificAgreement+"""
+"""+URLConvenioEspecifico+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -306,14 +309,14 @@ execution.setVariable("body", body);]]></activiti:string>
 def subject = "Firme junto con la empresa el siguiente convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OEName+"""
-Correo de la organizacion:"""+OEMail+"""
-Nombre de la persona encargada:"""+OEResponsable+"""
+Nombre de la organizacion:"""+Organizacion+"""
+Correo de la organizacion:"""+Email+"""
+Nombre de la persona encargada:"""+Contacto+"""
 
 Para ello se ha elaborado el sigiuente convenio especifico, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
 
-"""+URLEspecificAgreement+"""
+"""+URLConvenioEspecifico+"""
 
 Una vez firmado por favor responda al correo con siguiente formato:
 
@@ -349,7 +352,7 @@ realizado correctamente o no, con el siguiente formato:
 Dado de alta: Si/No
 
 El link con la direccion del convenio especifico es el siguiente:
-"""+URLEspecificAgreement+"""
+"""+URLConvenioEspecifico+"""
 
 
 Muchas gracias por su tiempo.""";
@@ -373,7 +376,7 @@ execution.setVariable("body", body);]]></activiti:string>
     </startEvent>
     <exclusiveGateway id="exclusivegateway13" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow44" sourceRef="exclusivegateway10" targetRef="exclusivegateway13">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Client==True}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Firmado=="Si"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow45" sourceRef="exclusivegateway13" targetRef="usertask15">
       <extensionElements>
@@ -383,14 +386,14 @@ execution.setVariable("body", body);]]></activiti:string>
 def subject = "Redacte el convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OEName+"""
-Correo de la organizacion:"""+OEMail+"""
-Nombre de la persona encargada:"""+OEResponsable+"""
+Nombre de la organizacion:"""+Organizacion+"""
+Correo de la organizacion:"""+Email+"""
+Nombre de la persona encargada:"""+Contacto+"""
 
 Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
 editando el documento que se encuentra disponible en el siguiente enlace:
 
-"""+URLEspecificAgreement+"""
+"""+URLConvenioEspecifico+"""
 
 Una vez redactado por favor responda al correo con siguiente formato:
 
@@ -416,15 +419,15 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OEMail];
+            <activiti:string><![CDATA[def tos = [Email];
 def subject = "Proyecto aceptado";
 def body ="""Hola, FIDETIA le informa que su proyecto ha sido aceptado. En el link que viene a continuacion podra ver
 una estimacion inicial del proyecto. Tanto si desea negociar el precio del proyecto como si no, responda este correo con la siguiente estructura:
 
-Negociar oferta: Si/No
+Negociar:Si/No
 
 El link con la oferta inicial es el siguiente:
-"""+URLOffer+"""
+"""+URLOferta+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -445,22 +448,22 @@ execution.setVariable("body", body);]]></activiti:string>
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Revisar oferta del proyecto";
-def body ="Hola, la organizacion """+OEName+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
+def body ="""Hola, la organizacion """+Organizacion+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
 un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
 
-Nombre de la organizacion:"""+OEName+"""
-Correo de la organizacion:"""+OEMail+"""
-Nombre de la persona encargada:"""+OEResponsable+"""
+Nombre de la organizacion:"""+Organizacion+"""
+Correo de la organizacion:"""+Email+"""
+Nombre de la persona encargada:"""+Contacto+"""
 
 Pongase en contacto con la organizacion y negocien un acuerdo para realizar el proyecto. Una vez que se haya fijado el precio
 modificar la oferta.
 
 El link con la direccion de la oferta es el siguiente:
-"""+URLOffer+"""
+"""+URLOferta+"""
 
 Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:
 
-Acuerdo: Si/No
+Acuerdo:Si/No
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -472,7 +475,7 @@ execution.setVariable("body", body);]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Offer==True}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Negociar=="Si"}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway15" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow51" sourceRef="exclusivegateway15" targetRef="usertask13">
@@ -483,13 +486,13 @@ execution.setVariable("body", body);]]></activiti:string>
 def subject = "Revise el convenio marco de la empresa";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
 
-Nombre de la organizacion:"""+OEName+"""
-Correo de la organizacion:"""+OEMail+"""
-Nombre de la persona encargada:"""+OEResponsable+"""
+Nombre de la organizacion:"""+Organizacion+"""
+Correo de la organizacion:"""+Email+"""
+Nombre de la persona encargada:"""+Contacto+"""
 
 Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respondiendo al correo con la siguiente estructura:
 
-Convenio Marco: Si/No
+Firmado:Si/No
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -503,7 +506,7 @@ execution.setVariable("body", body);]]></activiti:string>
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="flow52" sourceRef="exclusivegateway14" targetRef="exclusivegateway15">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Offer==False}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Negociar=="No"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow53" sourceRef="usertask3" targetRef="exclusivegateway5"></sequenceFlow>
     <sequenceFlow id="flow54" sourceRef="usertask9" targetRef="exclusivegateway6"></sequenceFlow>
@@ -513,12 +516,12 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [OEMail];
+            <activiti:string><![CDATA[def tos = [Email];
 def subject = "Oferta final del proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
 
 El link con la direccion de la oferta del proyecto es el siguiente:
-"""+URLOffer+"""
+"""+URLOferta+"""
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -535,23 +538,26 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Continue==True}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Acuerdo=="Si"}]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent4" name="End"></endEvent>
     <sequenceFlow id="flow58" sourceRef="exclusivegateway16" targetRef="endevent4">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Continue==False}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Acuerdo=="No"}]]></conditionExpression>
     </sequenceFlow>
-    <callActivity id="callactivity1" name="Convenio Marco" activiti:exclusive="false">
+    <callActivity id="callactivity1" name="Convenio Marco" activiti:exclusive="false" calledElement="ConvenioMarco">
       <extensionElements>
-        <activiti:in source="OEMail" target="OEMail"></activiti:in>
-        <activiti:in source="OEName" target="OEName"></activiti:in>
-        <activiti:in source="OEResponsable" target="OEResponsable"></activiti:in>
+        <activiti:in source="Email" target="Email"></activiti:in>
+        <activiti:in source="Organizacion" target="Organizacion"></activiti:in>
+        <activiti:in source="Contacto" target="Contacto"></activiti:in>
         <activiti:in source="RGETMail" target="RGETMail"></activiti:in>
         <activiti:in source="GreneciaMail" target="GreneciaMail"></activiti:in>
+        <activiti:in source="ProjectPath" target="ProjectPath"></activiti:in>
+        <activiti:in source="TemplateDirectory" target="TemplateDirectory"></activiti:in>
+        <activiti:in source="Firmado" target="Firmado"></activiti:in>
       </extensionElements>
     </callActivity>
     <sequenceFlow id="flow59" sourceRef="exclusivegateway10" targetRef="callactivity1">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Client==False}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Firmado=="No"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow60" sourceRef="callactivity1" targetRef="exclusivegateway13"></sequenceFlow>
   </process>
@@ -670,7 +676,7 @@ execution.setVariable("body", body);]]></activiti:string>
         <omgdi:waypoint x="1382.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="1382.0" y="292.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="14.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
@@ -701,7 +707,7 @@ execution.setVariable("body", body);]]></activiti:string>
         <omgdi:waypoint x="1402.0" y="207.0"></omgdi:waypoint>
         <omgdi:waypoint x="1527.0" y="207.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow49" id="BPMNEdge_flow49">

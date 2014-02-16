@@ -27,6 +27,8 @@ public class Main {
 		 * var.put("subject" , "Prueba de envio de correo");
 		 * var.put("body" , "Prueba body");
 		 */
+		
+		/*
 		var.put("DPMail" , "scrhall@scrhall.com");
 		var.put("DETMail" , "scrhall@scrhall.com");
 		var.put("GerenciaMail" , "scrhall@scrhall.com");
@@ -34,6 +36,16 @@ public class Main {
 		var.put("ProjectName" , "ProyectoPrueba");
 		var.put("TemplateDirectory" , "/Plantillas/CreacionProyecto");
 		var.put("Doc" , "Solicitud.docx");
+		*/
+		
+		var.put("DPMail" , "jualopver@gmail.com");
+		var.put("DETMail" , "jualopver@gmail.com");
+		var.put("GerenciaMail" , "jualopver@gmail.com");
+		var.put("RGFMail" , "jualopver@gmail.com");
+		var.put("ProjectName" , "ProyectoPrueba");
+		var.put("TemplateDirectory" , "/Plantillas/CreacionProyecto");
+		var.put("Doc" , "Solicitud.docx");
+		
 		Core.startProcces("CreacionProyecto" , var);
 		/*
 		 * String webappDirLocation = "src/main/webapp/";

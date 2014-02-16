@@ -22,7 +22,7 @@ public class CopyDocumentTemplate implements ExecutionListener {
 		// dest=dest+"/"+doc;
 		// Copiamos y guardamos el path del documento
 		Log.info("Copiando Documento de: " + source + " a: " + dest);
-		Core.copyDoc(source , dest);
+		Core.copyDoc(source , dest, doc);
 		execution.setVariable("Path" + doc , dest);
 		Log.info("Copia finalizada de: " + source + " a: " + dest);
 		// Obtenemos la URL y la guardamos

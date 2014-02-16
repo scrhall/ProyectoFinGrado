@@ -111,7 +111,9 @@ public class ContentManager {
 	 * @param targetFolder
 	 *            directorio de destino
 	 */
-	public void copyDoc(Document doc, Folder targetFolder) {
+	
+	//Hacemos una pequeña modificacion, ahora añadimos el nombre que queremos darle al nuevo documento.
+	public void copyDoc(Document doc, Folder targetFolder,String name) {
 		try {
 			String mimeType = doc.getContentStreamMimeType();
 			ContentStream contentStream = new ContentStreamImpl(doc.getName() , null , mimeType , new DataInputStream(doc.getContentStream()
@@ -119,7 +121,7 @@ public class ContentManager {
 			Map<String, Object> properties = new HashMap<String, Object>();
 			// File properties (minimal set: fileName and object type id)
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
-			properties.put(PropertyIds.NAME , doc.getName());
+			properties.put(PropertyIds.NAME , name);//doc.getName()
 			targetFolder.createDocument(properties , contentStream , VersioningState.MAJOR);
 		} catch (Exception e) {
 			Log.error("Error: " + e.getMessage());
@@ -134,10 +136,10 @@ public class ContentManager {
 	 * @param targetPath
 	 *            ruta del directorio destino
 	 */
-	public void copyDoc(String filePath, String targetPath) {
+	public void copyDoc(String filePath, String targetPath, String name) {
 		Document doc = (Document) this.session.getObjectByPath(filePath);
 		Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
-		this.copyDoc(doc , targetFolder);
+		this.copyDoc(doc , targetFolder, name);
 	}
 
 	/**
@@ -150,12 +152,14 @@ public class ContentManager {
 	 * @param targetPath
 	 *            ruta del directorio destino
 	 */
+	
+	/*
 	public void copyDoc(String fileName, String sourcePath, String targetPath) {
 		Document doc = (Document) this.session.getObjectByPath(sourcePath + fileName);
 		Folder targetFolder = (Folder) this.session.getObjectByPath(targetPath);
 		this.copyDoc(doc , targetFolder);
 	}
-
+	*/	
 	/**
 	 * obtiene la url de un documento de nuestro repositorio a partir de un
 	 * objeto Document

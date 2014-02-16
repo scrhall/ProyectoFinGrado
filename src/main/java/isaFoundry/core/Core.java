@@ -33,8 +33,8 @@ public class Core {
 	 * @param destinationPath
 	 *            carpeta destino
 	 */
-	public static void copyDoc(String filePath, String destinationPath) {
-		cManager.copyDoc(filePath , destinationPath);
+	public static void copyDoc(String filePath, String destinationPath, String name) {
+		cManager.copyDoc(filePath , destinationPath, name);
 	}
 
 	/**
@@ -47,9 +47,11 @@ public class Core {
 	 * @param destinationPath
 	 *            carpeta destino
 	 */
+	/*
 	public static void copyDoc(String fileName, String sourcePath, String destinationPath) {
 		cManager.copyDoc(fileName , sourcePath , destinationPath);
 	}
+	*/
 
 	public static void doTasks(List<UserTaskRequest> lt) {
 		pEngine.doTasks(lt);

@@ -20,10 +20,10 @@ public class CopyDocument implements ExecutionListener {
 		String doc = (String) execution.getVariable("Doc");
 		// Copiamos y guardamos el path del documento
 		Log.info("CopiandoDocumento de: " + src + " a: " + dest);
-		Core.copyDoc(src , dest);
+		Core.copyDoc(src , dest, doc+".docx");
 		execution.setVariable("Path" + doc , dest);
 		// Obtenemos la URL y la guardamos
-		String URLDoc = Core.urlDoc(dest);
+		String URLDoc = Core.urlDoc(dest+"/"+doc+".docx");
 		Log.info("Creando variable URL" + doc + " con valor: " + URLDoc);
 		execution.setVariable("URL" + doc , URLDoc);
 		// Podriamos añadir PDF
