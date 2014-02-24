@@ -39,7 +39,7 @@ public class Main {
 		*/
 		
 		var.put("DPMail" , "jualopver@gmail.com");
-		var.put("DETMail" , "jualopver@gmail.com");
+		//var.put("DETMail" , "jualopver@gmail.com");
 		var.put("GerenciaMail" , "jualopver@gmail.com");
 		var.put("RGFMail" , "jualopver@gmail.com");
 		var.put("ProjectName" , "ProyectoPrueba");

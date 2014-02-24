@@ -53,6 +53,7 @@
 			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLSolicitud+"""\
 			<br/>
 			<br/>
+			Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
 			execution.setVariable("subject", subject)
@@ -76,12 +77,14 @@
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Evalue el proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y evaluarlo para decidir si es valido o no para FIDETIA. Ademas debera de contestar este correo indicando si es valido o no el proyecto usando la siguiente estructura: 
-
-Aceptado: Si/No 
-
-El link con la direccion de la solicitud es el siguiente:
+<br/><br/>
+<--<br/>
+Aceptado: Si/No <br/>
+--><br/>
+<br/>
+El link con la direccion de la solicitud es el siguiente:<br/>
 """+URLSolicitud+"""
-
+<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -127,13 +130,15 @@ execution.setVariable("Doc",docName);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Seleccione el equipo de trabajo";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto y seleccionar el equipo de trabajo que lo realizara usando la siguiente estructura: 
-
-Nombre del equipo de trabajo:
-Correo del director del equipo de trabajo: 
-
-El link con la direccion de la solicitud es el siguiente:
+<br/><br/>
+<--<br/>
+ET: <br/>
+DETMail: <br/>
+--><br/>
+<br/>
+El link con la direccion de la solicitud es el siguiente:<br/>
 """+URLSolicitud+"""
-
+<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -173,14 +178,16 @@ execution.setVariable("Doc",docName)]]></activiti:string>
 def subject = "Designe a una persona para evaluar los requisitos del proyecto";
 def body ="""\
 Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, para seleccionar 
-la persona encargada de evaluar los requisitos reponda al correo indicando el correo de dicha persona de la siguiente manera: 
-<br/><--
-<br/>
-Designado:
+la persona encargada de evaluar los requisitos, ademas debera indicar quien es Responsable de Gestion del Equipo de Trabajo
+respondiendo al correo indicando las direcciones de correo electronico de ambos de la siguiente manera: 
+<br/><br/>
+<--<br/>
+Designado:<br/>
+RGETMail:<br/>
 <br/>-->
 El link con la direccion de la solicitud es el siguiente:<br/>
 """+URLSolicitud+"""\
-<br/>
+<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -206,23 +213,26 @@ def subject = "Evalue los requisitos del proyecto proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la solicitud del proyecto, ademas debe de realizar un estudio de viabilidad
 para ello se le adjunta una plantilla de estudio de viabilidad que debe rellenar. Por ultimo debe contestar al correo usando la siguiente estructura para indicar si el proyecto
 es viable o no: 
-
-Viable: Si/No
-
-Los datos de la empresa son los siguientes:
-Nombre de la organizacion:"""+Organizacion+"""
-Correo de la organizacion:"""+Email+"""
-Nombre de la persona encargada:"""+Contacto+"""
-
-El link con la direccion de la solicitud es el siguiente:
+<br/>
+<br/>
+<--<br/>
+Viable: Si/No<br/>
+--><br/>
+<br/>
+Los datos de la empresa son los siguientes:<br/>
+Nombre de la organizacion:"""+Organizacion+"""<br/>
+Correo de la organizacion:"""+Email+"""<br/>
+Nombre de la persona encargada:"""+Contacto+"""<br/>
+<br/>
+El link con la direccion de la solicitud es el siguiente:<br/>
 """+URLSolicitud+"""
-
-El link con la plantilla del estudio de viabilidad es:
+<br/><br/>
+El link con la plantilla del estudio de viabilidad es:<br/>
 """+URLEstudioViabilidad+"""
-
-Si el estudio de viabilidad es positivo modifique el documento para generar la oferta que recibirá la empresa:
+<br/><br/>
+Si el estudio de viabilidad es positivo modifique el documento para generar la oferta que recibirá la empresa:<br/>
 """+URLOferta+"""
-
+<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -286,10 +296,12 @@ execution.setVariable("Doc",docName)]]></activiti:string>
 def subject = "Copia convenio especifico";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para 
 la realizacion del proyecto: 
-
-El link con el convenio especifico del proyecto es el siguiente:
+<br/>
+<br/>
+El link con el convenio especifico del proyecto es el siguiente:<br/>
 """+URLConvenioEspecifico+"""
-
+<br/><br/>
+Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -308,19 +320,18 @@ execution.setVariable("body", body);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Firme junto con la empresa el siguiente convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
-
-Nombre de la organizacion:"""+Organizacion+"""
-Correo de la organizacion:"""+Email+"""
-Nombre de la persona encargada:"""+Contacto+"""
-
+<br/>
+<br/>
+Nombre de la organizacion:"""+Organizacion+"""<br/>
+Correo de la organizacion:"""+Email+"""<br/>
+Nombre de la persona encargada:"""+Contacto+"""<br/>
+<br/>
 Para ello se ha elaborado el sigiuente convenio especifico, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
-
+<br/>
 """+URLConvenioEspecifico+"""
-
-Una vez firmado por favor responda al correo con siguiente formato:
-
-Firmado: Si
+<br/>
+Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -346,14 +357,13 @@ execution.setVariable("body", body);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [RGFMail];
 def subject = "De el proyecto de alta en la aplicacion";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio especifico firmado para realizacion de
-un proyecto. Por favor de el proyecto de alta en la aplicacion de FIDETIA. Tras hacerlo responda al correo, indicando si lo ha 
-realizado correctamente o no, con el siguiente formato:  
+un proyecto. Por favor de el proyecto de alta en la aplicacion de FIDETIA. 
+<br/><br/>
+Tras haber haberlo dado de alta responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 
-Dado de alta: Si/No
-
-El link con la direccion del convenio especifico es el siguiente:
+El link con la direccion del convenio especifico es el siguiente:<br/>
 """+URLConvenioEspecifico+"""
-
+<br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -385,20 +395,17 @@ execution.setVariable("body", body);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [DPMail];
 def subject = "Redacte el convenio especifico";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
-
-Nombre de la organizacion:"""+Organizacion+"""
-Correo de la organizacion:"""+Email+"""
-Nombre de la persona encargada:"""+Contacto+"""
-
+<br/>
+Nombre de la organizacion:"""+Organizacion+"""<br/>
+Correo de la organizacion:"""+Email+"""<br/>
+Nombre de la persona encargada:"""+Contacto+"""<br/>
+<br/>
 Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
-editando el documento que se encuentra disponible en el siguiente enlace:
+editando el documento que se encuentra disponible en el siguiente enlace:<br/>
 
 """+URLConvenioEspecifico+"""
-
-Una vez redactado por favor responda al correo con siguiente formato:
-
-Finalizado: Si
-
+<br/><br/>
+Una vez redactado responda al correo, no es necesario escribir ningun texto<br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -423,11 +430,12 @@ execution.setVariable("body", body);]]></activiti:string>
 def subject = "Proyecto aceptado";
 def body ="""Hola, FIDETIA le informa que su proyecto ha sido aceptado. En el link que viene a continuacion podra ver
 una estimacion inicial del proyecto. Tanto si desea negociar el precio del proyecto como si no, responda este correo con la siguiente estructura:
-
-Negociar:Si/No
-
-El link con la oferta inicial es el siguiente:
-"""+URLOferta+"""
+<br/><br/>
+<--<br/>
+Negociar:Si/No<br/>
+--><br/><br/>
+El link con la oferta inicial es el siguiente:<br/>
+"""+URLOferta+"""<br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -450,21 +458,22 @@ execution.setVariable("body", body);]]></activiti:string>
 def subject = "Revisar oferta del proyecto";
 def body ="""Hola, la organizacion """+Organizacion+""" quiere revisar la oferta inicial hecha por FIDETIA,a continuacion se adjunta 
 un link desde el que puede ver la oferta del proyecto. Los datos de la empresa se muestran a continuacion:
-
-Nombre de la organizacion:"""+Organizacion+"""
-Correo de la organizacion:"""+Email+"""
-Nombre de la persona encargada:"""+Contacto+"""
-
+<br/>
+Nombre de la organizacion:"""+Organizacion+"""<br/>
+Correo de la organizacion:"""+Email+"""<br/>
+Nombre de la persona encargada:"""+Contacto+"""<br/>
+<br/>
 Pongase en contacto con la organizacion y negocien un acuerdo para realizar el proyecto. Una vez que se haya fijado el precio
-modificar la oferta.
+modificar la oferta.<br/>
 
-El link con la direccion de la oferta es el siguiente:
-"""+URLOferta+"""
+El link con la direccion de la oferta es el siguiente:<br/>
+"""+URLOferta+"""<br/><br/>
 
-Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:
-
-Acuerdo:Si/No
-
+Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:<br/>
+<br/>
+<--<br/>
+Acuerdo:Si/No<br/>
+--><br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -485,15 +494,16 @@ execution.setVariable("body", body);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Revise el convenio marco de la empresa";
 def body ="""Hola, la siguiente empresa tiene aceptada una oferta y desea llevarla a cabo: 
-
-Nombre de la organizacion:"""+Organizacion+"""
-Correo de la organizacion:"""+Email+"""
-Nombre de la persona encargada:"""+Contacto+"""
+<br/>
+Nombre de la organizacion:"""+Organizacion+"""<br/>
+Correo de la organizacion:"""+Email+"""<br/>
+Nombre de la persona encargada:"""+Contacto+"""<br/><br/>
 
 Indique si la empresa tiene ya firmado el convenio marco con FIDETIA o no respondiendo al correo con la siguiente estructura:
-
-Firmado:Si/No
-
+<br/><br/>
+<--<br/>
+Firmado:Si/No<br/>
+--><br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -519,9 +529,9 @@ execution.setVariable("body", body);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [Email];
 def subject = "Oferta final del proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
-
-El link con la direccion de la oferta del proyecto es el siguiente:
-"""+URLOferta+"""
+<br/><br/>
+El link con la direccion de la oferta del proyecto es el siguiente:<br/>
+"""+URLOferta+"""<br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -550,7 +560,7 @@ execution.setVariable("body", body);]]></activiti:string>
         <activiti:in source="Organizacion" target="Organizacion"></activiti:in>
         <activiti:in source="Contacto" target="Contacto"></activiti:in>
         <activiti:in source="RGETMail" target="RGETMail"></activiti:in>
-        <activiti:in source="GreneciaMail" target="GreneciaMail"></activiti:in>
+        <activiti:in source="GerenciaMail" target="GerenciaMail"></activiti:in>
         <activiti:in source="ProjectPath" target="ProjectPath"></activiti:in>
         <activiti:in source="TemplateDirectory" target="TemplateDirectory"></activiti:in>
         <activiti:in source="Firmado" target="Firmado"></activiti:in>

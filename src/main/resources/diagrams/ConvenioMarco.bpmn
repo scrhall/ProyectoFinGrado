@@ -39,9 +39,9 @@ execution.setVariable("Doc",docName);]]></activiti:string>
             <activiti:string><![CDATA[def tos = [Email];
 def subject = "Copia convenio marco";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver el convenio marco firmado: 
-
-El link con el convenio marco del proyecto es el siguiente:
-"""+URLConvenioMarco+"""
+<br/><br/>
+El link con el convenio marco del proyecto es el siguiente:<br/>
+"""+URLConvenioMarco+"""<br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -58,17 +58,15 @@ execution.setVariable("body", body);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = ["jualopver@gmail.com"];
+            <activiti:string><![CDATA[def tos = [GerenciaMail];
 def subject = "Firme junto con la empresa el siguiente convenio marco";
 def body ="""Hola, a continuacion se adjunta el convenio marco, por favor concerte una cita con la empresa responsable
-y firme el documento que se encuentra disponible en el siguiente enlace:
+y firme el documento que se encuentra disponible en el siguiente enlace:<br/>
 
-"""+URLConvenioMarco+"""
+"""+URLConvenioMarco+"""<br/><br/>
 
-Una vez firmado por favor introduzcalo en la aplicacion de FIDETIA y responda al correo con siguiente formato:
-
-Firmado: Si
-
+Una vez firmado por favor introduzcalo en la aplicacion de FIDETIA y responda al correo, no es necesario escribir nada.<br/>
+<br/>
 Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos);
 execution.setVariable("subject", subject);
@@ -89,19 +87,18 @@ execution.setVariable("body", body);]]></activiti:string>
     <sequenceFlow id="flow8" sourceRef="exclusivegateway1" targetRef="scripttask2"></sequenceFlow>
     <sequenceFlow id="flow9" sourceRef="scripttask2" targetRef="exclusivegateway2"></sequenceFlow>
     <scriptTask id="scripttask1" name="Email subproceso" scriptFormat="groovy" activiti:autoStoreVariables="false">
-      <script>def tos = ["jualopver@gmail.com"]
+      <script>def tos = [RGETMail]
 def subject = "Rellene el convenio marco de la empresa"
 def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco para la siguiente empresa:
+<br/><br/>
+Nombre de la orgacion: """+Organizacion+"""<br/>
+Email de contacto:  """+Email+"""<br/>
+Persona de contacto: """+Contacto+"""<br/>
+<br/>
+El link con la plantilla del convenio marco es el siguiente:<br/>
+"""+URLConvenioMarco+"""<br/><br/>
 
-Nombre de la orgacion: """+Organizacion+"""
-Email de contacto:  """+Email+"""
-Persona de contacto: """+Contacto+"""
-
-El link con la plantilla del convenio marco es el siguiente:
-"""+URLConvenioMarco+"""
-
-Una vez terminado de redactar responda al correo con la siguiente estructura:
-Terminado: Si
+Una vez terminado de redactar responda al correo, no es necesario escribir nada.<br/><br/>
 
 Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
@@ -109,15 +106,19 @@ execution.setVariable("subject", subject)
 execution.setVariable("body", body)</script>
     </scriptTask>
     <scriptTask id="scripttask2" name="Email no subproces" scriptFormat="groovy" activiti:autoStoreVariables="false">
-      <script>def tos = [GerenciaMail]
+      <script>def tos = [RGETMail]
 def subject = "Rellene el convenio marco"
-def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco :
-El link con la plantilla del convenio marco es el siguiente:
-"""+URLConvenioMarco+"""
+def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco:<br/><br/>
+El link con la plantilla del convenio marco es el siguiente:<br/>
+"""+URLConvenioMarco+"""<br/><br/>
 
-Una vez terminado de redactar responda al correo con la siguiente estructura:
-Email de la empresa: 
-Terminado: Si
+Una vez terminado de redactar responda al correo con la siguiente estructura rellenando los datos de la empresa:<br/>
+<br/><br/>
+<--<br/>
+Organizacion:<br/>
+Email: <br/>
+Contacto: <br/>
+--><br/><br/>
 
 Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
