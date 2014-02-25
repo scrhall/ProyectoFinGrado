@@ -90,16 +90,16 @@ execution.setVariable("body", body);]]></activiti:string>
       <script>def tos = [RGETMail]
 def subject = "Rellene el convenio marco de la empresa"
 def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco para la siguiente empresa:
-<br/><br/>
-Nombre de la orgacion: """+Organizacion+"""<br/>
-Email de contacto:  """+Email+"""<br/>
-Persona de contacto: """+Contacto+"""<br/>
-<br/>
-El link con la plantilla del convenio marco es el siguiente:<br/>
-"""+URLConvenioMarco+"""<br/><br/>
+&lt;br/&gt;&lt;br/&gt;
+Nombre de la orgacion: """+Organizacion+"""&lt;br/&gt;
+Email de contacto:  """+Email+"""&lt;br/&gt;
+Persona de contacto: """+Contacto+"""&lt;br/&gt;
+&lt;br/&gt;
+El link con la plantilla del convenio marco es el siguiente:&lt;br/&gt;
+"""+URLConvenioMarco+"""&lt;br/&gt;&lt;br/&gt;
 
-Una vez terminado de redactar responda al correo, no es necesario escribir nada.<br/><br/>
-
+Una vez terminado de redactar responda al correo, no es necesario escribir nada.
+&lt;br/&gt;&lt;br/&gt;
 Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
 execution.setVariable("subject", subject)
@@ -108,17 +108,18 @@ execution.setVariable("body", body)</script>
     <scriptTask id="scripttask2" name="Email no subproces" scriptFormat="groovy" activiti:autoStoreVariables="false">
       <script>def tos = [RGETMail]
 def subject = "Rellene el convenio marco"
-def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco:<br/><br/>
-El link con la plantilla del convenio marco es el siguiente:<br/>
-"""+URLConvenioMarco+"""<br/><br/>
+def body ="""Hola, a continuacion se adjunta un link desde el que puede rellenar el convenio marco:
+&lt;br/&gt;
+El link con la plantilla del convenio marco es el siguiente:&lt;br/&gt;
+"""+URLConvenioMarco+"""&lt;br/&gt;&lt;br/&gt;
 
-Una vez terminado de redactar responda al correo con la siguiente estructura rellenando los datos de la empresa:<br/>
-<br/><br/>
-<--<br/>
-Organizacion:<br/>
-Email: <br/>
-Contacto: <br/>
---><br/><br/>
+Una vez terminado de redactar responda al correo con la siguiente estructura rellenando los datos de la empresa:
+&lt;br/&gt;&lt;br/&gt;
+&lt;--&lt;br/&gt;
+Organizacion:&lt;br/&gt;
+Email: &lt;br/&gt;
+Contacto: &lt;br/&gt;
+--&gt;&lt;br/&gt;&lt;br/&gt;
 
 Muchas gracias por su tiempo."""
 execution.setVariable("tos",tos)
