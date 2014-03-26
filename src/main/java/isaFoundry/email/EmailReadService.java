@@ -1,10 +1,10 @@
 package isaFoundry.email;
 
 
+import isaFoundry.core.Core;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Flags;
@@ -15,23 +15,63 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.event.MessageCountAdapter;
+import javax.mail.event.MessageCountEvent;
 import javax.mail.search.FlagTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.mail.iap.ProtocolException;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.protocol.IMAPProtocol;
+
 
 public class EmailReadService {
 
-	private Logger				Log			= LoggerFactory.getLogger(EmailReadService.class);
+	private static class KeepAliveRunnable implements Runnable {
+
+		private static final long	KEEP_ALIVE_FREQ	= 300000;	// 5 minutes
+		private IMAPFolder			folder;
+
+		public KeepAliveRunnable(IMAPFolder folder) {
+			this.folder = folder;
+		}
+
+		public void run() {
+			while (!Thread.interrupted()) {
+				try {
+					Thread.sleep(KEEP_ALIVE_FREQ);
+					// Perform a NOOP just to keep alive the connection
+					Log.info("Performing a NOOP to keep alvie the connection");
+					this.folder.doCommand(new IMAPFolder.ProtocolCommand() {
+
+						public Object doCommand(IMAPProtocol p) throws ProtocolException {
+							p.simpleCommand("NOOP" , null);
+							return null;
+						}
+					});
+				} catch (InterruptedException e) {
+					// Ignore, just aborting the thread...
+				} catch (MessagingException e) {
+					// Shouldn't really happen...
+					Log.warn("Unexpected exception while keeping alive the IDLE connection" , e);
+				}
+			}
+		}
+	}
+
+	private static Logger		Log			= LoggerFactory.getLogger(EmailReadService.class);
 	private final Properties	properties	= new Properties();
 	private String				pass , user , host;
-	private Folder				inbox;
+	private IMAPFolder			inbox;
 	private Session				session;
+	private EmailService		emailService;
 
 	// Constructor
-	public EmailReadService() {
+	public EmailReadService(EmailService emailService) {
 		try {
+			this.emailService = emailService;
 			Properties config = new Properties();
 			config.load(this.getClass().getResourceAsStream("/config/emailRead.properties"));
 			this.user = config.getProperty("USER");
@@ -40,11 +80,11 @@ public class EmailReadService {
 			this.properties.put("mail.store.protocol" , "imaps");
 			this.session = Session.getDefaultInstance(this.properties);
 		} catch (FileNotFoundException e) {
-			this.Log.error("Error: Archivo no encontrado | emailRead.properties " + e);
+			Log.error("Error: Archivo no encontrado | emailRead.properties " + e);
 		} catch (IOException e) {
-			this.Log.info("Error: Entrada/Salida |  emailRead.properties " + e);
+			Log.info("Error: Entrada/Salida |  emailRead.properties " + e);
 		} catch (NullPointerException e) {
-			this.Log.info("Error: NullPointerException | emailRead.properties " + e);
+			Log.info("Error: NullPointerException | emailRead.properties " + e);
 		}
 	}
 
@@ -54,8 +94,19 @@ public class EmailReadService {
 			props.setProperty("mail.store.protocol" , "imaps");
 			Store store = this.session.getStore("imaps");
 			store.connect(this.host , this.user , this.pass);
-			this.inbox = store.getFolder("Inbox");
-			// Obtenemos la bandeja de entrada como carpeta a analizar
+			this.inbox = (IMAPFolder) store.getFolder("Inbox");
+			this.inbox.addMessageCountListener(new MessageCountAdapter() {
+
+				@Override
+				public void messagesAdded(MessageCountEvent ev) {
+					try {
+						Core.doTasks(EmailReadService.this.emailService.taskReceived());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			this.startListening(this.inbox);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,43 +114,7 @@ public class EmailReadService {
 		}
 	}
 
-	public int getUnreadMessageCount() {
-		try {
-			this.inbox.open(Folder.READ_ONLY);
-			int count = this.inbox.getUnreadMessageCount();
-			this.inbox.close(false);
-			return count;
-		} catch (Exception e) {
-			System.out.println(e);
-			return -1;
-			// En caso de una excepcion retornamos -1
-		}
-	}
-
-	public List<Email> readEmails() {
-		List<Email> emails = new ArrayList<Email>();
-		try {
-			this.inbox.open(Folder.READ_ONLY);//(Folder.READ_WRITE);
-			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
-			Message messages[] = this.inbox.search(ft);
-			for (Message msg : messages) {
-				Email email = new Email();
-				email.Subject = msg.getSubject();
-				email.From = msg.getFrom()[0].toString();
-				email.Body = this.getText(msg);
-				emails.add(email);
-				//msg.setFlag(Flags.Flag.SEEN, true);  //Marca Los mensajes como leidos
-			}
-			this.inbox.close(false);
-		} catch (MessagingException e) {
-			this.Log.error("Error: MessagingException al leer los mensajes | " + e);
-		} catch (IOException e) {
-			this.Log.error("Error: Entrada/Salida al leer los mensajes | " + e);
-		}
-		return emails;
-	}
-
-	private String getText(Part p) throws MessagingException, IOException {
+	public String getText(Part p) throws MessagingException, IOException {
 		if (p.isMimeType("text/*")) {
 			String s = (String) p.getContent();
 			p.isMimeType("text/html");
@@ -135,5 +150,47 @@ public class EmailReadService {
 			}
 		}
 		return null;
+	}
+
+	public Message[] readEmails() {
+		try {
+			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
+			Message messages[] = this.inbox.search(ft);
+			for (Message msg : messages) {
+				msg.setFlag(Flags.Flag.SEEN , true); // Marca Los mensajes como
+				// leidos
+			}
+			return messages;
+		} catch (MessagingException e) {
+			EmailReadService.Log.error("Error: MessagingException al leer los mensajes | " + e);
+		}
+		return null;
+	}
+
+	public void startListening(IMAPFolder imapFolder) {
+		// We need to create a new thread to keep alive the connection
+		try {
+			EmailReadService.Log.info("Inicio de la escucha");
+			imapFolder.open(Folder.READ_WRITE);
+			Thread t = new Thread(new KeepAliveRunnable(imapFolder) , "IdleConnectionKeepAlive");
+			t.start();
+			EmailReadService.Log.info("Iniciado hilo para mantener la conexion activa");
+			while (!Thread.interrupted()) {
+				Log.debug("Starting IDLE");
+				try {
+					imapFolder.idle();
+				} catch (MessagingException e) {
+					Log.warn("Messaging exception during IDLE" , e);
+					throw new RuntimeException(e);
+				}
+			}
+			// Shutdown keep alive thread
+			if (t.isAlive()) {
+				t.interrupt();
+			}
+		} catch (MessagingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

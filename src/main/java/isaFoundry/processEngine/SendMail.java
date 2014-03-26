@@ -19,13 +19,9 @@ public class SendMail implements ExecutionListener {
 		List<String> tos = (List<String>) execution.getVariable("tos");
 		Log.info("Variable tos =" + tos);
 		String subject = (String) execution.getVariable("subject");
-		subject = subject + "   -=[" + execution.getProcessInstanceId() + "|" + execution.getCurrentActivityId() + "|DONE";// falta
-																															// que
-																															// venga
-																															// por
-																															// execution.getVariable("Action")
 		Log.info("Variable subject =" + subject);
 		String body = (String) execution.getVariable("body");
+		body += "<br/><--DONE:" + ProccesEngine.calculeHash(execution.getCurrentActivityId() , execution.getProcessInstanceId()) + "-->";
 		Log.info("Variable body =" + body);
 		Core.sendEmail(subject , body , tos);
 	}

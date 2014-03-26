@@ -12,6 +12,7 @@ import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -39,6 +40,21 @@ public class EmailSenderService {
 			this.Log.error("Error: Archivo no encontrado | emailRead.properties" + e);
 		} catch (IOException e) {
 			this.Log.info("Error: Entrada/Salida | emailRead.properties " + e);
+		}
+	}
+
+	public void reply(Message msg, String string) {
+		try {
+			this.Log.info("Preparando Respuesta");
+			Message replyMessage = new MimeMessage(this.session);
+			replyMessage = msg.reply(false);
+			replyMessage.setFrom(new InternetAddress((String) this.properties.get("mail.smtp.mail.sender")));
+			replyMessage.setText(string);
+			replyMessage.setReplyTo(msg.getReplyTo());
+			this.connectAndSend(replyMessage);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -74,14 +90,7 @@ public class EmailSenderService {
 			this.Log.info("Titulo del mensaje: " + subject);
 			// A�adimos el Cuerpo
 			message.setContent(multipart);
-			System.out.println((String) this.properties.get("mail.smtp.user") + "/" + (String) this.properties.get("mail.smtp.password"));
-			// Cuerpo del mensage
-			Transport t = this.session.getTransport("smtp");
-			t.connect((String) this.properties.get("mail.smtp.user") , (String) this.properties.get("mail.smtp.password"));
-			t.sendMessage(message , message.getAllRecipients());
-			t.close();
-			this.Log.info("Cuerpo del mensaje" + body);
-			this.Log.info("Mensaje enviado con exito");
+			this.connectAndSend(message);
 		} catch (MessagingException me) {
 			// TODO
 			System.out.println(me);
@@ -90,6 +99,22 @@ public class EmailSenderService {
 			// superior la capture y avise al usuario con un popup, por ejemplo.
 			this.Log.info("Error al enviar el mensaje");
 			return;
+		}
+	}
+
+	private void connectAndSend(Message message) {
+		try {
+			Transport t = this.session.getTransport("smtp");
+			t.connect((String) this.properties.get("mail.smtp.user") , (String) this.properties.get("mail.smtp.password"));
+			t.sendMessage(message , message.getAllRecipients());
+			t.close();
+			this.Log.info("Email enviado con exito");
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

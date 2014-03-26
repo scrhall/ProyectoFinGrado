@@ -22,11 +22,16 @@ public class ProccesEngine {
 
 	public ProccesEngine() {
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
-		this.LoadAllDefinitions();
+		this.loadAllDefinitions();
 		// ProccesEngine.startProces("myProcess");
 	}
 
-	public void doTask(UserTaskRequest t) {
+	public static int calculeHash(String a, String b) {
+		return (a + b).hashCode();
+	}
+
+	public boolean doTask(UserTaskRequest t) {
+		boolean res=false;
 		TaskService taskService = this.processEngine.getTaskService();
 		switch (t.action) {
 			case DONE:
@@ -34,23 +39,20 @@ public class ProccesEngine {
 				for (Task task : tasks) {
 					String dk = task.getTaskDefinitionKey();
 					String pi = task.getProcessInstanceId();
-					if (dk.equals(t.idTask) && pi.equals(t.idProcces)) {
+					String hash = Integer.toString(calculeHash(dk , pi));
+					if (hash.equals(t.hash)) {
 						taskService.complete(task.getId() , t.options);
 						this.Log.info("Task: " + task.getName() + " Completada, options: " + t.options.toString());
+						res = true;
 					}
 				}
 				break;
 			case RVSP:
 				break;
 			default:
-				break;
+				return false;
 		}
-	}
-
-	public void doTasks(List<UserTaskRequest> lt) {
-		for (UserTaskRequest t : lt) {
-			this.doTask(t);
-		}
+		return res;
 	}
 
 	public void startProces(String procesKey) {
@@ -68,7 +70,7 @@ public class ProccesEngine {
 		this.Log.info("Nunero de instancias: " + runtimeService.createProcessInstanceQuery().count());
 	}
 
-	private void LoadAllDefinitions() {
+	private void loadAllDefinitions() {
 		// TODO: mirar todos los bpmn en diagrams y cargarlos todos
 		/*
 		 * RepositoryService repositoryService =

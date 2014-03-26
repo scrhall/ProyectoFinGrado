@@ -8,9 +8,6 @@ import isaFoundry.processEngine.UserTaskRequest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +15,10 @@ import org.slf4j.LoggerFactory;
 
 public class Core {
 
-	private static Logger			Log			= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager	= new ContentManager();
-	private static ProccesEngine	pEngine		= new ProccesEngine();
-	private static EmailService		eService	= new EmailService();
+	private static Logger			Log	= LoggerFactory.getLogger(Core.class);
+	private static ContentManager	cManager;
+	private static ProccesEngine	pEngine;
+	private static EmailService		eService;
 
 	public Core() {}
 
@@ -34,27 +31,29 @@ public class Core {
 	 *            carpeta destino
 	 */
 	public static void copyDoc(String filePath, String destinationPath, String name) {
-		cManager.copyDoc(filePath , destinationPath, name);
+		cManager.copyDoc(filePath , destinationPath , name);
 	}
 
 	/**
-	 * Copia un documento desde una ruta a otra.
+	 * Realiza las tareas suministradas en una lista, segun el tipo de tarea que
+	 * sean
 	 * 
-	 * @param fileName
-	 *            nombre del archivo
-	 * @param sourcePath
-	 *            carpeta origen
-	 * @param destinationPath
-	 *            carpeta destino
+	 * @param lt
 	 */
-	/*
-	public static void copyDoc(String fileName, String sourcePath, String destinationPath) {
-		cManager.copyDoc(fileName , sourcePath , destinationPath);
-	}
-	*/
-
 	public static void doTasks(List<UserTaskRequest> lt) {
-		pEngine.doTasks(lt);
+		for (UserTaskRequest t : lt) {
+			switch (t.action) {
+				case INICIAR:
+					Core.startProcces(t.hash , t.options);
+					break;
+				default:
+					if(!pEngine.doTask(t)) errorToResend(t);
+			}
+		}
+	}
+
+	private static void errorToResend(UserTaskRequest t) {
+		eService.reply(t.msg,"Se ha detectado un problema al procesar su respuesta, compruebe los datos enviados y intentelo de nuevo.");
 	}
 
 	/**
@@ -67,26 +66,6 @@ public class Core {
 		return cManager.newFolder(path).getPath();
 	}
 
-	public static void run() {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(new Runnable() {
-
-			public void run() {
-				Core.Log.info("loop ejecutandose...");
-				List<UserTaskRequest> lista = eService.taskReceived();
-				Core.doTasks(lista);
-				for (UserTaskRequest task : lista) {
-					Core.Log.info("IdTask: " + task.idTask + "; Action: " + task.action);
-				}
-				// TODO:Comprobar tareas pendientes en el motor de activiti
-				// TODO:Comprobar emails y formularios para realizar tareas
-				// pendientes
-			}
-			
-			//cambiamos de MINUTES a SECONDS
-		} , 0 , 30 , TimeUnit.SECONDS);
-	}
-
 	/**
 	 * Realiza el envio de un correo mediante la informacion proporcionada en
 	 * xml.
@@ -95,9 +74,15 @@ public class Core {
 	 *            incluye toda la informacion del correo a enviar.
 	 */
 	public static void sendEmail(String subject, String body, List<String> tos) {
-		eService.SendEmail(subject , body , tos);
+		eService.sendEmail(subject , body , tos);
 	}
 
+	/**
+	 * Inicia un proceso determinado en el motor de proceso
+	 * 
+	 * @param procesKey
+	 * @param var
+	 */
 	public static void startProcces(String procesKey, Map<String, Object> var) {
 		pEngine.startProces(procesKey , var);
 	}
@@ -139,5 +124,12 @@ public class Core {
 	 */
 	public static String urlDocOnlineEdit(String doc) {
 		return cManager.getOnlineEditURL(doc);
+	}
+
+	public void start() {
+		cManager = new ContentManager();
+		pEngine = new ProccesEngine();
+		eService = new EmailService();
+		eService.connect();
 	}
 }
