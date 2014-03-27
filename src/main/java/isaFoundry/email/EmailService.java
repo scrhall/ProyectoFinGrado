@@ -1,8 +1,8 @@
 package isaFoundry.email;
 
 
-import isaFoundry.processEngine.UserTaskRequest;
-import isaFoundry.processEngine.UserTaskRequest.Action;
+import isaFoundry.core.UserTaskRequest;
+import isaFoundry.core.UserTaskRequest.Action;
 
 import java.io.IOException;
 import java.util.ArrayList;

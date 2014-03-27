@@ -1,4 +1,4 @@
-package isaFoundry.processEngine;
+package isaFoundry.core;
 
 
 import java.util.HashMap;

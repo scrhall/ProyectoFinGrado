@@ -4,7 +4,6 @@ package isaFoundry.core;
 import isaFoundry.contentManager.ContentManager;
 import isaFoundry.email.EmailService;
 import isaFoundry.processEngine.ProccesEngine;
-import isaFoundry.processEngine.UserTaskRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,9 @@ public class Core {
 	private static ProccesEngine	pEngine;
 	private static EmailService		eService;
 
-	public Core() {}
+	public Core() {
+		Log.info("Iniciando Core...");
+		}
 
 	/**
 	 * Copia un documento desde una ruta a otra.
@@ -127,6 +128,7 @@ public class Core {
 	}
 
 	public void start() {
+		Log.info("Conectando a los Servicios de Core...");
 		cManager = new ContentManager();
 		pEngine = new ProccesEngine();
 		eService = new EmailService();
