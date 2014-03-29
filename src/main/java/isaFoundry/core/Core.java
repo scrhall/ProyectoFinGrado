@@ -21,15 +21,15 @@ public class Core {
 
 	public Core() {
 		Log.info("Iniciando Core...");
-		}
+	}
 
 	/**
 	 * Copia un documento desde una ruta a otra.
 	 * 
 	 * @param filePath
-	 *            ruta completa del archivo
+	 *            Ruta completa del archivo
 	 * @param destinationPath
-	 *            carpeta destino
+	 *            Carpeta destino
 	 */
 	public static void copyDoc(String filePath, String destinationPath, String name) {
 		cManager.copyDoc(filePath , destinationPath , name);
@@ -42,26 +42,26 @@ public class Core {
 	 * @param lt
 	 */
 	public static void doTasks(List<UserTaskRequest> lt) {
+		Log.info("Realizando tareas pendientes.");
 		for (UserTaskRequest t : lt) {
 			switch (t.action) {
 				case INICIAR:
+					Log.info("Comando 'INICIAR' detectado.");
 					Core.startProcces(t.hash , t.options);
 					break;
 				default:
-					if(!pEngine.doTask(t)) errorToResend(t);
+					if (!pEngine.doTask(t)) {
+						errorToResend(t);
+					}
 			}
 		}
-	}
-
-	private static void errorToResend(UserTaskRequest t) {
-		eService.reply(t.msg,"Se ha detectado un problema al procesar su respuesta, compruebe los datos enviados y intentelo de nuevo.");
 	}
 
 	/**
 	 * Crea un nuevo directorio en el repositorio
 	 * 
 	 * @param path
-	 *            ruta del directorio
+	 *            Ruta del directorio
 	 */
 	public static String newFolder(String path) {
 		return cManager.newFolder(path).getPath();
@@ -72,7 +72,7 @@ public class Core {
 	 * xml.
 	 * 
 	 * @param templatePath
-	 *            incluye toda la informacion del correo a enviar.
+	 *            Incluye toda la informacion del correo a enviar.
 	 */
 	public static void sendEmail(String subject, String body, List<String> tos) {
 		eService.sendEmail(subject , body , tos);
@@ -93,13 +93,13 @@ public class Core {
 	 * conversión asociada
 	 * 
 	 * @param fileName
-	 *            nombre del documento
+	 *            Nombre del documento
 	 * @param sourcePath
-	 *            carpeta origen del documento
+	 *            Carpeta origen del documento
 	 * @param targetPath
-	 *            carpeta destino del documento pdf
+	 *            Carpeta destino del documento pdf
 	 * @param converterPath
-	 *            ruta de la carpeta de transformación
+	 *            Ruta de la carpeta de transformación
 	 */
 	public static void toPDF(String fileName, String sourcePath, String targetPath, String converterPath) {
 		cManager.toPDF(fileName , sourcePath , targetPath , converterPath);
@@ -109,7 +109,7 @@ public class Core {
 	 * Recupera la url del documento.
 	 * 
 	 * @param doc
-	 *            ruta al documento
+	 *            Ruta al documento
 	 * @return String que representa la url del documento en nuestro repositorio
 	 */
 	public static String urlDoc(String doc) {
@@ -125,6 +125,15 @@ public class Core {
 	 */
 	public static String urlDocOnlineEdit(String doc) {
 		return cManager.getOnlineEditURL(doc);
+	}
+
+	/**
+	 * Metodo para notificar a un usuario que su mensaje no pudo ser procesado.
+	 * 
+	 * @param t
+	 */
+	private static void errorToResend(UserTaskRequest t) {
+		eService.reply(t.msg , "Se ha detectado un problema al procesar su respuesta, compruebe los datos enviados y intentelo de nuevo.");
 	}
 
 	public void start() {
