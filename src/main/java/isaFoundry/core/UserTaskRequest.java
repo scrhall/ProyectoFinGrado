@@ -9,7 +9,7 @@ import javax.mail.Message;
 public class UserTaskRequest {
 
 	public enum Action {
-		DONE, RVSP, INICIAR, ERROR
+		DONE, RVSP, INICIAR, ERROR, MULTI
 	}
 
 	public String					hash;

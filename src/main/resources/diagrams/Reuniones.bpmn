@@ -8,6 +8,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion, además debe exponer las posibles fechas en las 
@@ -26,6 +27,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -77,6 +79,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
@@ -98,6 +101,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -112,6 +116,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
@@ -133,6 +138,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -143,25 +149,27 @@
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="flow9" sourceRef="exclusivegateway4" targetRef="exclusivegateway2"></sequenceFlow>
-    <userTask id="usertask5" name="Elegir fecha y modificar orden del dia">
+    <userTask id="usertask5" name="Elegir fecha y modificar orden del dia" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow12" sourceRef="exclusivegateway5" targetRef="usertask6"></sequenceFlow>
-    <userTask id="usertask6" name="Evaluar fecha y orden del dia">
+    <userTask id="usertask6" name="Evaluar fecha y orden del dia" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow15" sourceRef="exclusivegateway6" targetRef="usertask8"></sequenceFlow>
-    <userTask id="usertask8" name="Registrar confirmaciones">
+    <userTask id="usertask8" name="Registrar confirmaciones" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
     <intermediateCatchEvent id="timerintermediatecatchevent1" name="TimerCatchEvent">
-      <timerEventDefinition></timerEventDefinition>
+      <timerEventDefinition>
+        <timeDuration>P7D</timeDuration>
+      </timerEventDefinition>
     </intermediateCatchEvent>
     <sequenceFlow id="flow16" sourceRef="usertask8" targetRef="timerintermediatecatchevent1">
       <extensionElements>
@@ -180,13 +188,14 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask9" name="Levantar acta"></userTask>
+    <userTask id="usertask9" name="Levantar acta" activiti:assignee="kermit"></userTask>
     <sequenceFlow id="flow17" sourceRef="timerintermediatecatchevent1" targetRef="usertask9">
       <extensionElements>
         <activiti:executionListener event="take" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Acta reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar el acta de la reunion. Es una copia de la orden del dia. <br/>
@@ -202,6 +211,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -216,6 +226,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [Asistentes]
+			def emailAction="DONE"; 
 			def subject = "Revise el acta de la reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que sugerir algunas modificaciones del acta de la reunion. <br/>
@@ -228,6 +239,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -237,7 +249,7 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask10" name="Proponer modificaciones de acta">
+    <userTask id="usertask10" name="Proponer modificaciones de acta" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
@@ -248,6 +260,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Modificaciones del acta de la reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede ver las sugerencias, de los asistentes a la reunion, sobre el acta redactada de la misma.<br/>
@@ -258,6 +271,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -267,11 +281,11 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask11" name="Modificar acta"></userTask>
+    <userTask id="usertask11" name="Modificar acta" activiti:assignee="kermit"></userTask>
     <endEvent id="endevent1" name="End"></endEvent>
     <boundaryEvent id="boundarytimer1" name="Timer" attachedToRef="usertask5" cancelActivity="true">
       <timerEventDefinition>
-        <timeDuration>P7DT</timeDuration>
+        <timeDuration>P7D</timeDuration>
       </timerEventDefinition>
     </boundaryEvent>
     <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway"></exclusiveGateway>
@@ -280,6 +294,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
@@ -297,6 +312,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -314,7 +330,7 @@
     </boundaryEvent>
     <exclusiveGateway id="exclusivegateway7" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow25" sourceRef="usertask10" targetRef="exclusivegateway7"></sequenceFlow>
-    <userTask id="usertask13" name="Confirmar asistencia">
+    <userTask id="usertask13" name="Confirmar asistencia" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -324,6 +340,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
+			def emailAction="DONE"; 
 			def subject = "Confirmacion de asistencia de la reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se muestran los resultados de la confirmacion de asistencia a la reunion propuesta el : 
@@ -337,6 +354,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -348,7 +366,7 @@
     </sequenceFlow>
     <boundaryEvent id="boundarytimer4" name="Timer" attachedToRef="usertask13" cancelActivity="true">
       <timerEventDefinition>
-        <timeDuration>P7DT</timeDuration>
+        <timeDuration>P7D</timeDuration>
       </timerEventDefinition>
     </boundaryEvent>
     <sequenceFlow id="flow35" sourceRef="usertask11" targetRef="endevent1"></sequenceFlow>
@@ -381,6 +399,7 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [UGIDIET]
+			def emailAction="DONE"; 
 			def subject = "Fecha de celebraciono de reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede ver la orden del dia de la reunion. <br/>
@@ -397,6 +416,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -407,7 +427,7 @@
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="flow38" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
-    <userTask id="usertask14" name="Proponer fecha y orden del dia">
+    <userTask id="usertask14" name="Proponer fecha y orden del dia" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
@@ -417,7 +437,8 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [UGIDIET]
+            <activiti:string><![CDATA[def tos = UGIDIET
+			def emailAction="MULTI"; 
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede modificar la orden del dia de la reunion. <br/>
@@ -434,6 +455,7 @@
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -447,7 +469,8 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
+            <activiti:string><![CDATA[def emailAction="DONE"; 
+			def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
 			de la reunion. <br/>"""+Fechas+"""<br/>Los miembros del equipo que no han contestado son:<br/>"""+tos+"""<br/>
@@ -465,6 +488,7 @@
 			Muchas gracias por su tiempo."""
 			def tos = [RGETMail]
 			execution.setVariable("tos",tos)
+			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
           </activiti:field>
@@ -506,9 +530,6 @@
       <bpmndi:BPMNShape bpmnElement="usertask5" id="BPMNShape_usertask5">
         <omgdc:Bounds height="70.0" width="105.0" x="880.0" y="568.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="boundarytimer1" id="BPMNShape_boundarytimer1">
-        <omgdc:Bounds height="30.0" width="30.0" x="960.0" y="620.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask6" id="BPMNShape_usertask6">
         <omgdc:Bounds height="60.0" width="105.0" x="1110.0" y="234.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
@@ -524,20 +545,23 @@
       <bpmndi:BPMNShape bpmnElement="usertask10" id="BPMNShape_usertask10">
         <omgdc:Bounds height="85.0" width="105.0" x="1810.0" y="560.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
-        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask11" id="BPMNShape_usertask11">
         <omgdc:Bounds height="55.0" width="105.0" x="2000.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="2180.0" y="240.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer1" id="BPMNShape_boundarytimer1">
+        <omgdc:Bounds height="30.0" width="30.0" x="960.0" y="620.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway5" id="BPMNShape_exclusivegateway5">
         <omgdc:Bounds height="40.0" width="40.0" x="1020.0" y="582.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway6" id="BPMNShape_exclusivegateway6">
         <omgdc:Bounds height="40.0" width="40.0" x="1440.0" y="582.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
+        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway7" id="BPMNShape_exclusivegateway7">
         <omgdc:Bounds height="40.0" width="40.0" x="1980.0" y="582.0"></omgdc:Bounds>

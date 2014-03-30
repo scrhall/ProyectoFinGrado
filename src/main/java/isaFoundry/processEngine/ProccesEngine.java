@@ -54,7 +54,7 @@ public class ProccesEngine {
 		Log.info("Iniciando tarea...");
 		boolean res = false;
 		TaskService taskService = this.processEngine.getTaskService();
-		List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
+		List<Task> tasks = taskService.createTaskQuery().active().list();
 		switch (t.action) {
 			case DONE:
 				for (Task task : tasks) {
@@ -69,7 +69,7 @@ public class ProccesEngine {
 					}
 				}
 				break;
-			case RVSP:
+			case MULTI:
 				for (Task task : tasks) {
 					String dk = task.getTaskDefinitionKey();
 					String pi = task.getProcessInstanceId();
@@ -139,7 +139,7 @@ public class ProccesEngine {
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
 		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
-				.addClasspathResource("diagrams/ConvenioMarco.bpmn").deploy();
+				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones.bpmn").deploy();
 		ProccesEngine.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }

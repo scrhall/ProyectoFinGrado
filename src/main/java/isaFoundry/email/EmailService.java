@@ -6,6 +6,7 @@ import isaFoundry.core.UserTaskRequest.Action;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -108,7 +109,14 @@ public class EmailService {
 							for (String element : options) {
 								String[] option = element.split(":");
 								if (option.length == 2) {
-									uTaskRequest.options.put(option[0].trim() , option[1].trim());
+									//uTaskRequest.options.put(option[0].trim() , option[1].trim());
+									//String[] aux = option[1].trim().split(",");
+									List<String> aux =Arrays.asList(option[1].trim().split(","));
+									if (aux.size() > 1) {
+								 	 uTaskRequest.options.put(option[0].trim() , aux);
+								 	} else {
+								 	 uTaskRequest.options.put(option[0].trim() , option[1].trim());
+								 	 }
 								}
 							}
 						}
