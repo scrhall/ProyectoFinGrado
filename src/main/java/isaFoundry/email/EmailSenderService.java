@@ -27,25 +27,40 @@ import org.slf4j.LoggerFactory;
 
 public class EmailSenderService {
 
-	private Logger				Log			= LoggerFactory.getLogger(EmailSenderService.class);
+	private static Logger		Log			= LoggerFactory.getLogger(EmailSenderService.class);
 	private final Properties	properties	= new Properties();
 	private Session				session;
 
+	/**
+	 * Constructor de la clase, inicializa los paramentros necesarios.
+	 */
 	public EmailSenderService() {
 		try {
+			Log.info("Incializando el  servicio de envio de correos electronicos.");
+			EmailSenderService.Log.info("Leyendo configuracion.");
 			this.properties.load(this.getClass().getResourceAsStream("/config/emailSender.properties"));
 			this.session = Session.getInstance(this.properties , new GMailAuthenticator((String) this.properties.get("mail.smtp.user") ,
 					(String) this.properties.get("mail.smtp.password")));
 		} catch (FileNotFoundException e) {
-			this.Log.error("Error: Archivo no encontrado | emailRead.properties" + e);
+			Log.error("Error: Archivo no encontrado | emailRead.properties");
+			e.printStackTrace();
 		} catch (IOException e) {
-			this.Log.info("Error: Entrada/Salida | emailRead.properties " + e);
+			Log.error("Error: Entrada/Salida | emailRead.properties ");
+			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Crea un mensaje de respuesta y lo manda.
+	 * 
+	 * @param msg
+	 *            Mensaje que al que se debe responder.
+	 * @param string
+	 *            Texto de la respuesta.
+	 */
 	public void reply(Message msg, String string) {
 		try {
-			this.Log.info("Preparando Respuesta");
+			Log.info("Preparando Respuesta");
 			Message replyMessage = new MimeMessage(this.session);
 			replyMessage = msg.reply(false);
 			replyMessage.setFrom(new InternetAddress((String) this.properties.get("mail.smtp.mail.sender")));
@@ -53,73 +68,98 @@ public class EmailSenderService {
 			replyMessage.setReplyTo(msg.getReplyTo());
 			this.connectAndSend(replyMessage);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
+			Log.error("Error: No se pudo crear un mensaje de respuesta");
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Envia un correo electronico.
+	 * 
+	 * @param subject
+	 *            Asunto
+	 * @param body
+	 *            Texto
+	 * @param tos
+	 *            Destinatarios
+	 */
 	public void sendEmail(String subject, String body, List<String> tos) {
 		this.sendEmail(subject , body , tos , "" , "");
 	}
 
+	/**
+	 * Envia un correo electronico con adjunto.
+	 * 
+	 * @param subject
+	 *            Asunto
+	 * @param body
+	 *            Texto
+	 * @param tos
+	 *            Destinatario
+	 * @param attachedPatch
+	 *            Ruta del archivo adajunto.
+	 * @param attachedName
+	 *            Nombre del archivo adjunto.
+	 */
 	public void sendEmail(String subject, String body, List<String> tos, String attachedPatch, String attachedName) {
 		try {
+			Log.info("Enviando correo electronico...");
 			MimeMultipart multipart = new MimeMultipart();
-			// Texto del Email
 			BodyPart text = new MimeBodyPart();
 			text.setContent(body , "text/html");
 			multipart.addBodyPart(text);
 			if (attachedPatch != "") {
-				// Adjunto
 				BodyPart attached = new MimeBodyPart();
 				attached.setDataHandler(new DataHandler(new FileDataSource(attachedPatch)));
 				attached.setFileName(attachedName);
 				multipart.addBodyPart(attached);
 			}
-			// Mensaje
 			MimeMessage message = new MimeMessage(this.session);
-			// Remitente
 			message.setFrom(new InternetAddress((String) this.properties.get("mail.smtp.mail.sender")));
-			// Insertamos los destinatarios en el correo
 			for (String to : tos) {
 				message.addRecipient(Message.RecipientType.BCC , new InternetAddress(to));
-				this.Log.info("Destinatario: " + to);
+				Log.info("Destinatario: " + to);
 			}
-			// Indicamos el titulo del mensage
 			message.setSubject(subject);
-			this.Log.info("Titulo del mensaje: " + subject);
-			// A�adimos el Cuerpo
+			Log.info("Titulo del mensaje: " + subject);
 			message.setContent(multipart);
 			this.connectAndSend(message);
-		} catch (MessagingException me) {
-			// TODO
-			System.out.println(me);
-			// Aqui se deberia o mostrar un mensaje de error o en lugar
-			// de no hacer nada con la excepcion, lanzarla para que el modulo
-			// superior la capture y avise al usuario con un popup, por ejemplo.
-			this.Log.info("Error al enviar el mensaje");
+		} catch (MessagingException e) {
+			Log.error("Error: No se pudo enviar el mensaje");
+			e.printStackTrace();
 			return;
 		}
 	}
 
+	/**
+	 * Conecta con el servidor de correo para enviar un mensaje.
+	 * 
+	 * @param message
+	 *            Correo electronco a enviar.
+	 */
 	private void connectAndSend(Message message) {
 		try {
+			Log.info("Conectando con el servidor de correo...");
 			Transport t = this.session.getTransport("smtp");
 			t.connect((String) this.properties.get("mail.smtp.user") , (String) this.properties.get("mail.smtp.password"));
 			t.sendMessage(message , message.getAllRecipients());
 			t.close();
-			this.Log.info("Email enviado con exito");
+			Log.info("Correo electronico enviado con exito.");
 		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
+			Log.error("Error: No se pudo enviar el mensaje");
 			e.printStackTrace();
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
+			Log.error("Error: No se pudo enviar el mensaje");
 			e.printStackTrace();
 		}
 	}
 }
 
 
+/**
+ * Clase usada para la autentificacion con servidores de GMAIL.
+ * 
+ */
 class GMailAuthenticator extends Authenticator {
 
 	String	user;

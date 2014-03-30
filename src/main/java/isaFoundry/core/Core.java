@@ -85,7 +85,7 @@ public class Core {
 	 * @param var
 	 */
 	public static void startProcces(String procesKey, Map<String, Object> var) {
-		pEngine.startProces(procesKey , var);
+		pEngine.startProcess(procesKey , var);
 	}
 
 	/**

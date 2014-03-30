@@ -3,6 +3,8 @@ package isaFoundry.processEngine;
 
 import isaFoundry.core.UserTaskRequest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,37 +21,85 @@ import org.slf4j.LoggerFactory;
 
 public class ProccesEngine {
 
-	private Logger			Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
 	private ProcessEngine	processEngine;
 
+	/**
+	 * Incializa el motor de proceso y carga todos los procesos necesarios.
+	 */
 	public ProccesEngine() {
+		Log.info("Iniciando el motor de proceso...");
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
 		this.loadAllDefinitions();
-		// ProccesEngine.startProces("myProcess");
 	}
 
+	/**
+	 * Calcula un hash para dos string dados.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return Hash
+	 */
 	public static int calculeHash(String a, String b) {
 		return (a + b).hashCode();
 	}
 
+	/**
+	 * Realiza una tarea.
+	 * 
+	 * @param t
+	 * @return
+	 */
 	public boolean doTask(UserTaskRequest t) {
-		boolean res=false;
+		Log.info("Iniciando tarea...");
+		boolean res = false;
 		TaskService taskService = this.processEngine.getTaskService();
+		List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 		switch (t.action) {
 			case DONE:
-				List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 				for (Task task : tasks) {
 					String dk = task.getTaskDefinitionKey();
 					String pi = task.getProcessInstanceId();
 					String hash = Integer.toString(calculeHash(dk , pi));
 					if (hash.equals(t.hash)) {
 						taskService.complete(task.getId() , t.options);
-						this.Log.info("Task: " + task.getName() + " Completada, options: " + t.options.toString());
+						Log.info("Task: " + task.getName() + " Completada, options: " + t.options.toString());
 						res = true;
+						break;
 					}
 				}
 				break;
 			case RVSP:
+				for (Task task : tasks) {
+					String dk = task.getTaskDefinitionKey();
+					String pi = task.getProcessInstanceId();
+					String hash = Integer.toString(calculeHash(dk , pi));
+					if (hash.equals(t.hash)) {
+						List<String> tos = (List<String>) taskService.getVariable(task.getId() , "tos");
+						List<List<String>> tosResponse = (List<List<String>>) taskService.getVariable(task.getId() , "tosResponse");
+						if (tos.contains(t.options.get("From"))) {
+							for (List<String> list : tosResponse) {
+								if (list.get(0).equals(t.options.get("From"))) {
+									tosResponse.remove(list);
+									break;
+								}
+							}
+							List<String> auxList = new ArrayList<String>();
+							auxList.add((String) t.options.get("From"));
+							t.options.remove("From");
+							auxList.addAll(Arrays.asList(t.options.values().toArray(new String[0])));
+							tosResponse.add(auxList);
+							taskService.setVariable(task.getId() , "tosResponse" , tosResponse);
+							Log.info("Task: " + task.getName() + " Actualizada.");
+							if (tos.size() == tosResponse.size()) {
+								taskService.complete(task.getId());
+								Log.info("Task: " + task.getName() + " Completada.");
+							}
+						}
+						res = true;
+						break;
+					}
+				}
 				break;
 			default:
 				return false;
@@ -57,40 +107,39 @@ public class ProccesEngine {
 		return res;
 	}
 
-	public void startProces(String procesKey) {
-		Map<String, Object> variables = new HashMap<String, Object>();
-		RuntimeService runtimeService = this.processEngine.getRuntimeService();
-		runtimeService.startProcessInstanceByKey(procesKey , variables);
-		// Verificamos que se ha empezado la nueva instancia del proceso
-		this.Log.info("Nunero de instancias: " + runtimeService.createProcessInstanceQuery().count());
+	/**
+	 * Inicia un proceso en el motor de procesos.
+	 * 
+	 * @param procesKey
+	 *            Nombre del proceso a iniciar.
+	 */
+	public void startProcess(String procesKey) {
+		this.startProcess(procesKey , new HashMap<String, Object>());
 	}
 
-	public void startProces(String procesKey, Map<String, Object> var) {
+	/**
+	 * Inicia un proceso en el motor de procesos.
+	 * 
+	 * @param procesKey
+	 *            Nombre del proceso a iniciar.
+	 * @param var
+	 *            Parametros de entrada en el proceso.
+	 */
+	public void startProcess(String procesKey, Map<String, Object> var) {
+		Log.info("Iniciando el  proceso '" + procesKey + "'");
 		RuntimeService runtimeService = this.processEngine.getRuntimeService();
 		runtimeService.startProcessInstanceByKey(procesKey , var);
-		// Verificamos que se ha empezado la nueva instancia del proceso
-		this.Log.info("Nunero de instancias: " + runtimeService.createProcessInstanceQuery().count());
 	}
 
+	/**
+	 * Carga todas las definiciones de los procesos.
+	 */
 	private void loadAllDefinitions() {
-		// TODO: mirar todos los bpmn en diagrams y cargarlos todos
-		/*
-		 * RepositoryService repositoryService =
-		 * this.processEngine.getRepositoryService();
-		 * final Collection<String> list =
-		 * getResources(Pattern.compile(".+\\.bpmn"));
-		 * for (final String name : list) {
-		 * repositoryService.createDeployment().addInputStream(resourceName ,
-		 * inputStream).addClasspathResource(name).deploy();
-		 * this.Log.info("Number of process definitions: " +
-		 * repositoryService.createProcessDefinitionQuery().count());
-		 * }
-		 */
-		// Forma menos practica
+		Log.info("Cargando las definiciones de los procesos...");
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
 		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
 				.addClasspathResource("diagrams/ConvenioMarco.bpmn").deploy();
-		this.Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());
+		ProccesEngine.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }

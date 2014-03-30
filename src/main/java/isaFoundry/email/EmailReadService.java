@@ -80,8 +80,10 @@ public class EmailReadService {
 	 */
 	public EmailReadService(EmailService emailService) {
 		try {
+			Log.info("Incializando el  servicio de lectura de correos electronicos.");
 			this.emailService = emailService;
 			Properties config = new Properties();
+			Log.info("Leyendo configuracion.");
 			config.load(this.getClass().getResourceAsStream("/config/emailRead.properties"));
 			this.user = config.getProperty("USER");
 			this.pass = config.getProperty("PASSWORD");
@@ -89,11 +91,13 @@ public class EmailReadService {
 			this.properties.put("mail.store.protocol" , "imaps");
 			this.session = Session.getDefaultInstance(this.properties);
 		} catch (FileNotFoundException e) {
-			Log.error("Error: Archivo no encontrado | emailRead.properties " + e);
+			Log.error("Error: Archivo no encontrado | emailRead.properties ");
+			e.printStackTrace();
 		} catch (IOException e) {
-			Log.info("Error: Entrada/Salida |  emailRead.properties " + e);
+			Log.error("Error: Entrada/Salida |  emailRead.properties ");
 		} catch (NullPointerException e) {
-			Log.info("Error: NullPointerException | emailRead.properties " + e);
+			Log.error("Error: NullPointerException | emailRead.properties ");
+			e.printStackTrace();
 		}
 	}
 
@@ -183,13 +187,15 @@ public class EmailReadService {
 	 */
 	public Message[] readEmails() {
 		try {
-			Log.info("Obteniendo correos electronicos no leidos");
+			Log.info("Obteniendo correos electronicos no leidos.");
 			FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN) , false);
 			Message messages[] = this.inbox.search(ft);
 			for (Message msg : messages) {
 				// Marca Los mensajes como leidos
 				msg.setFlag(Flags.Flag.SEEN , true);
 			}
+
+			Log.info("Emails Obtenidos.");
 			return messages;
 		} catch (MessagingException e) {
 			Log.error("Error: No se pudieron leer los correos.");
@@ -199,8 +205,10 @@ public class EmailReadService {
 	}
 
 	/**
-	 * Inicia la escucha en una carpeta de IMAP, para recibir eventos instantaneos.
-	 * @param imapFolder 
+	 * Inicia la escucha en una carpeta de IMAP, para recibir eventos
+	 * instantaneos.
+	 * 
+	 * @param imapFolder
 	 */
 	public void startListening(IMAPFolder imapFolder) {
 		try {
