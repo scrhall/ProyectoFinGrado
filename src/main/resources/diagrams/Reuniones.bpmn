@@ -293,12 +293,30 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [RGETMail]
+            <activiti:string><![CDATA[
+            puntuaciones=[]
+			personas=[]
+			for (indFech in 0..Fechas){
+				puntuaciones[indFech]=0
+				personas[indFech]=""
+			}
+			for (respuestas in 0..tosResponse.size()){
+				logResp=respuestas.size()-1
+				for (fecha in response[1..logResp]){
+					puntuaciones[fecha]=puntuaciones[fecha]+1
+					personas[fecha]=personas[fecha]+","+respuestas[0]
+				}
+			}
+			estadistica=""
+			for (i in 0..Fechas.size()){
+				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+puntuaciones[i]+"<br/>"
+			}
+            def tos = [RGETMail]
 			def emailAction="DONE"; 
 			def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
-			de la reunion. <br/>"""+Fechas+"""<br/>Todos los miembros del equipo han contestado.<br/>
+			de la reunion. <br/>"""+estadistica+"""<br/>Todos los miembros del equipo han contestado.<br/>
 			Además se adjunta una url donde se encuentra la orden del dia ya modificada por los miembros del equipo.<br/>
 			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
 			<br/>
@@ -311,6 +329,7 @@
 			<br/>			
 			<br/>
 			Muchas gracias por su tiempo."""
+			execution.setVariable("Estadistica",estadistica)
 			execution.setVariable("tos",tos)
 			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
