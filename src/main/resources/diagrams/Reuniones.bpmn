@@ -296,20 +296,19 @@
             <activiti:string><![CDATA[
             puntuaciones=[]
 			personas=[]
-			for (indFech in 0..Fechas){
-				puntuaciones[indFech]=0
-				personas[indFech]=""
+			for (i in 0..Fechas.size()){
+				puntuaciones[i]=0
+				personas[i]=""
 			}
-			for (respuestas in 0..tosResponse.size()){
-				logResp=respuestas.size()-1
-				for (fecha in response[1..logResp]){
-					puntuaciones[fecha]=puntuaciones[fecha]+1
-					personas[fecha]=personas[fecha]+","+respuestas[0]
+			for (respuestas in tosResponse){
+				for (idfecha in respuestas['Fechas']){
+					puntuaciones[idfecha]=puntuaciones[idfecha]+1
+					personas[idfecha]=personas[idfecha]+","+respuestas.get("From")
 				}
 			}
 			estadistica=""
 			for (i in 0..Fechas.size()){
-				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+puntuaciones[i]+"<br/>"
+				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+Integer.toString(puntuaciones[i])+"<br/>"
 			}
             def tos = [RGETMail]
 			def emailAction="DONE"; 

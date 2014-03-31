@@ -76,27 +76,27 @@ public class ProccesEngine {
 					String hash = Integer.toString(calculeHash(dk , pi));
 					if (hash.equals(t.hash)) {
 						List<String> tos = (List<String>) taskService.getVariable(task.getId() , "tos");
-						List<List<String>> tosResponse = (List<List<String>>) taskService.getVariable(task.getId() , "tosResponse");
-						if (tos.contains(t.options.get("From"))) {
-							for (List<String> list : tosResponse) {
-								if (list.get(0).equals(t.options.get("From"))) {
+						List<HashMap<String, Object>> tosResponse = (List<HashMap<String, Object>>) taskService.getVariable(task.getId() , "tosResponse");
+						if (tosResponse == null) {
+							tosResponse = new ArrayList<HashMap<String, Object>>();
+						}
+						String[] auxFrom = t.options.get("From").toString().split("<|>");
+						if ((auxFrom.length > 1) && tos.contains(auxFrom[1])) {
+							for (HashMap<String, Object> list : tosResponse) {
+								if (list.get("From").equals(t.options.get("From"))) {
 									tosResponse.remove(list);
 									break;
 								}
 							}
-							List<String> auxList = new ArrayList<String>();
-							auxList.add((String) t.options.get("From"));
-							t.options.remove("From");
-							auxList.addAll(Arrays.asList(t.options.values().toArray(new String[0])));
-							tosResponse.add(auxList);
+							tosResponse.add(t.options);
 							taskService.setVariable(task.getId() , "tosResponse" , tosResponse);
-							Log.info("Task: " + task.getName() + " Actualizada.");
+							Log.info("Task: '" + task.getName() + "' Actualizada.");
 							if (tos.size() == tosResponse.size()) {
 								taskService.complete(task.getId());
-								Log.info("Task: " + task.getName() + " Completada.");
+								Log.info("Task: '" + task.getName() + "' Completada.");
 							}
+							res = true;
 						}
-						res = true;
 						break;
 					}
 				}

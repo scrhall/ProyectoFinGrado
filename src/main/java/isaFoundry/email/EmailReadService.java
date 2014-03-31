@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
+import javax.mail.FolderClosedException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -127,6 +128,10 @@ public class EmailReadService {
 			});
 			this.startListening(this.inbox);
 			return true;
+		} catch (FolderClosedException e) {
+			Log.info("Error: No se pudo conectar con el servidor de correo IMAP. Intentando reiniciar la conexion.");
+			connect();
+			return false;
 		} catch (Exception e) {
 			Log.info("Error: No se pudo conectar con el servidor de correo IMAP.");
 			e.printStackTrace();

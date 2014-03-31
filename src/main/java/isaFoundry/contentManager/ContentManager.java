@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.tika.Tika;
@@ -101,6 +102,9 @@ public class ContentManager {
 			properties.put(PropertyIds.OBJECT_TYPE_ID , "cmis:document");
 			properties.put(PropertyIds.NAME , name);
 			targetFolder.createDocument(properties , contentStream , VersioningState.MAJOR);
+		} catch (CmisContentAlreadyExistsException e){
+			
+		
 		} catch (Exception e) {
 			Log.error("Error: No se pudo copiar el documento");
 			e.printStackTrace();
