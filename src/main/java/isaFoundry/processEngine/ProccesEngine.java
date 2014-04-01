@@ -89,6 +89,7 @@ public class ProccesEngine {
 								}
 							}
 							tosResponse.add(t.options);
+							Log.info("tosResponse actualizada: "+tosResponse);
 							taskService.setVariable(task.getId() , "tosResponse" , tosResponse);
 							Log.info("Task: '" + task.getName() + "' Actualizada.");
 							if (tos.size() == tosResponse.size()) {
