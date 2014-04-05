@@ -22,7 +22,7 @@
 			Contacto:<br/>
 			--><br/>
 			<br/>
-			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLSolicitud+"""\
+			El link con la direccion de la solicitud es el siguiente:<br/>	<a href=<a href="""+URLSolicitud+""">Solicitud</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -50,7 +50,7 @@
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede firmar la solicitud del proyecto
 			<br/>
-			El link con la direccion de la solicitud es el siguiente:<br/>	"""+URLSolicitud+"""\
+			El link con la direccion de la solicitud es el siguiente:<br/>	<a href="""+URLSolicitud+""">Solicitud</a>
 			<br/>
 			<br/>
 			Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
@@ -83,7 +83,7 @@ Aceptado: Si/No <br/>
 --><br/>
 <br/>
 El link con la direccion de la solicitud es el siguiente:<br/>
-"""+URLSolicitud+"""
+<a href="""+URLSolicitud+""">Solicitud</a>
 <br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -137,7 +137,7 @@ DETMail: <br/>
 --><br/>
 <br/>
 El link con la direccion de la solicitud es el siguiente:<br/>
-"""+URLSolicitud+"""
+<a href="""+URLSolicitud+""">Solicitud</a>
 <br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -186,7 +186,7 @@ Designado:<br/>
 RGETMail:<br/>
 <br/>-->
 El link con la direccion de la solicitud es el siguiente:<br/>
-"""+URLSolicitud+"""\
+<a href="""+URLSolicitud+""">Solicitud</a>
 <br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -225,13 +225,13 @@ Correo de la organizacion:"""+Email+"""<br/>
 Nombre de la persona encargada:"""+Contacto+"""<br/>
 <br/>
 El link con la direccion de la solicitud es el siguiente:<br/>
-"""+URLSolicitud+"""
+<a href="""+URLSolicitud+""">Solicitud</a>
 <br/><br/>
 El link con la plantilla del estudio de viabilidad es:<br/>
-"""+URLEstudioViabilidad+"""
+<a href="""+URLEstudioViabilidad+""">Estudio de Viabilidad</a>
 <br/><br/>
 Si el estudio de viabilidad es positivo modifique el documento para generar la oferta que recibirá la empresa:<br/>
-"""+URLOferta+"""
+<a href="""+URLOferta+""">Oferta</a>
 <br/><br/>
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -299,7 +299,7 @@ la realizacion del proyecto:
 <br/>
 <br/>
 El link con el convenio especifico del proyecto es el siguiente:<br/>
-"""+URLConvenioEspecifico+"""
+<a href="""+URLConvenioEspecifico+""">Convenio Especifico</a>
 <br/><br/>
 Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 Muchas gracias por su tiempo.""";
@@ -329,7 +329,7 @@ Nombre de la persona encargada:"""+Contacto+"""<br/>
 Para ello se ha elaborado el sigiuente convenio especifico, por favor concerte una cita con la empresa responsable
 y firme el documento que se encuentra disponible en el siguiente enlace:
 <br/>
-"""+URLConvenioEspecifico+"""
+<a href="""+URLConvenioEspecifico+""">Convenio Especifico</a>
 <br/>
 Tras haber firmado el documento responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 
@@ -362,7 +362,7 @@ un proyecto. Por favor de el proyecto de alta en la aplicacion de FIDETIA.
 Tras haber haberlo dado de alta responda al correo, no es necesario escribir nada en el mensaje.<br/><br/>
 
 El link con la direccion del convenio especifico es el siguiente:<br/>
-"""+URLConvenioEspecifico+"""
+<a href="""+URLConvenioEspecifico+""">Convenio Especifico</a>
 <br/><br/>
 
 Muchas gracias por su tiempo.""";
@@ -415,7 +415,7 @@ Nombre de la persona encargada:"""+Contacto+"""<br/>
 Para ello se necesita firmar el convenio especifico, por favor redacte el convenio especifico
 editando el documento que se encuentra disponible en el siguiente enlace:<br/>
 
-"""+URLConvenioEspecifico+"""
+<a href="""+URLConvenioEspecifico+""">Convenio Especifico</a>
 <br/><br/>
 Una vez redactado responda al correo, no es necesario escribir ningun texto<br/><br/>
 Muchas gracias por su tiempo.""";
@@ -447,7 +447,7 @@ una estimacion inicial del proyecto. Tanto si desea negociar el precio del proye
 Negociar:Si/No<br/>
 --><br/><br/>
 El link con la oferta inicial es el siguiente:<br/>
-"""+URLOferta+"""<br/><br/>
+<a href="""+URLOferta+""">Oferta</a><br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);
@@ -479,7 +479,7 @@ Pongase en contacto con la organizacion y negocien un acuerdo para realizar el p
 modificar la oferta.<br/>
 
 El link con la direccion de la oferta es el siguiente:<br/>
-"""+URLOferta+"""<br/><br/>
+<a href="""+URLOferta+""">Oferta</a><br/><br/>
 
 Por ultimo responda al mail indicando si se ha llegado a un acuerdo o no, con el siguiente formato:<br/>
 <br/>
@@ -543,7 +543,7 @@ def subject = "Oferta final del proyecto";
 def body ="""Hola, a continuacion se adjunta un link desde el que puede ver la oferta final del proyecto: 
 <br/><br/>
 El link con la direccion de la oferta del proyecto es el siguiente:<br/>
-"""+URLOferta+"""<br/><br/>
+<a href="""+URLOferta+""">Oferta</a><br/><br/>
 
 Muchas gracias por su tiempo.""";
 execution.setVariable("tos",tos);

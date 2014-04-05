@@ -22,7 +22,7 @@
 			...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -83,8 +83,8 @@
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
-			Para facilitar el seguimiento de la misma se adjunta el analisis DAFO realizado en la primera reunion del año<br/>:"""
-			+URLDAFOReunion1+"""<br/>
+			Para facilitar el seguimiento de la misma se adjunta el analisis DAFO realizado en la primera reunion del año<br/>:<a href="""
+			+URLDAFOReunion1+""">DAFO</a><br/>
 			Una vez rellenada la orden del día debe contestar al correo con las posibles fechas en las 
 			que realizar la reunion siguiendo el siguiente formato:
 			<br/>
@@ -96,7 +96,7 @@
 			...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -121,7 +121,7 @@
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
 			Al tratarse de la primera reunión del proyecto debe rellenar un analisis DAFO del mismo que se encuentra en la siguiente
-			direccion: <br/>"""+URLDAFO+"""<br/>
+			direccion: <br/><a href="""+URLDAFO+""">DAFO</a><br/>
 			Una vez rellenada la orden del dia debe responder al correo con las posibles fechas en las 
 			que realizar la reunion siguiendo el siguiente formato:
 			<br/>
@@ -133,7 +133,7 @@
 			...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -206,7 +206,7 @@
 			Asistentes:Correo asistente 1,Correo asistente 2,...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion del acta es el siguiente:<br/>	"""+URLActa+"""\
+			El link con la direccion del acta es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -234,7 +234,7 @@
 			que sea oportuno.<br/>
 			Una vez haya realizado todas las modificaciones oportunas responda al correo, no es necesario añadir texto.
 			<br/>
-			El link con la direccion del acta de es el siguiente:<br/>	"""+URLActa+"""\
+			El link con la direccion del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -266,7 +266,7 @@
 			Hola, a continuacion se adjunta un link desde el que puede ver las sugerencias, de los asistentes a la reunion, sobre el acta redactada de la misma.<br/>
 			Una vez haya realizado todas las modificaciones oportunas responda al correo, no es necesario añadir texto.
 			<br/>
-			El link con la direccion del acta de es el siguiente:<br/>	"""+URLActa+"""\
+			El link con la direccion del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -317,7 +317,7 @@
 			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
 			de la reunion. <br/>"""+estadistica+"""<br/>Todos los miembros del equipo han contestado.<br/>
 			Además se adjunta una url donde se encuentra la orden del dia ya modificada por los miembros del equipo.<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con la fecha final de 
 			celebracion de la reunion usando el siguiente formato:
@@ -429,7 +429,7 @@
 			Asistencia:2 *Si no vas a asistir*<br/>			
 			--p><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -468,7 +468,7 @@
 			Fechas:1,3,4<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -493,7 +493,7 @@
 			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
 			de la reunion. <br/>"""+Fechas+"""<br/>Los miembros del equipo que no han contestado son:<br/>"""+tos+"""<br/>
 			Además se adjunta una url donde se encuentra la orden del dia ya modificada por los miembros del equipo.<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	"""+URLOrdenDia+"""\
+			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con la fecha final de 
 			celebracion de la reunion usando el siguiente formato:
