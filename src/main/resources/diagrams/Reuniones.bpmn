@@ -15,11 +15,8 @@
 			que realizar la reunion siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:<br/>
-			1)*Fecha posible 1*<br/>
-			2)*Fecha posible 2*<br/>
-			3)*Fecha posible 3*<br/>
-			...<br/>			
+			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>
+			
 			--><br/>
 			<br/>
 			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
@@ -89,11 +86,7 @@
 			que realizar la reunion siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:<br/>
-			1)*Fecha posible 1*<br/>
-			2)*Fecha posible 2*<br/>
-			3)*Fecha posible 3*<br/>
-			...<br/>			
+			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
 			--><br/>
 			<br/>
 			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
@@ -126,11 +119,7 @@
 			que realizar la reunion siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:<br/>
-			1)*Fecha posible 1*<br/>
-			2)*Fecha posible 2*<br/>
-			3)*Fecha posible 3*<br/>
-			...<br/>			
+			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
 			--><br/>
 			<br/>
 			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
@@ -225,7 +214,7 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [Asistentes]
+            <activiti:string><![CDATA[def tos = UGIDIET
 			def emailAction="DONE"; 
 			def subject = "Revise el acta de la reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
@@ -302,13 +291,16 @@
 			}
 			for (respuestas in tosResponse){
 				for (idfecha in respuestas['Fechas']){
-					puntuaciones[idfecha]=puntuaciones[idfecha]+1
-					personas[idfecha]=personas[idfecha]+","+respuestas.get("From")
+					idfecha=idfecha.toInteger()
+				//	puntuaciones[idfecha]=(puntuaciones[idfecha])+1
+					puntuaciones.putAt(idfecha, puntuaciones.get(idfecha)+1)
+				//	personas[idfecha]=personas[idfecha]+","+respuestas.get("From")
+					personas.putAt(idfecha, personas[idfecha]+","+respuestas.get("From"))
 				}
 			}
 			estadistica=""
 			for (i in 0..Fechas.size()){
-				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+Integer.toString(puntuaciones[i])+"<br/>"
+				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+puntuaciones[i]+"<br/>"
 			}
             def tos = [RGETMail]
 			def emailAction="DONE"; 
@@ -357,12 +349,31 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [RGETMail]
+            <activiti:string><![CDATA[
+            SiAsiste=[]
+			NoAsiste=[]
+			Contestan=[]
+			for (i in 0..UGIDIET.size()){
+				SiAsiste[i]=""
+				NoAsiste[i]=""
+			}
+			for (respuestas in tosResponse){
+				if(respuestas['Asistencia']=="Si"){
+					SiAsiste.add(respuestas.get("From"))
+				}else{
+					NoAsiste.add(respuestas.get("From"))
+				}
+				Contestan.add(respuestas.get("From"))			
+			}
+			NC=UGIDIET-Contestan
+			
+			def tos = [RGETMail]
 			def emailAction="DONE"; 
 			def subject = "Confirmacion de asistencia de la reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se muestran los resultados de la confirmacion de asistencia a la reunion propuesta el : 
-			"""+FechaFinal+"""<br/>"""+Asistencia+"""<br/>
+			"""+FechaFinal+"""<br/>Miembros que han contestado SI: """+SiAsiste+"""<br/>Miembros que han contestado NO: """+NoAsiste+"""<br/>
+			Miembros que no han contestado: """+NC+"""<br/>
 			Conteste al correo indicando los dias que restan hasta el dia de la reunion siguiendo el formato:
 			<br/>
 			<--<br/>
@@ -416,18 +427,17 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [UGIDIET]
+            <activiti:string><![CDATA[def tos = UGIDIET
 			def emailAction="DONE"; 
 			def subject = "Fecha de celebraciono de reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede ver la orden del dia de la reunion. <br/>
+			Hola, a continuación se adjunta un link desde el que puede ver la orden del dia de la reunion. <br/>
 			La fecha de celebracion de la reunion será: """+FechaFinal+"""<br/>
 			Por favor confirme si asistira o no a la reunion respondiendo al correo con el siguiente formato:
 			<br/>
 			<--<br/>
-			Asistencia:1 *Si vas a asistir*<br/>
-			Asistencia:2 *Si no vas a asistir*<br/>			
-			--p><br/>
+			Asistencia:Si/No<br/>
+			--><br/>
 			<br/>
 			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
@@ -455,12 +465,17 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = UGIDIET
+            <activiti:string><![CDATA[
+            muestraFechas=""
+            for (i in 0..Fechas.size()){
+            	muestraFechas=muestraFechas+Integer.toString(i)+") "+Fechas[i]+"<br/>"
+            }
+            def tos = UGIDIET
 			def emailAction="MULTI"; 
 			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
 			def body = """\
 			Hola, a continuacion se adjunta un link desde el que puede modificar la orden del dia de la reunion. <br/>
-			Además las fechas posbiles propuestas por el RGET para la celebracion de la reunion son:<br/>"""+Fechas+"""<br/><br/>
+			Además las fechas posbiles propuestas por el RGET para la celebracion de la reunion son:<br/>"""+muestraFechas+"""<br/><br/>
 			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con las posibles fechas en las 
 			que tiene disponibilidad para realizar la reunion indicando el numero de la fecha con el siguiente formato:
 			<br/>
