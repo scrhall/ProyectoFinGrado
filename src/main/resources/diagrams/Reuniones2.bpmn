@@ -9,17 +9,17 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Nueva reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion, además debe exponer las posibles fechas en las 
-			que realizar la reunion siguiendo el siguiente formato:
+			Hola, a continuación se adjunta un link desde el que puede rellenar la orden del día de la reunión, además debe exponer las posibles fechas en las 
+			que realizar la reunión siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
 			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>
 			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -77,19 +77,19 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Nueva reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
-			Para facilitar el seguimiento de la misma se adjunta el analisis DAFO realizado en la primera reunion del año<br/>:<a href="""
-			+URLDAFOReunion1+""">DAFO</a><br/>
+			Hola, a continuación se adjunta un link desde el que puede rellenar la orden del día de la reunión. <br/><br/>
+			Para facilitar el seguimiento de la misma se adjunta el analisis DAFO realizado en la primera reunión del año<br/>:<a href="""
+			+URLDAFOReunion1+""">DAFO</a><br/><br/>
 			Una vez rellenada la orden del día debe contestar al correo con las posibles fechas en las 
-			que realizar la reunion siguiendo el siguiente formato:
+			que realizar la reunión siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
 			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -110,19 +110,19 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Nueva reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/>
+			Hola, a continuación se adjunta un link desde el que puede rellenar la orden del dia de la reunion. <br/><br/>
 			Al tratarse de la primera reunión del proyecto debe rellenar un analisis DAFO del mismo que se encuentra en la siguiente
-			direccion: <br/><a href="""+URLDAFO+""">DAFO</a><br/>
+			dirección: <br/><a href="""+URLDAFO+""">DAFO</a><br/>
 			Una vez rellenada la orden del dia debe responder al correo con las posibles fechas en las 
-			que realizar la reunion siguiendo el siguiente formato:
+			que realizar la reunión siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
 			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			El link con la dirección de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -155,15 +155,7 @@
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
-    <intermediateCatchEvent id="timerintermediatecatchevent1" name="TimerCatchEvent">
-      <extensionElements>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
-      </extensionElements>
-      <timerEventDefinition>
-        <timeDuration>PT5M</timeDuration>
-      </timerEventDefinition>
-    </intermediateCatchEvent>
-    <sequenceFlow id="flow16" sourceRef="usertask8" targetRef="timerintermediatecatchevent1">
+    <sequenceFlow id="flow16" sourceRef="usertask8" targetRef="usertask9">
       <extensionElements>
         <activiti:executionListener event="taken" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
@@ -178,31 +170,22 @@
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
-      </extensionElements>
-    </sequenceFlow>
-    <userTask id="usertask9" name="Levantar acta" activiti:assignee="kermit">
-      <extensionElements>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-      </extensionElements>
-    </userTask>
-    <sequenceFlow id="flow17" sourceRef="timerintermediatecatchevent1" targetRef="usertask9">
-      <extensionElements>
         <activiti:executionListener event="take" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Acta reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Acta reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede rellenar el acta de la reunion. Es una copia de la orden del dia. <br/>
+			Hola, a continuación se adjunta un link desde el que puede rellenar el acta de la reunión. Es una copia de la orden del dia anteriormente redactada.<br/> <br/>
 			Una vez rellenada el acta simplemente tiene que contestar al correo indicando el correo de los revisores del acta (asistentes a 
-			la reunion) siguiendo el formato: <br/>
+			la reunión) siguiendo el formato: <br/>
 			<br/>
 			<--<br/>
 			Asistentes:Correo asistente 1,Correo asistente 2,...<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion del acta es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
+			El link con la dirección del acta es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -217,24 +200,30 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
+    <userTask id="usertask9" name="Levantar acta" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow18" sourceRef="usertask9" targetRef="usertask10">
       <extensionElements>
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = UGIDIET
+            <activiti:string><![CDATA[def tos = Asistentes
 			def emailAction="MULTI"; 
-			def subject = "Revise el acta de la reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Revise el acta de la reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que sugerir algunas modificaciones del acta de la reunion. <br/>
-			Por favor se le ruega haga comente las partes que quiera modificar para que el RGET proceda a su modificacion en caso de 
-			que sea oportuno.<br/>
+			Hola, a continuación se adjunta un link desde el que sugerir algunas modificaciones del acta de la reunion. <br/>
+			Por favor se le ruega haga comente las partes que quiera modificar para que el RGET proceda a su modificación en caso de 
+			que sea oportuno.<br/><br/>
 			Una vez haya realizado todas las modificaciones oportunas responda al correo, no es necesario añadir texto.
 			<br/>
-			El link con la direccion del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
+			El link con la dirección del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
 			execution.setVariable("tos",tos)
+			execution.setVariable("tosResponse",[])
 			execution.setVariable("emailAction",emailAction)
 			execution.setVariable("subject", subject)
 			execution.setVariable("body", body)]]></activiti:string>
@@ -248,7 +237,6 @@
     <userTask id="usertask10" name="Proponer modificaciones de acta" activiti:assignee="kermit">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow19" sourceRef="exclusivegateway7" targetRef="usertask11">
@@ -257,12 +245,12 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Modificaciones del acta de la reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Modificaciones del acta de la reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede ver las sugerencias, de los asistentes a la reunion, sobre el acta redactada de la misma.<br/>
-			Una vez haya realizado todas las modificaciones oportunas responda al correo, no es necesario añadir texto.
+			Hola, a continuación se adjunta un link desde el que puede ver las sugerencias, de los asistentes a la reunión, sobre el acta redactada de la misma.<br/>
+			<br/>Una vez haya realizado todas las modificaciones oportunas responda al correo, no es necesario añadir texto.
 			<br/>
-			El link con la direccion del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
+			El link con la dirección del acta de es el siguiente:<br/>	<a href="""+URLActa+""">Acta</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -277,7 +265,11 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <userTask id="usertask11" name="Modificar acta" activiti:assignee="kermit"></userTask>
+    <userTask id="usertask11" name="Modificar acta" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
     <endEvent id="endevent1" name="End"></endEvent>
     <boundaryEvent id="boundarytimer1" name="Timer" attachedToRef="usertask5" cancelActivity="true">
       <timerEventDefinition>
@@ -297,28 +289,26 @@
 			}
 			for (respuestas in tosResponse){
 				for (idfecha in respuestas['Fechas']){
-					idfecha=idfecha.toInteger()
-				//	puntuaciones[idfecha]=(puntuaciones[idfecha])+1
-					puntuaciones.putAt(idfecha, puntuaciones.get(idfecha)+1)
-				//	personas[idfecha]=personas[idfecha]+","+respuestas.get("From")
+					idfecha=idfecha.toInteger()				
+					puntuaciones.putAt(idfecha, puntuaciones.get(idfecha)+1)				
 					personas.putAt(idfecha, personas[idfecha]+","+respuestas.get("From"))
 				}
 			}
 			estadistica=""
-			for (i in 0..Fechas.size()){
-				estadistica=estadistica+"Fecha: "+Fechas[i]+" Personas que han respondido si: "+personas[i]+" Total: "+puntuaciones[i]+"<br/>"
-			}
+			for (i in 0..Fechas.size()-1){
+				estadistica=estadistica+"Fecha: "+Fechas[i]+"==>"+puntuaciones[i]+" Personas que han respondido si: "+personas[i]+"<br/>"
+            }
             def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
+			def subject = "Evalue fecha y orden del dia de la reunión del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
-			de la reunion. <br/>"""+estadistica+"""<br/>Todos los miembros del equipo han contestado.<br/>
-			Además se adjunta una url donde se encuentra la orden del dia ya modificada por los miembros del equipo.<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
-			<br/>
-			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con la fecha final de 
-			celebracion de la reunion usando el siguiente formato:
+			Hola, a continuación se muestra los resultados la votación para la selección de fecha de celebración
+			de la reunion.<br/> <br/>"""+estadistica+"""<br/><br/>Todos los miembros del equipo han contestado.<br/>
+			Además se adjunta una url donde se encuentra la orden del día ya modificada por los miembros del equipo.<br/>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
+			<br/><br/>
+			Una vez modificada la orden del día, en caso de que sea necesario, debe responder al correo con la fecha final de 
+			celebración de la reunión usando el siguiente formato:
 			<br/>
 			<--<br/>
 			FechaFinal:*Fecha de celebracion*<br/>			
@@ -358,10 +348,7 @@
             <activiti:string><![CDATA[SiAsiste=[]
 			NoAsiste=[]
 			Contestan=[]
-			//for (i in 0..UGIDIET.size()){
-			//	SiAsiste[i]=""
-			//	NoAsiste[i]=""
-			//}
+			
 			for (respuestas in tosResponse){
 				if(respuestas['Asistencia']=="Si"){
 					SiAsiste.add(respuestas.get("From"))
@@ -374,16 +361,12 @@
 			
 			def tos = [RGETMail]
 			def emailAction="DONE"; 
-			def subject = "Confirmacion de asistencia de la reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Confirmación de asistencia de la reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se muestran los resultados de la confirmacion de asistencia a la reunion propuesta el : 
-			"""+FechaFinal+"""<br/>Miembros que han contestado SI: """+SiAsiste+"""<br/>Miembros que han contestado NO: """+NoAsiste+"""<br/>
+			Hola, a continuación se muestran los resultados de la confirmación de asistencia a la reunión propuesta el : 
+			"""+FechaFinal+"""<br/><br/>Miembros que han contestado SI: """+SiAsiste+"""<br/>Miembros que han contestado NO: """+NoAsiste+"""<br/>
 			Miembros que no han contestado: """+NC+"""<br/><br/>
-			Conteste al correo indicando los dias que restan hasta el dia de la reunion siguiendo el formato:
-			<br/>
-			<--<br/>
-			Dias:<br/>
-			--> 
+			Responda al correo para marcar la actividad como finalizada, no es necesario enviar texto alguno.
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -425,7 +408,6 @@
     <task id="manualtask2" name="Incluir plantilla DAFO">
       <extensionElements>
         <activiti:executionListener event="start" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
       </extensionElements>
     </task>
     <sequenceFlow id="flow37" sourceRef="usertask6" targetRef="usertask13">
@@ -434,17 +416,17 @@
           <activiti:field name="script">
             <activiti:string><![CDATA[def tos = UGIDIET
 			def emailAction="MULTI"; 
-			def subject = "Fecha de celebraciono de reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Fecha de celebración de reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuación se adjunta un link desde el que puede ver la orden del dia de la reunion. <br/>
-			La fecha de celebracion de la reunion será: """+FechaFinal+"""<br/>
-			Por favor confirme si asistira o no a la reunion respondiendo al correo con el siguiente formato:
+			Hola, a continuación se adjunta un link desde el que puede ver la orden del día de la reunión. <br/><br/>
+			La fecha de celebracion de la reunion será: """+FechaFinal+"""<br/><br/>
+			Por favor confirme si asistirá o no a la reunión respondiendo al correo con el siguiente formato:
 			<br/>
 			<--<br/>
 			Asistencia:Si/No<br/>
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -472,23 +454,23 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[muestraFechas=""
-            for (i in 0..Fechas.size()){
-            	muestraFechas=muestraFechas+Integer.toString(i)+") "+Fechas[i]+"<br/>"
+            for (i in 0..Fechas.size()-1){
+            		muestraFechas=muestraFechas+Integer.toString(i)+") "+Fechas[i]+"<br/>"
             }
             def tos = UGIDIET
 			def emailAction="MULTI"; 
-			def subject = "Nueva reunion de seguimiento del proyecto: "+ProjectName;
+			def subject = "Nueva reunión de seguimiento del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se adjunta un link desde el que puede modificar la orden del dia de la reunion. <br/>
-			Además las fechas posbiles propuestas por el RGET para la celebracion de la reunion son:<br/>"""+muestraFechas+"""<br/><br/>
+			Hola, a continuación se adjunta un link desde el que puede modificar la orden del dia de la reunión. <br/>
+			<br/>Además las fechas posbiles propuestas por el RGET para la celebracion de la reunión son:<br/>"""+muestraFechas+"""<br/><br/>
 			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con las posibles fechas en las 
-			que tiene disponibilidad para realizar la reunion indicando el numero de la fecha con el siguiente formato:
+			que tiene disponibilidad para realizar la reunión indicando el número de la fecha con el siguiente formato:
 			<br/>
 			<--<br/>
 			Fechas:1,3,4<br/>			
 			--><br/>
 			<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
 			<br/>
 			<br/>
 			Muchas gracias por su tiempo."""
@@ -508,18 +490,18 @@
         <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[def emailAction="DONE"; 
-			def subject = "Evalue fecha y orden del dia de la reunion del proyecto: "+ProjectName;
+			def subject = "Evalue fecha y orden del día de la reunión del proyecto: "+ProjectName;
 			def body = """\
-			Hola, a continuacion se a continuacion se muestra los resultados la votacion para la seleccion de fecha de celebracion
-			de la reunion. <br/>"""+Fechas+"""<br/>Los miembros del equipo que no han contestado son:<br/>"""+tos+"""<br/>
-			Además se adjunta una url donde se encuentra la orden del dia ya modificada por los miembros del equipo.<br/>
-			El link con la direccion de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
+			Hola, a continuación se muestra los resultados la votacion para la selección de fecha de celebración
+			de la reunion. <br/><br/>"""+Fechas+"""<br/><br/>Los miembros del equipo que no han contestado son:<br/>"""+tos+"""<br/>
+			<br/>Además se adjunta una url donde se encuentra la orden del día ya modificada por los miembros del equipo.<br/>
+			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
 			<br/>
-			Una vez modificada la orden del dia, en caso de que sea necesario, debe responder al correo con la fecha final de 
-			celebracion de la reunion usando el siguiente formato:
+			Una vez modificada la orden del día, en caso de que sea necesario, debe responder al correo con la fecha final de 
+			celebración de la reunión usando el siguiente formato:
 			<br/>
 			<--<br/>
-			FechaFinal:*Fecha de celebracion*<br/>			
+			FechaFinal:*Fecha de celebración*<br/>			
 			--><br/>
 			<br/>			
 			<br/>
@@ -577,29 +559,26 @@
       <bpmndi:BPMNShape bpmnElement="usertask8" id="BPMNShape_usertask8">
         <omgdc:Bounds height="60.0" width="105.0" x="1450.0" y="228.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="timerintermediatecatchevent1" id="BPMNShape_timerintermediatecatchevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="1620.0" y="240.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask9" id="BPMNShape_usertask9">
         <omgdc:Bounds height="55.0" width="105.0" x="1710.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask10" id="BPMNShape_usertask10">
         <omgdc:Bounds height="85.0" width="105.0" x="1810.0" y="560.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
-        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask11" id="BPMNShape_usertask11">
         <omgdc:Bounds height="55.0" width="105.0" x="2000.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="2180.0" y="240.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="2170.0" y="240.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway5" id="BPMNShape_exclusivegateway5">
         <omgdc:Bounds height="40.0" width="40.0" x="1020.0" y="582.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway6" id="BPMNShape_exclusivegateway6">
         <omgdc:Bounds height="40.0" width="40.0" x="1440.0" y="582.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
+        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway7" id="BPMNShape_exclusivegateway7">
         <omgdc:Bounds height="40.0" width="40.0" x="1980.0" y="582.0"></omgdc:Bounds>
@@ -651,7 +630,7 @@
         <omgdi:waypoint x="329.0" y="324.0"></omgdi:waypoint>
         <omgdi:waypoint x="370.0" y="323.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
@@ -690,10 +669,6 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
         <omgdi:waypoint x="1555.0" y="258.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1620.0" y="257.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
-        <omgdi:waypoint x="1655.0" y="257.0"></omgdi:waypoint>
         <omgdi:waypoint x="1710.0" y="257.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
@@ -720,7 +695,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
         <omgdi:waypoint x="2105.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="2180.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2170.0" y="257.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow37" id="BPMNEdge_flow37">
         <omgdi:waypoint x="1215.0" y="264.0"></omgdi:waypoint>
