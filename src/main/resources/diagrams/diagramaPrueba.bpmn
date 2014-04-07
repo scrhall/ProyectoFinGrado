@@ -7,27 +7,74 @@
         <activiti:executionListener event="start" class="isaFoundry.processEngine.SendMail"></activiti:executionListener>
       </extensionElements>
     </endEvent>
-    <intermediateCatchEvent id="timerintermediatecatchevent1" name="TimerCatchEvent">
-      <timerEventDefinition>
-        <timeDuration>PT3M</timeDuration>
-      </timerEventDefinition>
-    </intermediateCatchEvent>
-    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="timerintermediatecatchevent1"></sequenceFlow>
-    <sequenceFlow id="flow2" sourceRef="timerintermediatecatchevent1" targetRef="endevent1">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="endevent1">
+     <extensionElements>
+        <activiti:executionListener event="taken" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def tos = [jualopver@gmail.com]
-			def emailAction="DONE"; 
-			def subject = "Proceso de prueba concluido ";
-			def body = """\
-			
-			El el evento de tiempo ha finalizado 
-			Muchas gracias por su tiempo."""
-			execution.setVariable("tos",tos)
-			execution.setVariable("emailAction",emailAction)
-			execution.setVariable("subject", subject)
-			execution.setVariable("body", body)]]></activiti:string>
+            <activiti:string><![CDATA[//HistorialReunioes[HistorialReuniones.size()] = ProjectPath;
+            def nr=Reunion.toInteger()
+            if(nr==4){
+            	next=1
+            }else{
+            	next=nr+1
+            }
+            miembros=""
+            for(e in UGIDIET){
+            	if(miembros==""){
+            		miembros=miembros+e
+            	}else{
+            		miembros=miembros+","+e	
+            	}
+            }
+            aux=ProjectName.substring(0,ProjectName.size()-2)+"/"+next.toString()
+            def tos=["pruebas@scrhall.com"]
+            def subject=""
+            def body="""
+            <--<br/>
+			RGETMail:"""+RGETMail+"""<br/>
+			UGIDIET:"""+miembros+"""<br/>
+			ProjectName:"""+aux+"""<br/>
+			Reunion:"""+next.toString()+"""<br/>
+			--><br/>
+			<--INICIAR:Reuniones-->
+            
+              """
+            execution.setVariable("tos",tos);            
+            execution.setVariable("subject",subject);    
+            execution.setVariable("body",body);]]></activiti:string>
+          </activiti:field>
+          <activiti:field name="language">
+            <activiti:string><![CDATA[groovy]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    <extensionElements>
+        <activiti:executionListener event="taken" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[def HistorialReunioes = HistorialReuniones.add(ProjectPath);
+            def nr=Reunion.toInteger()
+            if(nr==4){
+            	next=1
+            }else{
+            	next=nr+1
+            }
+            aux=ProjectName.substring(0,ProjectName.size()-2)+"/"+next.toString()
+            def tos=["pruebas@scrhall.com"]
+            def subject=""
+            def body="""
+            <--<br/>
+			RGETMail:"""+RGETMail+"""<br/>
+			UGIDIET:"""+UGIDIET+"""<br/>
+			ProjectName:"""+aux+"""<br/>
+			Reunion:"""+next.toString()+"""<br/>
+			HistorialReuniones:"""+HistorialReuniones+"""<br/>
+			--><br/>
+			<--INICIAR:Reuniones-->
+            
+              """
+            execution.setVariable("tos",tos);            
+            execution.setVariable("subject",subject);    
+            execution.setVariable("body",body);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
@@ -44,15 +91,8 @@
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="650.0" y="140.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="timerintermediatecatchevent1" id="BPMNShape_timerintermediatecatchevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="360.0" y="140.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="165.0" y="157.0"></omgdi:waypoint>
-        <omgdi:waypoint x="360.0" y="157.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="395.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="650.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

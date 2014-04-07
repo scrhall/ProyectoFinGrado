@@ -16,7 +16,6 @@
 			<br/>
 			<--<br/>
 			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>
-			
 			--><br/>
 			<br/>
 			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Dia</a>
@@ -56,17 +55,18 @@
       <extensionElements>
         <activiti:executionListener event="taken" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[def TemplateDirectory = "/Plantillas/Reuniones";
-            def Doc = "OrdenDia.docx";
-            execution.setVariable("TemplateDirectory",TemplateDirectory);            
+            <activiti:string><![CDATA[def src = "/Procesos/PruebasReuniones/1/DAFO.docx";
+            def dest = ProjectPath
+            def Doc = "DAFOReunion1";
+            execution.setVariable("src",src);
+            execution.setVariable("dest",dest);            
             execution.setVariable("Doc",Doc);]]></activiti:string>
           </activiti:field>
           <activiti:field name="language">
             <activiti:string><![CDATA[groovy]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.CreateDirectory"></activiti:executionListener>
-        <activiti:executionListener event="start" class="isaFoundry.processEngine.CopyDocumentTemplate"></activiti:executionListener>
+        <activiti:executionListener event="start" class="isaFoundry.processEngine.CopyDocument"></activiti:executionListener>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Reunion==3}]]></conditionExpression>
     </sequenceFlow>
@@ -81,12 +81,12 @@
 			def body = """\
 			Hola, a continuación se adjunta un link desde el que puede rellenar la orden del día de la reunión. <br/><br/>
 			Para facilitar el seguimiento de la misma se adjunta el analisis DAFO realizado en la primera reunión del año<br/>:<a href="""
-			+URLDAFOReunion1+""">DAFO</a><br/><br/>
+			+URLDAFOReunion1+""">DAFOReunion1</a><br/><br/>
 			Una vez rellenada la orden del día debe contestar al correo con las posibles fechas en las 
 			que realizar la reunión siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
+			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>	
 			--><br/>
 			<br/>
 			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
@@ -119,7 +119,7 @@
 			que realizar la reunión siguiendo el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>			
+			Fechas:Fecha posible 1,Fecha posible 2,Fecha posible 3...<br/>	
 			--><br/>
 			<br/>
 			El link con la dirección de la orden del dia es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
@@ -357,7 +357,7 @@
 				}
 				Contestan.add(respuestas.get("From"))			
 			}
-			NC=UGIDIET-Contestan
+			
 			
 			def tos = [RGETMail]
 			def emailAction="DONE"; 
@@ -365,7 +365,7 @@
 			def body = """\
 			Hola, a continuación se muestran los resultados de la confirmación de asistencia a la reunión propuesta el : 
 			"""+FechaFinal+"""<br/><br/>Miembros que han contestado SI: """+SiAsiste+"""<br/>Miembros que han contestado NO: """+NoAsiste+"""<br/>
-			Miembros que no han contestado: """+NC+"""<br/><br/>
+			
 			Responda al correo para marcar la actividad como finalizada, no es necesario enviar texto alguno.
 			<br/>
 			<br/>
@@ -386,7 +386,6 @@
         <timeDuration>P7D</timeDuration>
       </timerEventDefinition>
     </boundaryEvent>
-    <sequenceFlow id="flow35" sourceRef="usertask11" targetRef="endevent1"></sequenceFlow>
     <startEvent id="startevent1" name="Start">
       <extensionElements>
         <activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener">
@@ -467,7 +466,7 @@
 			que tiene disponibilidad para realizar la reunión indicando el número de la fecha con el siguiente formato:
 			<br/>
 			<--<br/>
-			Fechas:1,3,4<br/>			
+			Fechas:1,3,4<br/>	
 			--><br/>
 			<br/>
 			El link con la dirección de la orden del día es el siguiente:<br/>	<a href="""+URLOrdenDia+""">Orden del Día</a>
@@ -520,6 +519,9 @@
     </sequenceFlow>
     <sequenceFlow id="flow42" sourceRef="boundarytimer4" targetRef="exclusivegateway6"></sequenceFlow>
     <sequenceFlow id="flow43" sourceRef="boundarytimer3" targetRef="exclusivegateway7"></sequenceFlow>
+    <sequenceFlow id="flow45" sourceRef="usertask11" targetRef="endevent1">
+      
+    </sequenceFlow>
     <textAnnotation id="textannotation4">
       <text>Por cada uno de los miembros</text>
     </textAnnotation>
@@ -565,20 +567,20 @@
       <bpmndi:BPMNShape bpmnElement="usertask10" id="BPMNShape_usertask10">
         <omgdc:Bounds height="85.0" width="105.0" x="1810.0" y="560.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
+        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask11" id="BPMNShape_usertask11">
         <omgdc:Bounds height="55.0" width="105.0" x="2000.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="2170.0" y="240.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="2240.0" y="240.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway5" id="BPMNShape_exclusivegateway5">
         <omgdc:Bounds height="40.0" width="40.0" x="1020.0" y="582.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway6" id="BPMNShape_exclusivegateway6">
         <omgdc:Bounds height="40.0" width="40.0" x="1440.0" y="582.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="boundarytimer3" id="BPMNShape_boundarytimer3">
-        <omgdc:Bounds height="30.0" width="30.0" x="1890.0" y="637.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway7" id="BPMNShape_exclusivegateway7">
         <omgdc:Bounds height="40.0" width="40.0" x="1980.0" y="582.0"></omgdc:Bounds>
@@ -630,7 +632,7 @@
         <omgdi:waypoint x="329.0" y="324.0"></omgdi:waypoint>
         <omgdi:waypoint x="370.0" y="323.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="13.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="13.0" width="9.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
@@ -693,10 +695,6 @@
         <omgdi:waypoint x="1385.0" y="602.0"></omgdi:waypoint>
         <omgdi:waypoint x="1440.0" y="602.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
-        <omgdi:waypoint x="2105.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="2170.0" y="257.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow37" id="BPMNEdge_flow37">
         <omgdi:waypoint x="1215.0" y="264.0"></omgdi:waypoint>
         <omgdi:waypoint x="1248.0" y="263.0"></omgdi:waypoint>
@@ -733,6 +731,10 @@
         <omgdi:waypoint x="1920.0" y="652.0"></omgdi:waypoint>
         <omgdi:waypoint x="2000.0" y="651.0"></omgdi:waypoint>
         <omgdi:waypoint x="2000.0" y="622.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow45" id="BPMNEdge_flow45">
+        <omgdi:waypoint x="2105.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2240.0" y="257.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="association4" id="BPMNEdge_association4">
         <omgdi:waypoint x="932.0" y="568.0"></omgdi:waypoint>
