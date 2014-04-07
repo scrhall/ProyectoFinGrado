@@ -128,13 +128,9 @@ public class EmailReadService {
 			});
 			this.startListening(this.inbox);
 			return true;
-		} catch (FolderClosedException e) {
+		} catch (Exception e) {
 			Log.info("Error: No se pudo conectar con el servidor de correo IMAP. Intentando reiniciar la conexion.");
 			connect();
-			return false;
-		} catch (Exception e) {
-			Log.info("Error: No se pudo conectar con el servidor de correo IMAP.");
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -215,7 +211,7 @@ public class EmailReadService {
 	 * 
 	 * @param imapFolder
 	 */
-	public void startListening(IMAPFolder imapFolder) {
+	public void startListening(IMAPFolder imapFolder) throws RuntimeException{
 		try {
 			Log.info("Inicio de la escucha");
 			imapFolder.open(Folder.READ_WRITE);

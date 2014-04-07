@@ -117,6 +117,7 @@ public class EmailSenderService {
 			MimeMessage message = new MimeMessage(this.session);
 			message.setFrom(new InternetAddress((String) this.properties.get("mail.smtp.mail.sender")));
 			for (String to : tos) {
+				to=to.replace(String.valueOf((char) 160), " ").trim();
 				message.addRecipient(Message.RecipientType.BCC , new InternetAddress(to));
 				Log.info("Destinatario: " + to);
 			}
