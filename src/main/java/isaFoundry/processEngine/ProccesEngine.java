@@ -140,7 +140,7 @@ public class ProccesEngine {
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
 		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
-				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn").deploy();
+				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn").addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
 		ProccesEngine.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }
