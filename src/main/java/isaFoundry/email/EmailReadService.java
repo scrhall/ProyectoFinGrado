@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
-import javax.mail.FolderClosedException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
