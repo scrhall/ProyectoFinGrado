@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
