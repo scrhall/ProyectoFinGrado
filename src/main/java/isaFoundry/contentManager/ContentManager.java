@@ -179,10 +179,12 @@ public class ContentManager {
 		try {
 			Log.info("Generando Url para la edicion del documento '" + doc.getName() + "'");
 			String[] id = doc.getId().split(";");
+			url = this.properties.getProperty("SERVER_URL") + "/share/page/document-details?nodeRef=" + id[0] ;
+					//+ "&return=document-details%3FnodeRef%3D" + id[0];
 			//url = this.properties.getProperty("SERVER_URL") + "share/page/googledocsEditor?nodeRef=" + id[0]
-			//		+ "&return=context%2Fmine%2Fdocument-details%3FnodeRef%3D" + id[0];
-			url = this.properties.getProperty("SERVER_URL") + "share/page/googledocsEditor?nodeRef=" + id[0]
-				  + "&return=repository%23filter%3Dpath%257C%252F" + doc.getPaths().get(0).toString() + "%26page%3D1";
+			//	  + "&return=repository%23filter%3Dpath%257C" + doc.getParents().get(0).getPath().toString() + "%26page%3D1";
+			//url = this.properties.getProperty("SERVER_URL") + "share/page/googledocsEditor?nodeRef=" + id[0]
+			//		  + "&return=repository%23filter%3Dpath%7C%2F" + doc.getParents().toString() + "%26page%3D1";
 		} catch (Exception e) {
 			Log.error("Error: No se pudo generar la Url");
 			e.printStackTrace();

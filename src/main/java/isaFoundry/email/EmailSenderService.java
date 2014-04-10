@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/scrhall/ProyectoFinGrado.git
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
