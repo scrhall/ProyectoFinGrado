@@ -32,7 +32,6 @@ public class ProccesEngine {
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
 		this.loadAllDefinitions();
 	}
-
 	/**
 	 * Calcula un hash para dos string dados.
 	 * 

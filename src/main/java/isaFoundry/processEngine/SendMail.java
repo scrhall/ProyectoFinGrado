@@ -11,7 +11,6 @@ import org.activiti.engine.delegate.ExecutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class SendMail implements ExecutionListener {
 
 	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
