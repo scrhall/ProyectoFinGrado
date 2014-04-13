@@ -89,7 +89,8 @@ public class EmailService {
 		for (Message email : emails) {
 			String body;
 			try {
-				body = this.eReadService.getText(email).replaceAll("<br" , "{NewLine}<br").replaceAll("</div>" , "</div>{NewLine}").replaceAll("</p>" , "</p>{NewLine}");
+				body = this.eReadService.getText(email).replaceAll("<br" , "{NewLine}<br").replaceAll("</div>" , "</div>{NewLine}")
+						.replaceAll("</p>" , "</p>{NewLine}");
 				body = this.html2text(body);
 				String[] splitbody = body.split("<\\-\\-|\\-\\->");
 				if (splitbody.length > 1) {
@@ -109,14 +110,16 @@ public class EmailService {
 							for (String element : options) {
 								String[] option = element.split(":");
 								if (option.length == 2) {
-									//uTaskRequest.options.put(option[0].trim() , option[1].trim());
-									//String[] aux = option[1].trim().split(",");
-									List<String> aux =Arrays.asList(option[1].trim().split(","));
+									List<String> aux = Arrays.asList(option[1].trim().split(","));
 									if (aux.size() > 1) {
-								 	 uTaskRequest.options.put(option[0].replace(String.valueOf((char) 160), " ").trim(), aux);
-								 	} else {
-								 	 uTaskRequest.options.put(option[0].replace(String.valueOf((char) 160), " ").trim() , option[1].replace(String.valueOf((char) 160), " ").trim());
-								 	 }
+										for (int i = 0; i < aux.size(); i++) {
+											aux.set(i , aux.get(i).replace(String.valueOf((char) 160) , " ").trim());
+										}
+										uTaskRequest.options.put(option[0].replace(String.valueOf((char) 160) , " ").trim() , aux);
+									} else {
+										uTaskRequest.options.put(option[0].replace(String.valueOf((char) 160) , " ").trim() ,
+												option[1].replace(String.valueOf((char) 160) , " ").trim());
+									}
 								}
 							}
 						}
