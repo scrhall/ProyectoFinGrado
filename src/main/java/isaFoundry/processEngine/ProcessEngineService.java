@@ -19,15 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ProccesEngine {
+public class ProcessEngineService {
 
-	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
 	private ProcessEngine	processEngine;
 
 	/**
 	 * Incializa el motor de proceso y carga todos los procesos necesarios.
 	 */
-	public ProccesEngine() {
+	public ProcessEngineService() {
 		Log.info("Iniciando el motor de proceso...");
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
 		this.loadAllDefinitions();
@@ -140,6 +140,6 @@ public class ProccesEngine {
 		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
 				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn").addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
-		ProccesEngine.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
+		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }

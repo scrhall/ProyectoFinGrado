@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class CreateDirectory implements ExecutionListener {
 
-	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
 
 	public void notify(DelegateExecution execution) throws Exception {
 		String p = "/Procesos/" + (String) execution.getVariable("ProjectName");

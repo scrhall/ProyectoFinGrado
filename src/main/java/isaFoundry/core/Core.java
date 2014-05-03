@@ -1,9 +1,9 @@
 package isaFoundry.core;
 
 
-import isaFoundry.contentManager.ContentManager;
+import isaFoundry.contentManager.ContentManagerService;
 import isaFoundry.email.EmailService;
-import isaFoundry.processEngine.ProccesEngine;
+import isaFoundry.processEngine.ProcessEngineService;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 public class Core {
 
 	private static Logger			Log	= LoggerFactory.getLogger(Core.class);
-	private static ContentManager	cManager;
-	private static ProccesEngine	pEngine;
+	private static ContentManagerService	cManager;
+	private static ProcessEngineService	pEngine;
 	private static EmailService		eService;
 
 	public Core() {
@@ -138,8 +138,8 @@ public class Core {
 
 	public void start() {
 		Log.info("Conectando a los Servicios de Core...");
-		cManager = new ContentManager();
-		pEngine = new ProccesEngine();
+		cManager = new ContentManagerService();
+		pEngine = new ProcessEngineService();
 		eService = new EmailService();
 		eService.connect();
 	}

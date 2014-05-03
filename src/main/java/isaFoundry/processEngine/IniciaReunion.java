@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class IniciaReunion implements ExecutionListener {
 
-	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
 
 	public void notify(DelegateExecution execution) throws Exception {
 		// Preparamos las variables necesarias

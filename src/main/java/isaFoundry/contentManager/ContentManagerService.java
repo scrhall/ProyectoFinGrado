@@ -36,19 +36,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ContentManager {
+public class ContentManagerService {
 
 	private final Properties	properties	= new Properties();
-	private static Logger		Log			= LoggerFactory.getLogger(ContentManager.class);
+	private static Logger		Log			= LoggerFactory.getLogger(ContentManagerService.class);
 	private Session				session		= null;
 
 	/**
 	 * Constructor
 	 */
-	public ContentManager() {
+	public ContentManagerService() {
 		try {
 			Log.info("Cargando configuracion del Gestor Documental.");
-			this.properties.load(ContentManager.class.getResourceAsStream("/config/contentManagement.properties"));
+			this.properties.load(ContentManagerService.class.getResourceAsStream("/config/contentManagement.properties"));
 		} catch (IOException e) {
 			Log.error("Error: No se pudo cargar el archivo de configuracion del Gestor Documental.");
 			e.printStackTrace();

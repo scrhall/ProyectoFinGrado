@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class SendNotification implements ExecutionListener {
 
-	private static Logger	Log	= LoggerFactory.getLogger(ProccesEngine.class);
+	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
 
 	public void notify(DelegateExecution execution) throws Exception {
 		List<String> tos = (List<String>) execution.getVariable("tos");
