@@ -80,8 +80,7 @@ public class ProcessEngineService {
 						} else {
 							if (taskService.getVariable(task.getId() , "tos") instanceof List<?>) {
 								tos = (List<String>) taskService.getVariable(task.getId() , "tos");
-							}else
-							{
+							} else {
 								break;
 							}
 						}
