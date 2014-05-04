@@ -4,7 +4,6 @@ package isaFoundry.processEngine;
 import isaFoundry.core.UserTaskRequest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ public class ProcessEngineService {
 		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
 		this.loadAllDefinitions();
 	}
+
 	/**
 	 * Calcula un hash para dos string dados.
 	 * 
@@ -74,8 +74,19 @@ public class ProcessEngineService {
 					String pi = task.getProcessInstanceId();
 					String hash = Integer.toString(calculeHash(dk , pi));
 					if (hash.equals(t.hash)) {
-						List<String> tos = (List<String>) taskService.getVariable(task.getId() , "tos");
-						List<HashMap<String, Object>> tosResponse = (List<HashMap<String, Object>>) taskService.getVariable(task.getId() , "tosResponse");
+						List<String> tos = new ArrayList<String>();
+						if (taskService.getVariable(task.getId() , "tos") instanceof String) {
+							tos.add((String) taskService.getVariable(task.getId() , "tos"));
+						} else {
+							if (taskService.getVariable(task.getId() , "tos") instanceof List<?>) {
+								tos = (List<String>) taskService.getVariable(task.getId() , "tos");
+							}else
+							{
+								break;
+							}
+						}
+						List<HashMap<String, Object>> tosResponse = (List<HashMap<String, Object>>) taskService.getVariable(task.getId() ,
+								"tosResponse");
 						if (tosResponse == null) {
 							tosResponse = new ArrayList<HashMap<String, Object>>();
 						}
@@ -88,7 +99,7 @@ public class ProcessEngineService {
 								}
 							}
 							tosResponse.add(t.options);
-							Log.info("tosResponse actualizada: "+tosResponse);
+							Log.info("tosResponse actualizada: " + tosResponse);
 							taskService.setVariable(task.getId() , "tosResponse" , tosResponse);
 							Log.info("Task: '" + task.getName() + "' Actualizada.");
 							if (tos.size() == tosResponse.size()) {
@@ -139,7 +150,8 @@ public class ProcessEngineService {
 		RepositoryService repositoryService = this.processEngine.getRepositoryService();
 		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
 		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
-				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn").addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
+				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn")
+				.addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
 		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }
