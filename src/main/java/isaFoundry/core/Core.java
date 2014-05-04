@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 
 public class Core {
 
-	private static Logger			Log	= LoggerFactory.getLogger(Core.class);
+	private static Logger					Log	= LoggerFactory.getLogger(Core.class);
 	private static ContentManagerService	cManager;
-	private static ProcessEngineService	pEngine;
-	private static EmailService		eService;
+	private static ProcessEngineService		pEngine;
+	private static EmailService				eService;
 
 	public Core() {
 		Log.info("Iniciando Core...");
@@ -42,7 +42,10 @@ public class Core {
 	 * @param lt
 	 */
 	public static void doTasks(List<UserTaskRequest> lt) {
-		Log.info("Realizando tareas pendientes.");
+		if(lt.size()==0)
+			Log.info("No hay tareas pendientes.");
+		else
+		Log.info("Realizando "+lt.size()+" tareas pendientes.");
 		for (UserTaskRequest t : lt) {
 			switch (t.action) {
 				case INICIAR:

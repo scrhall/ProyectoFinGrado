@@ -15,6 +15,8 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.event.ConnectionEvent;
+import javax.mail.event.ConnectionListener;
 import javax.mail.event.MessageCountAdapter;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.search.FlagTerm;
@@ -125,11 +127,29 @@ public class EmailReadService {
 					}
 				}
 			});
+			this.inbox.addConnectionListener(new ConnectionListener() {
+
+				public void closed(ConnectionEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				public void disconnected(ConnectionEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				public void opened(ConnectionEvent e) {
+					try {
+						Core.doTasks(EmailReadService.this.emailService.taskReceived());
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});
 			this.startListening(this.inbox);
 			return true;
 		} catch (Exception e) {
 			Log.info("Error: No se pudo conectar con el servidor de correo IMAP. Intentando reiniciar la conexion.");
-			connect();
+			this.connect();
 			return false;
 		}
 	}
@@ -194,8 +214,7 @@ public class EmailReadService {
 				// Marca Los mensajes como leidos
 				msg.setFlag(Flags.Flag.SEEN , true);
 			}
-
-			Log.info("Emails Obtenidos.");
+			Log.info(messages.length+" emails obtenidos.");
 			return messages;
 		} catch (MessagingException e) {
 			Log.error("Error: No se pudieron leer los correos.");
@@ -210,7 +229,7 @@ public class EmailReadService {
 	 * 
 	 * @param imapFolder
 	 */
-	public void startListening(IMAPFolder imapFolder) throws RuntimeException{
+	public void startListening(IMAPFolder imapFolder) throws RuntimeException {
 		try {
 			Log.info("Inicio de la escucha");
 			imapFolder.open(Folder.READ_WRITE);
