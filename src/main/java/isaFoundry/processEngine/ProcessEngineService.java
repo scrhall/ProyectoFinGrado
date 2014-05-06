@@ -131,6 +131,8 @@ public class ProcessEngineService {
 					}
 				}
 				break;
+			
+				
 			default:
 				return false;
 		}
@@ -172,5 +174,10 @@ public class ProcessEngineService {
 				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn")
 				.addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
 		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
+	}
+
+	public void endProcess(String hash) {
+		// TODO Auto-generated method stub
+		
 	}
 }
