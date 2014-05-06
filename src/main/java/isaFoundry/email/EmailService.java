@@ -57,7 +57,15 @@ public class EmailService {
 	 * @param string
 	 */
 	public void reply(Message msg, String string) {
-		this.eSenderService.reply(msg , string);
+		try {
+			this.eSenderService.reply(msg , string + "\n\n\n\n" + this.eReadService.getText(msg));
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -83,6 +91,7 @@ public class EmailService {
 	public List<UserTaskRequest> taskReceived() {
 		Log.info("Comprobando si existen tareas pendientes en el correo electronico.");
 		boolean error = false;
+		String 	msgError="";
 		List<UserTaskRequest> ids = new ArrayList<UserTaskRequest>();
 		Message[] emails = this.eReadService.readEmails();
 		Log.info("Iniciando analisis de los correos electronicos.");
@@ -126,15 +135,18 @@ public class EmailService {
 						ids.add(uTaskRequest);
 					} else {
 						error = true;
+						msgError="No se pudo procesar correctamente su mensage.";
+						
 					}
 				} else {
 					error = true;
+					msgError="No se pudo procesar correctamente su mensage, compruebue que sigue la estructura sugerida. No se encontroaron las siguientes etiquetas correctamente situadas: <--  -->";
 				}
 				if (error) {
 					UserTaskRequest uTaskRequest = new UserTaskRequest();
 					uTaskRequest.msg = email;
 					uTaskRequest.action = Action.ERROR;
-					uTaskRequest.hash = "";
+					uTaskRequest.hash = msgError;
 					uTaskRequest.options = new HashMap<String, Object>();
 					uTaskRequest.options.put("From" , email.getFrom()[0].toString());
 					ids.add(uTaskRequest);

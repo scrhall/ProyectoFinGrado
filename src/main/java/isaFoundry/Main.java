@@ -16,7 +16,6 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Logger Log = LoggerFactory.getLogger(Main.class);
 		Core core = new Core();
 		core.start();
 	}

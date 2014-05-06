@@ -3,6 +3,10 @@ package isaFoundry.processEngine;
 
 import isaFoundry.core.UserTaskRequest;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +25,30 @@ import org.slf4j.LoggerFactory;
 public class ProcessEngineService {
 
 	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
-	private ProcessEngine	processEngine;
+	private static ProcessEngine	processEngine;
 
 	/**
 	 * Incializa el motor de proceso y carga todos los procesos necesarios.
+	 * 
+	 * @throws Exception
 	 */
 	public ProcessEngineService() {
 		Log.info("Iniciando el motor de proceso...");
-		this.processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
+		if (processEngine != null) {
+			try {
+				Class.forName("org.h2.Driver");
+				Connection con = DriverManager.getConnection("jdbc:h2:mem:activiti" , "sa" , "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("SHUTDOWN");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration().buildProcessEngine();
 		this.loadAllDefinitions();
 	}
 

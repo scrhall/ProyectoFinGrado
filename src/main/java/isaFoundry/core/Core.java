@@ -18,9 +18,11 @@ public class Core {
 	private static ContentManagerService	cManager;
 	private static ProcessEngineService		pEngine;
 	private static EmailService				eService;
+	private static Core						core;
 
 	public Core() {
 		Log.info("Iniciando Core...");
+		Core.core = this;
 	}
 
 	/**
@@ -42,19 +44,41 @@ public class Core {
 	 * @param lt
 	 */
 	public static void doTasks(List<UserTaskRequest> lt) {
-		if(lt.size()==0)
+		if (lt.size() == 0) {
 			Log.info("No hay tareas pendientes.");
-		else
-		Log.info("Realizando "+lt.size()+" tareas pendientes.");
+		} else {
+			Log.info("Realizando " + lt.size() + " tareas pendientes.");
+		}
 		for (UserTaskRequest t : lt) {
 			switch (t.action) {
 				case INICIAR:
 					Log.info("Comando 'INICIAR' detectado.");
 					Core.startProcces(t.hash , t.options);
 					break;
+				case RESET:
+					Log.info("Comando 'RESET' detectado.");
+					Log.info("Se reiniciara la aplicacion en "+t.hash+ " Milisegundos.");
+					
+					
+					try {
+						Thread.sleep(tryParseInt(t.hash));
+					} catch (InterruptedException e) {
+						Log.error("Error: no se pudo reiniciar la aplicacion. \n" + e.getMessage());
+						e.printStackTrace();
+					}
+					Log.info("Reiniciando Core...");
+					Core.core.start();
+					break;
+				case ERROR:
+					errorToResend(t , t.hash);
+					break;
 				default:
 					if (!pEngine.doTask(t)) {
-						errorToResend(t);
+						errorToResend(
+								t ,
+								"No se encontro la tarea que coincida con el hash: "
+										+ t.hash
+										+ ", compruebue que incluye la utima etiqueta del mensaje del sistema al final de su correo con el siguiente formato: <--'Cadena de texto':'Codigo Numerico'-->");
 					}
 			}
 		}
@@ -136,7 +160,19 @@ public class Core {
 	 * @param t
 	 */
 	private static void errorToResend(UserTaskRequest t) {
-		eService.reply(t.msg , "Se ha detectado un problema al procesar su respuesta, compruebe los datos enviados y intentelo de nuevo.");
+		errorToResend(t , "Se ha detectado un problema al procesar su respuesta, compruebe los datos enviados y intentelo de nuevo.");
+	}
+
+	private static void errorToResend(UserTaskRequest t, String msg) {
+		eService.reply(t.msg , msg);
+	}
+
+	static int tryParseInt(String value) {
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
 	}
 
 	public void start() {
