@@ -8,6 +8,7 @@ import isaFoundry.processEngine.ProcessEngineService;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,10 @@ public class Core {
 					break;
 				case ERROR:
 					errorToResend(t , t.hash);
+					break;
+				case FIN:
+					pEngine.endProcess(t.hash);
+					
 					break;
 				default:
 					if (!pEngine.doTask(t)) {

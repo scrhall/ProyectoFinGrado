@@ -152,15 +152,15 @@ public class ProcessEngineService {
 	/**
 	 * Inicia un proceso en el motor de procesos.
 	 * 
-	 * @param procesKey
+	 * @param processKey
 	 *            Nombre del proceso a iniciar.
 	 * @param var
 	 *            Parametros de entrada en el proceso.
 	 */
-	public void startProcess(String procesKey, Map<String, Object> var) {
-		Log.info("Iniciando el  proceso '" + procesKey + "'");
+	public void startProcess(String processKey, Map<String, Object> var) {
+		Log.info("Iniciando el  proceso '" + processKey + "'");
 		RuntimeService runtimeService = this.processEngine.getRuntimeService();
-		runtimeService.startProcessInstanceByKey(procesKey , var);
+		runtimeService.startProcessInstanceByKey(processKey , var);
 	}
 
 	/**
@@ -176,8 +176,9 @@ public class ProcessEngineService {
 		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 
-	public void endProcess(String hash) {
-		// TODO Auto-generated method stub
-		
+	public void endProcess(String processId) {
+		Log.info("Eliminando el  proceso '" + processId + "'");
+		RuntimeService runtimeService = this.processEngine.getRuntimeService();
+		runtimeService.deleteProcessInstance(processId ,null);
 	}
 }
