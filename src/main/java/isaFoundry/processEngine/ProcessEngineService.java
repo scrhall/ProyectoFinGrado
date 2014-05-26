@@ -1,8 +1,10 @@
 package isaFoundry.processEngine;
 
 
+import isaFoundry.contentManager.ContentManagerService;
 import isaFoundry.core.UserTaskRequest;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
@@ -24,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class ProcessEngineService {
 
-	private static Logger	Log	= LoggerFactory.getLogger(ProcessEngineService.class);
+	private static Logger			Log	= LoggerFactory.getLogger(ProcessEngineService.class);
 	private static ProcessEngine	processEngine;
 
 	/**
@@ -72,7 +75,7 @@ public class ProcessEngineService {
 	public boolean doTask(UserTaskRequest t) {
 		Log.info("Iniciando tarea...");
 		boolean res = false;
-		TaskService taskService = this.processEngine.getTaskService();
+		TaskService taskService = ProcessEngineService.processEngine.getTaskService();
 		List<Task> tasks = taskService.createTaskQuery().active().list();
 		switch (t.action) {
 			case DONE:
@@ -131,12 +134,16 @@ public class ProcessEngineService {
 					}
 				}
 				break;
-			
-				
 			default:
 				return false;
 		}
 		return res;
+	}
+
+	public void endProcess(String processId) {
+		Log.info("Eliminando el  proceso '" + processId + "'");
+		RuntimeService runtimeService = ProcessEngineService.processEngine.getRuntimeService();
+		runtimeService.deleteProcessInstance(processId , null);
 	}
 
 	/**
@@ -159,7 +166,7 @@ public class ProcessEngineService {
 	 */
 	public void startProcess(String processKey, Map<String, Object> var) {
 		Log.info("Iniciando el  proceso '" + processKey + "'");
-		RuntimeService runtimeService = this.processEngine.getRuntimeService();
+		RuntimeService runtimeService = ProcessEngineService.processEngine.getRuntimeService();
 		runtimeService.startProcessInstanceByKey(processKey , var);
 	}
 
@@ -167,18 +174,22 @@ public class ProcessEngineService {
 	 * Carga todas las definiciones de los procesos.
 	 */
 	private void loadAllDefinitions() {
+		Properties	properties	= new Properties();
+		
 		Log.info("Cargando las definiciones de los procesos...");
-		RepositoryService repositoryService = this.processEngine.getRepositoryService();
-		// repositoryService.createDeployment().addClasspathResource("diagrams/FinalizacionProyecto.bpmn").deploy();
-		repositoryService.createDeployment().addClasspathResource("diagrams/CreacionProyecto.bpmn")
-				.addClasspathResource("diagrams/ConvenioMarco.bpmn").addClasspathResource("diagrams/Reuniones2.bpmn")
-				.addClasspathResource("diagrams/diagramaPrueba.bpmn").deploy();
-		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
-	}
+		RepositoryService repositoryService = ProcessEngineService.processEngine.getRepositoryService();
+		try {
+			properties.load(ProcessEngineService.class.getResourceAsStream("/config/processEngine.properties"));
+			String[] diagrams=properties.getProperty("DIAGRAMS").split(",");
+			for (String string : diagrams) {
+				repositoryService.createDeployment().addClasspathResource("diagrams/"+string+".bpmn").deploy();
+			}
 
-	public void endProcess(String processId) {
-		Log.info("Eliminando el  proceso '" + processId + "'");
-		RuntimeService runtimeService = this.processEngine.getRuntimeService();
-		runtimeService.deleteProcessInstance(processId ,null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
 }
