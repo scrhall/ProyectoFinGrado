@@ -192,4 +192,23 @@ public class ProcessEngineService {
 		
 		ProcessEngineService.Log.info("Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count());
 	}
+
+	public String info() {
+		TaskService taskService = ProcessEngineService.processEngine.getTaskService();
+		List<Task> tasks = taskService.createTaskQuery().active().list();
+		RepositoryService repositoryService = ProcessEngineService.processEngine.getRepositoryService();
+		String res="";
+		res+="<br>Numero de definiciones cargadas: " + repositoryService.createProcessDefinitionQuery().count();
+		res+="<br>";
+		res+="<br>Tareas activas:";
+		for (Task task : tasks) {
+			String dk = task.getTaskDefinitionKey();
+			String pi = task.getProcessInstanceId();
+			String hash = Integer.toString(calculeHash(dk , pi));
+			res+="<br>Id Proceso:"+task.getProcessDefinitionId()+" Tarea:"+task.getName()+" Hash: "+hash;
+		}
+		
+		return res;
+	}
+
 }

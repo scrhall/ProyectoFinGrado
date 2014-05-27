@@ -57,13 +57,17 @@ public class EmailSenderService {
 	 * @param string
 	 *            Texto de la respuesta.
 	 */
-	public void reply(Message msg, String string) {
+	public void reply(Message msg, String body) {
 		try {
 			Log.info("Preparando Respuesta");
+			MimeMultipart multipart = new MimeMultipart();
+			BodyPart text = new MimeBodyPart();
 			Message replyMessage = new MimeMessage(this.session);
 			replyMessage = msg.reply(false);
 			replyMessage.setFrom(new InternetAddress((String) this.properties.get("mail.smtp.mail.sender")));
-			replyMessage.setText(string);
+			text.setContent(body , "text/html");
+			multipart.addBodyPart(text);
+			replyMessage.setContent(multipart);
 			replyMessage.setReplyTo(msg.getReplyTo());
 			this.connectAndSend(replyMessage);
 		} catch (MessagingException e) {
